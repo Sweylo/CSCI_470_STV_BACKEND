@@ -1,0 +1,2 @@
+# install mysql server in docker container
+docker run --name mysql -e MYSQL_ROOT_PASSWORD=<password> -d mysql:tag
