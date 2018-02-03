@@ -1,1 +1,5 @@
-<?php echo 'hello!'; ?>
+<?php 
+
+include 'model/sql.php';
+
+?>
