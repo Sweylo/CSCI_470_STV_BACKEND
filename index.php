@@ -1,5 +1,5 @@
 <?php 
 
-include 'model/sql.php';
+require_once('model/sql.php');
 
 ?>

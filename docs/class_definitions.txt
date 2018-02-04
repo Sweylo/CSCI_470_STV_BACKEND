@@ -1,0 +1,87 @@
+user - the user playing the game
+
+match - the round of chess being played by 2 users (white and black)
+
+board - the board being used to play the match
+	encoded in JSON (or maybe YAML or XML, whichever is easiest to use with unity or by group consensus). this is quite verbose so better solutions are welcomed:
+		standard chess board:
+		{
+			"dimensions": {
+				"maxXSize": 8,
+				"maxYSize": 8
+			},
+			"spaces": [
+				{
+					"xCoord": 1,
+					"yCoord": 1
+				},
+				{
+					"xCoord": 2,
+					"yCoord": 1
+				},
+
+				...
+
+				{
+					"xCoord": 8,
+					"yCoord": 8
+				}
+			],
+			"hazards": {
+
+			}
+		}
+
+space - the individual spaces that make up the board
+
+piece - the pieces being used in the match
+	one of 6 classes (these are the IDs for the rows in the classes table in the database):
+		1 - king
+		2 - queen
+		3 - bishop
+		4 - rook
+		5 - knight
+		6 - pawn
+
+card - obtained by winning games (or micro-transaction if we really want to go there) 
+	tarot_card - apply effects to pieces (specific to the class)
+	trap_card - apply effects to spaces
+
+move - defines how a piece can move, attack, and defend relative to its current space on the board
+	encoded in JSON (or maybe YAML or XML, whichever is easiest to use with unity or by group consensus). this is quite verbose so better solutions are welcomed:
+		pawn (not on starting space):
+		{
+			"movement": {
+				"n": 1,
+				"ne": 0,
+				"e": 0,
+				"se": 0,
+				"s": 0,
+				"sw": 0,
+				"w": 0,
+				"nw": 0
+			},
+			"attack": {
+				"n": 0,
+				"ne": 1,
+				"e": 0,
+				"se": 0,
+				"s": 0,
+				"sw": 0,
+				"w": 0,
+				"nw": 1
+			},
+			"defend": {
+				"n": 0,
+				"ne": 0,
+				"e": 0,
+				"se": 0,
+				"s": 0,
+				"sw": 0,
+				"w": 0,
+				"nw": 0
+			}
+		}
+	database also has a move_level column, which at 0 is the default move for the class of piece
+
+trap - effect that will be applied to an opponent's piece whenever said piece is moved onto the space that the trap was laid
