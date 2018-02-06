@@ -306,7 +306,18 @@ class sql extends ArrayObject {
 	}
 	
 	public function delete() {
+        
+        if ($this->data == null) {
+			throw new Exception('select needs to be done before delete');
+		}
 		
+        $sql = "DELETE FROM users 
+                WHERE $this->primary_key_column = '$this->primary_key_value'";
+	
+        $stmt = sql::$db->prepare($sql);
+		$stmt->execute();
+		$stmt->close();
+        
 	}
 	
 	/*private static function get_db_var_type($var) {
@@ -342,6 +353,7 @@ try {
 	//sql::$error_message = 'Unable to connect to the database';
 	//include('../setup/db_setup_form.php');
 	die('Unable to connect to the database.');
+    //echo 'Unable to connect to the database.';
 }
 
 ?>

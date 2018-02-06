@@ -54,9 +54,9 @@ function edit_user($id, $username, $password, $email) {
 	$user->update();
 }
 
-function delete_user($user_id) {
+function delete_user($id) {
 	
-	global $db;
+	/*global $db;
 	
 	$sql = 'DELETE FROM users 
 			WHERE user_id = ?';
@@ -64,7 +64,11 @@ function delete_user($user_id) {
 	$stmt = $db->prepare($sql);
 	$stmt->bind_param('i', $user_id);
 	$stmt->execute();
-	$stmt->closeCursor();
+	$stmt->closeCursor();*/
+    
+    $user = new sql('users');
+    $user->select(array('user_id', $id));
+    $user->delete();
 	
 }
 
