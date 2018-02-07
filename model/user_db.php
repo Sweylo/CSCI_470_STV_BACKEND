@@ -112,7 +112,7 @@ session_start();
 
 if (sql::is_connected()) {
 
-	// check to see if the admin account has been setup
+	/*// check to see if the admin account has been setup
 	$admin = get_user_by_name('admin');
 	$admin_needs_pw = $admin['user_password'] == 'password';
 	
@@ -120,7 +120,7 @@ if (sql::is_connected()) {
         header('Location: ../setup/?action=admin_setup');
     }
 	
-	unset($admin);
+	unset($admin);*/
 
     // check to see a user is logged in
     $me = (isset($_SESSION['user'])) ? get_user_by_name($_SESSION['user']) : false;

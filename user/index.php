@@ -25,6 +25,7 @@ switch ($action) {
         break;
     
     case 'list_users':
+		$users = get_users();
         include('list_users.php');
         break;
     
@@ -37,12 +38,14 @@ switch ($action) {
 		switch ($login_error) {
 			
 			case USER_NOT_FOUND: case WRONG_PASSWORD:
-				$get_operator = (strpos($referer, '?') != false) ? '&' : '?';
+				//$get_operator = (strpos($referer, '?') != false) ? '&' : '?';
 				//header("Location: $referer${get_operator}login_error=$login_error");
+				echo $login_error;
 				break;
 			
 			case USER_VALIDATED: 
 				$_SESSION['user'] = $username;
+				echo $_SESSION['user'];
 				header("Location: $referer");
 			
 		}

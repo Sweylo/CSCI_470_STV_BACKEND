@@ -34,7 +34,7 @@ class sql extends ArrayObject {
 	public function __construct($table, $data = array()) {
 		
         // call constructor for ArrayObject
-		parent::__construct();
+		//parent::__construct();
 		
 		// check to make sure the database has been connected to
 		if (!sql::$db) {
@@ -44,7 +44,7 @@ class sql extends ArrayObject {
 		$this->table = $table;
 		
 		// allow only 1d arrays to be stored in the object
-		if (!is_array(data[0])) {
+		if (!is_array($data[0])) {
 			$this->data = $data;
 			$this->primary_key_column = key($data);
 			$this->primary_key_value = reset($data);
@@ -109,11 +109,13 @@ class sql extends ArrayObject {
 				
 			} catch (mysqli_sql_exception $e) {
 				
-				if (isset($is_db_setup_page) && $is_db_setup_page) {
+				/*if (isset($is_db_setup_page) && $is_db_setup_page) {
 					sql::$error_message = $e->getMessage();
 				} else {
 					header("Location: ../setup/?action=db_setup");
-				}
+				}*/
+				
+				sql::$error_message = $e->getMessage();
 				
 				throw $e;
 				
@@ -358,7 +360,7 @@ try {
 } catch (Exception $e) {
 	//sql::$error_message = 'Unable to connect to the database';
 	//include('../setup/db_setup_form.php');
-	die('Unable to connect to the database.');
+	die('Unable to connect to the database: ' . sql::$error_message);
     //echo 'Unable to connect to the database.';
 }
 
