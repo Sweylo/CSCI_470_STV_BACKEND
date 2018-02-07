@@ -1,6 +1,10 @@
-<?php //require('../view/header.php'); ?>
+<?php require('../view/header.php'); ?>
+
+<p><a href='../'>&LT;&LT; back to main</a></p>
 
 <h2>Registration</h2>
+
+<p class="message <?php echo $is_error_message ? 'error' : 'info';  ?>"><?php echo $message; ?></p>
 
 <form method="post" action="./">
     
@@ -8,11 +12,11 @@
     
     <div>
 		<label>Username</label>
-		<input type="text" name="username" placeholder="Username">
+		<input type="text" name="username" placeholder="Username" value="<?php echo $username; ?>">
 	</div>
 	<div>
 		<label>E-mail</label>
-		<input type="text" name="email" placeholder="Email address">
+		<input type="text" name="email" placeholder="Email address" value="<?php echo $email; ?>">
 	</div>
 	
 	<br />
@@ -25,6 +29,8 @@
 		<label>Confirm password</label>
 		<input type="password" name="confirm" placeholder="Confirm">
 	</div>
+    
+    <br />
 	
 	<input class="button start" type="submit" value="Save">
     

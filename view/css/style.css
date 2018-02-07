@@ -1,0 +1,9 @@
+/* form messages */
+
+.message.error {
+    color: #933;
+}
+
+.message.info {
+    color: #339;
+}

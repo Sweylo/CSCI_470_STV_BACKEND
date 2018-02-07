@@ -33,6 +33,7 @@ class sql extends ArrayObject {
 	 */
 	public function __construct($table, $data = array()) {
 		
+        // call constructor for ArrayObject
 		parent::__construct();
 		
 		// check to make sure the database has been connected to
@@ -140,7 +141,7 @@ class sql extends ArrayObject {
 	 * 
 	 * @param array $args array with the following fields: 'column', 'value', 'limit', and 'tables'
 	 * @param int $type either SELECT_SINGLE for 1d array or SELECT_MULTIPLE for 2d array
-	 * @throws Exception
+	 * @throws Exception if incorrect arguments (other than column, value, or limit) are passed
 	 * @return array an array containing all rows of a SELECT
 	 */
 	public function select($args = array(), $type = null) {
@@ -187,7 +188,7 @@ class sql extends ArrayObject {
 		$result = $stmt->get_result();
 		if ($type == sql::SELECT_SINGLE || (sql::$db->num_rows == 1 && $type == null)) {
 			$data = $result->fetch_array(MYSQLI_ASSOC);
-		} else if ($type == sql::SELECT_MULTIPLE || $db->num_rows > 1) {
+		} else if ($type == sql::SELECT_MULTIPLE || sql::$db->num_rows > 1) {
 			
 			$data = array();
 
@@ -209,7 +210,7 @@ class sql extends ArrayObject {
 		//$this->data = $data;
 		
 		// store the primary key column name and its value
-		if (!is_array($data[0])) {
+		if (!is_array($data[0]) && $data != null) {
 			$this->primary_key_column = key($data);
 			$this->primary_key_value = reset($data);
 		}
@@ -263,9 +264,10 @@ class sql extends ArrayObject {
 		
 	}
 	
-	/**
-	 * updates the row based on the current value of the data
-	 */
+    /**
+     * updates the row based on the current value of the data
+     * @throws Exception
+     */
 	public function update() {
 		
 		$fields = '';
@@ -305,13 +307,17 @@ class sql extends ArrayObject {
 		
 	}
 	
+    /**
+     * 
+     * @throws Exception
+     */
 	public function delete() {
         
         if ($this->data == null) {
 			throw new Exception('select needs to be done before delete');
 		}
 		
-        $sql = "DELETE FROM users 
+        $sql = "DELETE FROM $this->table 
                 WHERE $this->primary_key_column = '$this->primary_key_value'";
 	
         $stmt = sql::$db->prepare($sql);
