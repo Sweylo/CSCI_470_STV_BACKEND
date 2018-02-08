@@ -51,6 +51,7 @@ move - defines how a piece can move, attack, and defend relative to its current 
 	encoded in JSON (or maybe YAML or XML, whichever is easiest to use with unity or by group consensus). this is quite verbose so better solutions are welcomed:
 		pawn (not on starting space):
 		{
+            "isKnight": false,
 			"movement": {
 				"n": 1,
 				"ne": 0,

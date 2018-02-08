@@ -12,16 +12,21 @@
 
 #board td {
     border: solid 1px #999;
-    padding: 10px;
-    width: 30px;
-    height: 30px;
+    padding: 5px;
+    width: 80px;
+    height: 80px;
+    opacity: 0.25;
 }
 
 #board td.black {
-    background: #ccc;
-    color: #666;
+    background: #000;
+    color: #ccc;
 }
 
 #board td.white {
-    color: #666;
+    color: #999;
+}
+
+#board td.normal {
+    opacity: 1;
 }
