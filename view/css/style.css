@@ -7,3 +7,21 @@
 .message.info {
     color: #339;
 }
+
+/* board designer */
+
+#board td {
+    border: solid 1px #999;
+    padding: 10px;
+    width: 30px;
+    height: 30px;
+}
+
+#board td.black {
+    background: #ccc;
+    color: #666;
+}
+
+#board td.white {
+    color: #666;
+}

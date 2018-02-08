@@ -7,6 +7,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 -- -----------------------------------------------------
 -- Schema chess_champions
 -- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `chess_champions` ;
 
 -- -----------------------------------------------------
 -- Schema chess_champions
@@ -17,6 +18,8 @@ USE `chess_champions` ;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`account_types`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`account_types` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`account_types` (
   `account_type_id` INT NOT NULL AUTO_INCREMENT,
   `account_type_name` VARCHAR(45) NOT NULL,
@@ -30,6 +33,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`users`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`users` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`users` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
   `user_name` VARCHAR(45) NOT NULL,
@@ -52,6 +57,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`boards`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`boards` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`boards` (
   `board_id` INT NOT NULL AUTO_INCREMENT,
   `board_name` VARCHAR(45) NOT NULL,
@@ -65,6 +72,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`matches`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`matches` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`matches` (
   `match_id` INT NOT NULL AUTO_INCREMENT,
   `match_name` VARCHAR(45) NOT NULL,
@@ -85,6 +94,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`classes`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`classes` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`classes` (
   `class_id` INT NOT NULL AUTO_INCREMENT,
   `class_name` VARCHAR(45) NOT NULL,
@@ -97,6 +108,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`moves`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`moves` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`moves` (
   `move_id` INT NOT NULL AUTO_INCREMENT,
   `move_data` VARCHAR(45) NOT NULL,
@@ -116,6 +129,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`cards`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`cards` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`cards` (
   `card_id` INT NOT NULL AUTO_INCREMENT,
   `card_rarity` INT NOT NULL,
@@ -127,6 +142,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`user_cards`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`user_cards` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`user_cards` (
   `user_card_id` INT NOT NULL AUTO_INCREMENT,
   `card_id` INT NOT NULL,
@@ -151,6 +168,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`tarot_card`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`tarot_card` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`tarot_card` (
   `tarot_card_id` INT NOT NULL AUTO_INCREMENT,
   `tarot_card_name` VARCHAR(45) NOT NULL,
@@ -177,6 +196,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`traps`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`traps` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`traps` (
   `trap_id` INT NOT NULL AUTO_INCREMENT,
   `trap_data` VARCHAR(45) NOT NULL,
@@ -189,6 +210,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`trap_card`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`trap_card` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`trap_card` (
   `trap_card_id` INT NOT NULL AUTO_INCREMENT,
   `trap_card_name` VARCHAR(45) NOT NULL,
@@ -216,6 +239,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`space_types`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`space_types` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`space_types` (
   `space_type_id` INT NOT NULL AUTO_INCREMENT,
   `space_type_name` VARCHAR(45) NOT NULL,
@@ -228,6 +253,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`spaces`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`spaces` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`spaces` (
   `space_id` INT NOT NULL AUTO_INCREMENT,
   `match_id` INT NOT NULL,
@@ -253,6 +280,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`pieces`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`pieces` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`pieces` (
   `piece_id` INT NOT NULL AUTO_INCREMENT,
   `space_id` INT NOT NULL,
@@ -291,6 +320,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`match_users`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`match_users` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`match_users` (
   `match_user_id` INT NOT NULL AUTO_INCREMENT,
   `match_white_user_id` INT NOT NULL,
@@ -322,6 +353,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `chess_champions`.`laid_traps`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `chess_champions`.`laid_traps` ;
+
 CREATE TABLE IF NOT EXISTS `chess_champions`.`laid_traps` (
   `space_trap_id` INT NOT NULL AUTO_INCREMENT,
   `space_id` INT NOT NULL,

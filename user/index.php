@@ -31,10 +31,14 @@ switch ($action) {
     
     case 'login': 
         
-        $username = input(INPUT_POST, 'username');
-        $password = input(INPUT_POST, 'password');
-		$login_error = validate_user($username, $password);
-		
+        try {
+            $username = input(INPUT_POST, 'username');
+            $password = input(INPUT_POST, 'password');
+            $login_error = validate_user($username, $password);
+        } catch (Exception $e) {
+            echo $e;
+        }
+        
 		switch ($login_error) {
 			
 			case USER_NOT_FOUND: case WRONG_PASSWORD:
@@ -47,6 +51,7 @@ switch ($action) {
 				$_SESSION['user'] = $username;
 				echo $_SESSION['user'];
 				header("Location: $referer");
+                break;
 			
 		}
 		
