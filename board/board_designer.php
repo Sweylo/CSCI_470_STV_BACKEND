@@ -2,15 +2,20 @@
 
 <script type="text/javascript" src="../view/js/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="../view/js/jquery.boardDesigner.js"></script>
+<script type="text/javascript">
+	var board_data = <?php echo isset($board_data) ? $board_data : 'null' ?>;
+</script>
 
 <p><a href='../'>&LT;&LT; back to main</a></p>
+
+<?php echo isset($message) ? "<p>$message</p>" : null; ?>
 
 <form method="post" action="./">
     
     <input type="hidden" name="action" value="add_board">
     
     <div>
-        board name <input type="text" name="boardName" id="board-name">
+        board name <input type="text" name="boardName" id="boardName">
     </div>
 
     <div>

@@ -34,7 +34,7 @@ class sql extends ArrayObject {
 	public function __construct($table, $data = array()) {
 		
         // call constructor for ArrayObject
-		//parent::__construct();
+		parent::__construct();
 		
 		// check to make sure the database has been connected to
 		if (!sql::$db) {

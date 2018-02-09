@@ -41,19 +41,23 @@ switch ($action) {
         
 		switch ($login_error) {
 			
-			case USER_NOT_FOUND: case WRONG_PASSWORD:
-				//$get_operator = (strpos($referer, '?') != false) ? '&' : '?';
-				//header("Location: $referer${get_operator}login_error=$login_error");
-				echo $login_error;
+			case USER_NOT_FOUND: 
+				echo 'user not found';
+				break;
+				
+			case WRONG_PASSWORD:
+				echo 'wrong password';
 				break;
 			
 			case USER_VALIDATED: 
 				$_SESSION['user'] = $username;
-				echo $_SESSION['user'];
+				//echo $_SESSION['user'];
 				header("Location: $referer");
                 break;
 			
 		}
+		
+		echo "error logging in '$username'";
 		
 		break;
 		

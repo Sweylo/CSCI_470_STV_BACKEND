@@ -23,10 +23,21 @@ switch ($action) {
 	case 'board_designer':
 		include('board_designer.php');
 		break;
+	
+	case 'edit_board':
+		$board = get_board_by_id(input(INPUT_GET, 'board_id'));
+		$board_data = $board['board_data'];
+		include('board_designer.php');
+		break;
     
     case 'add_board':
         
         //print_r($_POST);
+		
+		/*$board_name = input(INPUT_POST, 'boardName');
+		$row_count = input(INPUT_POST, 'rowCount');
+		$col_count = input(INPUT_POST, 'colCount');
+		$home_col = input(INPUT_POST, 'homeCol');*/
         
         $board_array = array(
             'board_name' => input(INPUT_POST, 'boardName'),
@@ -56,7 +67,18 @@ switch ($action) {
 			
         }
         
-        echo json_encode($board_array);
+        $board_json = json_encode($board_array);
+		
+		try {
+			add_board($board_array['board_name'], $board_json);
+		} catch(mysqli_sql_exception $e) {
+			//die('error adding board to the database: ' . $e);
+			$message = 'error adding board to the database: ' . $e;
+			include('board_designer.php');
+		}
+		
+		$message = 'board successfully added';
+		include('board_designer.php');
         
         break;
 	

@@ -19,15 +19,17 @@ $(document).ready(function() {
     var maxRowCount = alpha.length;
     var maxColCount = 20; 
     
-    var whiteHomeRow;
-    var blackHomeRow;
-    
-    // set initial board dimensions
-    $('#rowCount').val(minRowCount);
-    $('#colCount').val(minColCount);
+    // set initial board values
+    $('#rowCount').val(board_data ? board_data.row_count : minRowCount);
+    $('#colCount').val(board_data ? board_data.col_count : minColCount);
 
     // set initial home locations
-    $('#homeCol').val(1);
+    $('#homeCol').val(board_data ? board_data.home_col : 1);
+	
+	$('#boardName').val(board_data ? board_data.board_name : '');
+	
+	var coords = board_data ? board_data.coords : [];
+	console.log(coords);
     
     // draw board on initial values
     drawBoard();
@@ -63,16 +65,7 @@ $(document).ready(function() {
         }
     });
     
-    function init() {
-        //$('#whiteHomeRow').val($('#rowCount').val());
-        //$('#blackHomeRow').val($('#rowCount').val() - 1);
-        whiteHomeRow = 1;
-        blackHomeRow = $('#rowCount').val() - 1;
-    }
-    
     function drawBoard() {
-        
-        init();
         
         var boardHtml = '';
         
@@ -104,8 +97,8 @@ $(document).ready(function() {
         $('#board').html(boardHtml);
         
         // place home pieces on the board
-        placeHomePieces(whiteHomeRow, $('#homeCol').val(), 'white');
-        placeHomePieces(blackHomeRow, $('#homeCol').val(), 'black');
+        //placeHomePieces(1, $('#homeCol').val(), 'white');
+        //placeHomePieces($('#rowCount').val() - 1, $('#homeCol').val(), 'black');
         
     }
     

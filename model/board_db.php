@@ -3,87 +3,83 @@
 require_once('../model/sql.php');
 
 // constants
-const USER_NOT_FOUND = 0;
-const WRONG_PASSWORD = 1;
-const USER_VALIDATED = 2;
 
 /**
- * gets all the users in the database
+ * gets all the boards in the database
  * 
- * @param int $limit number of users to get
+ * @param int $limit number of boards to get
  * @return array array of sql objects
  */
-function get_users($limit = null) {
-	$sql = new sql('users');
-	$users = $sql->select(array('limit' => $limit), sql::SELECT_MULTIPLE);
-	return $users;
+function get_boards($limit = null) {
+	$sql = new sql('boards');
+	$boards = $sql->select(array('limit' => $limit), sql::SELECT_MULTIPLE);
+	return $boards;
 }
 
-function get_user_by_name($username) {
-	$user = new sql('users');
-	$user->select(array(
-		'column' => 'user_name', 
-		'value' => $username
+function get_board_by_name($board_name) {
+	$board = new sql('boards');
+	$board->select(array(
+		'column' => 'board_name', 
+		'value' => $board_name
 	));
-	return $user;
+	return $board;
 }
 
-function get_user_by_id($id) {
-	$user = new sql('users');
-	$user->select(array(
-		'column' => 'user_id', 
+function get_board_by_id($id) {
+	$board = new sql('boards');
+	$board->select(array(
+		'column' => 'board_id', 
 		'value' => $id
 	));
-	return $user;
+	return $board;
 }
 
-function add_user($username, $password, $email) {
-	sql::insert('users', array(
-		'user_name' => $username, 
-		'user_password' => sha1($username . $password),
-		'user_email' => $email
+function add_board($board_name, $board_data) {
+	sql::insert('boards', array(
+		'board_name' => $board_name, 
+		'board_data' => $board_data
 	));
 }
 
-function edit_user($id, $username, $password, $email) {
-	$user = new sql('users');
-	$user->select(array('user_id', $id));
-	$user['user_name'] = $username;
-	$user['user_password'] = sha1($username . $password);
-	$user['user_email'] = $email;
-	$user->update();
+function edit_board($id, $boardname, $password, $email) {
+	$board = new sql('boards');
+	$board->select(array('board_id', $id));
+	$board['board_name'] = $boardname;
+	$board['board_password'] = sha1($boardname . $password);
+	$board['board_email'] = $email;
+	$board->update();
 }
 
-function delete_user($id) {
+function delete_board($id) {
 	
 	/*global $db;
 	
-	$sql = 'DELETE FROM users 
-			WHERE user_id = ?';
+	$sql = 'DELETE FROM boards 
+			WHERE board_id = ?';
 	
 	$stmt = $db->prepare($sql);
-	$stmt->bind_param('i', $user_id);
+	$stmt->bind_param('i', $board_id);
 	$stmt->execute();
 	$stmt->closeCursor();*/
     
-    $user = new sql('users');
-    $user->select(array('user_id', $id));
-    $user->delete();
+    $board = new sql('boards');
+    $board->select(array('board_id', $id));
+    $board->delete();
 	
 }
 
-function validate_user($username, $password) {
+function validate_board($boardname, $password) {
 	
-	$user = get_user_by_name($username);
+	$board = get_board_by_name($boardname);
 	
-	print_r($user);
-	echo '<br /><br />' . sha1($username . $password);
+	print_r($board);
+	echo '<br /><br />' . sha1($boardname . $password);
 	
-	if (!$user) {
+	if (!$board) {
 		return USER_NOT_FOUND;
-	} else if (sha1($username . $password) != $user['user_password']) {
+	} else if (sha1($boardname . $password) != $board['board_password']) {
 		return WRONG_PASSWORD;
-	} else if (sha1($username . $password) == $user['user_password']){
+	} else if (sha1($boardname . $password) == $board['board_password']){
 		return USER_VALIDATED;
 	}
 	
@@ -92,7 +88,7 @@ function validate_user($username, $password) {
 /**
  * simplified gravatar implementation from https://en.gravatar.com/site/implement/images/php/
  * 
- * @param string $email email address of the user
+ * @param string $email email address of the board
  * @param int $s size of the image
  * @param string $d default image
  * @param string $r rating
@@ -113,8 +109,8 @@ session_start();
 if (sql::is_connected()) {
 
 	/*// check to see if the admin account has been setup
-	$admin = get_user_by_name('admin');
-	$admin_needs_pw = $admin['user_password'] == 'password';
+	$admin = get_board_by_name('admin');
+	$admin_needs_pw = $admin['board_password'] == 'password';
 	
     if ($admin_needs_pw && !$is_admin_setup_page) {
         header('Location: ../setup/?action=admin_setup');
@@ -122,8 +118,8 @@ if (sql::is_connected()) {
 	
 	unset($admin);*/
 
-    // check to see a user is logged in
-    $me = (isset($_SESSION['user'])) ? get_user_by_name($_SESSION['user']) : false;
+    // check to see a board is logged in
+    $me = (isset($_SESSION['board'])) ? get_board_by_name($_SESSION['board']) : false;
 
 }
 
