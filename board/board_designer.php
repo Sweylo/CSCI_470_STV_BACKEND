@@ -7,7 +7,7 @@
 
 <form method="post" action="./">
     
-    <input type="hidden" name="action" value="save_board">
+    <input type="hidden" name="action" value="add_board">
     
     <div>
         board name <input type="text" name="boardName" id="board-name">
@@ -21,17 +21,8 @@
     </div>
     
     <div>
-        white home row 
-        <input type="number" name="whiteHomeRow" class="board-control" accept=""id="whiteHomeRow">
-        black home row
-        <input type="number" name="blackHomeRow" class="board-control" id="blackHomeRow">
-    </div>
-    
-    <div>
-        white home col
-        <input type="number" name="whiteHomeCol" class="board-control" accept=""id="whiteHomeCol">
-        black home col
-        <input type="number" name="blackHomeCol" class="board-control" id="blackHomeCol">
+        home col
+        <input type="number" name="homeCol" class="board-control" accept=""id="homeCol">
     </div>
 
     <table id="board">

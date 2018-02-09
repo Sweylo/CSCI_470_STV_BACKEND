@@ -23,6 +23,44 @@ switch ($action) {
 	case 'board_designer':
 		include('board_designer.php');
 		break;
+    
+    case 'add_board':
+        
+        //print_r($_POST);
+        
+        $board_array = array(
+            'board_name' => input(INPUT_POST, 'boardName'),
+            'row_count' => input(INPUT_POST, 'rowCount'),
+            'col_count' => input(INPUT_POST, 'colCount'),
+            'home_col' => input(INPUT_POST, 'homeCol')
+            //'coords' => $coords_array
+        );
+        $coords_array = array();
+        
+        for ($i = 0; $i <= $board_array['row_count']; $i++) {
+            for ($j = 0; $j <= $board_array['col_count']; $j++) {
+                
+                $is_space_active = input(INPUT_POST, $i . '-' . $j);
+                
+                if ($is_space_active) {
+                    //echo "<p>$i, $j</p>";
+                    //print_r(array('row' => $i, 'col' => $j));
+                    array_push($coords_array, array(
+                        'row' => $i, 
+                        'col' => $j,
+                        'piece' => null
+                    ));
+                }
+                
+            }
+        }
+        
+        //print_r(json_encode($coords_array));
+        
+        array_push($board_array, $coords_array);
+        echo json_encode($board_array);
+        
+        break;
 	
 }
 

@@ -1,45 +1,73 @@
 /**
- * jQuery board designer controls
+ * jQuery board designer script
  */
 $(document).ready(function() {
     
-    var alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
-    
+    // define global variables
+    var alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+                 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+             
     // set home rows dimensions
     var homeRowCount = 2;
     var homeColCount = 8;
-    
+
     // set minimum board dimensions
     var minRowCount = 8;
     var minColCount = homeColCount;
-    
+
     // set maximum board dimensions
     var maxRowCount = alpha.length;
     var maxColCount = 20; 
     
+    var whiteHomeRow;
+    var blackHomeRow;
+    
     // set initial board dimensions
     $('#rowCount').val(minRowCount);
     $('#colCount').val(minColCount);
-    
+
     // set initial home locations
-    $('#whiteHomeRow').val(1);
-    $('#whiteHomeCol').val(1);
-    $('#blackHomeRow').val(7);
-    $('#blackHomeCol').val(1);
+    $('#homeCol').val(1);
     
+    // draw board on initial values
     drawBoard();
     
     $('.board-control').on('input', function() { 
-        if ($('#colCount').val() >= minColCount && $('#rowCount').val() >= minRowCount) {
+        if (
+            $('#colCount').val() >= minColCount 
+            && 
+            $('#rowCount').val() >= minRowCount
+            &&
+            $('#homeCol').val() >= 1
+        ) {
             drawBoard();
         } else if ($('#colCount').val() < minColCount) {
             $('#colCount').val(minColCount);
         } else if ($('#rowCount').val() < minRowCount) {
             $('#rowCount').val(minRowCount);
+        } else if ($('#homeCol').val() < 1) {
+            $('#homeCol').val(1);
         }
     });
     
+    $('.space-toggle').on('input', function() { 
+        if ($(this).prop('checked')) {
+            $(this).parent().addClass('normal');
+        } else {
+            $(this).parent().removeClass('normal');
+        }
+    });
+    
+    function init() {
+        //$('#whiteHomeRow').val($('#rowCount').val());
+        //$('#blackHomeRow').val($('#rowCount').val() - 1);
+        whiteHomeRow = 1;
+        blackHomeRow = $('#rowCount').val() - 1;
+    }
+    
     function drawBoard() {
+        
+        init();
         
         var boardHtml = '';
         
@@ -50,23 +78,15 @@ $(document).ready(function() {
             
             for (var j = 0; j < $('#colCount').val(); j++) {
                 
+                console.log($('#rowCount').val() - i + ', ' + (parseInt(j) + 1));
                 
                 var isBlack = i % 2 == 0 && j % 2 == 0 || i % 2 != 0 && j % 2 != 0;
                 
-                boardHtml += '<td class="' + (isBlack ? 'black' : 'white') + '">';
-                
-                boardHtml += alpha[i] + (j + 1);
-                
-                boardHtml += '</td>';
-                
                 boardHtml 
-                    += '<td class="' + isBlack ? 'black' : 'white' + '">'
-                    + '<span class="coordX">' 
-                    + alpha[i]
-                    + '</span>'
-                    + '<span class="coordY">'
-                    + (j + 1) 
-                    + '</span>'
+                    += '<td class="' + (isBlack ? 'black' : 'white') + '">'
+                    + '<span>' + (alpha[i] + (j + 1)) + '</span>'
+                    + '<input type="checkbox" class="space-toggle" name="' 
+                    + (i + 1) + '-' + (j + 1) + '">'
                     + '</td>';
                 
             }
@@ -79,8 +99,8 @@ $(document).ready(function() {
         $('#board').html(boardHtml);
         
         // place home pieces on the board
-        placeHomePieces($('#whiteHomeRow').val(), $('#whiteHomeCol').val(), 'white');
-        placeHomePieces($('#blackHomeRow').val(), $('#blackHomeCol').val(), 'black');
+        placeHomePieces(whiteHomeRow, $('#homeCol').val(), 'white');
+        placeHomePieces(blackHomeRow, $('#homeCol').val(), 'black');
         
     }
     
@@ -95,7 +115,7 @@ $(document).ready(function() {
         row = parseInt(row);
         col = parseInt(col);
         
-        console.log('absHomeCoord: ' + row + ', ' + col + ' (' + color + ')');
+        //console.log('absHomeCoord: ' + row + ', ' + col + ' (' + color + ')');
         //console.log('rowLoop: ' + (homeRowCount + parseInt(row) - 1));
         //console.log('colLoop: ' + (homeColCount + parseInt(col) - 1));
         
@@ -156,9 +176,7 @@ $(document).ready(function() {
                 }
                 
                 //$(selector).append('<input type="hidden" name="' + i + '-' + j + '">');
-                $(selector).append('<input type="hidden" name="' 
-                    + "{ 'row': " + i + ", 'col': " + j + " }" 
-                    + '">');
+                $(selector + ' input').prop('checked', true);
                 
             }
             
