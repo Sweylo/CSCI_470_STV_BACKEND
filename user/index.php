@@ -50,7 +50,7 @@ switch ($action) {
 			case USER_VALIDATED: 
 				$_SESSION['user'] = $username;
 				echo $_SESSION['user'];
-				header("Location: https://$referer");
+				header("Location: $referer");
                 break;
 			
 		}
@@ -62,7 +62,7 @@ switch ($action) {
 		session_unset();
 		session_destroy();
         
-        header("Location: https://$referer");
+        header("Location: $referer");
 		break;
 	
 	case 'add_user':
