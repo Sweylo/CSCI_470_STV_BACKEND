@@ -34,9 +34,9 @@ $(document).ready(function() {
     
     $('.board-control').on('input', function() { 
         if (
-            $('#colCount').val() >= minColCount 
+            $('#colCount').val() >= minColCount && $('#colCount').val() <= maxColCount
             && 
-            $('#rowCount').val() >= minRowCount
+            $('#rowCount').val() >= minRowCount && $('#rowCount').val() <= maxRowCount
             &&
             $('#homeCol').val() >= 1
         ) {
@@ -47,10 +47,15 @@ $(document).ready(function() {
             $('#rowCount').val(minRowCount);
         } else if ($('#homeCol').val() < 1) {
             $('#homeCol').val(1);
+        } else if ($('#colCount').val() > maxColCount) {
+            $('#colCount').val(maxColCount);
+        } else if ($('#rowCount').val() > maxRowCount) {
+            $('#rowCount').val(maxRowCount);
         }
     });
     
-    $('.space-toggle').on('input', function() { 
+    $('.space-toggle').on('click', function() { 
+		console.log('toggle clicked on ' + $(this).prop('name'));
         if ($(this).prop('checked')) {
             $(this).parent().addClass('normal');
         } else {
@@ -78,7 +83,7 @@ $(document).ready(function() {
             
             for (var j = 0; j < $('#colCount').val(); j++) {
                 
-                console.log($('#rowCount').val() - i + ', ' + (parseInt(j) + 1));
+                //console.log($('#rowCount').val() - i + ', ' + (parseInt(j) + 1));
                 
                 var isBlack = i % 2 == 0 && j % 2 == 0 || i % 2 != 0 && j % 2 != 0;
                 
@@ -106,7 +111,7 @@ $(document).ready(function() {
     
     function getSpaceJquerySelector(row, col) {
         var selector = 'tr:eq(' + ($('#rowCount').val() - row) + ') td:eq(' + (col - 1) + ')';
-        console.log('(' + row + ',' + col + '): ' + selector);
+        //console.log('(' + row + ',' + col + '): ' + selector);
         return selector;
     }
     
@@ -129,8 +134,8 @@ $(document).ready(function() {
                 var relativeRow = i - row + 1;
                 var relativeCol = j - col + 1;
                 
-                console.log('relativeRow: ' + relativeRow);
-                console.log('relativeCol: ' + relativeCol);
+                //console.log('relativeRow: ' + relativeRow);
+                //console.log('relativeCol: ' + relativeCol);
                 
                 if (color == 'black') {
                     pawnRow = 1;
