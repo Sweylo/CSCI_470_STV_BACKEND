@@ -258,11 +258,31 @@ class sql extends ArrayObject {
 			// retrieve the newly inserted row
 			$new_id = sql::$db->insert_id;
 			$inserted = new sql($table);
-			$inserted->select('user_id', $new_id);
+			
+			$inserted->select(array(
+				'column' => sql::get_primary_key_column_name($table), 'value' => $new_id
+			));
 
 			return $inserted;
 		
 		}
+		
+	}
+	
+	public static function get_primary_key_column_name($table_name) {
+		
+		// get primary key column name
+		$sql = "SHOW KEYS FROM $table_name WHERE Key_name = 'PRIMARY'";
+
+		// prepare the statement and execute the statement
+		$stmt = sql::$db->prepare($sql);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$stmt->close();
+
+		$data = $result->fetch_array(MYSQLI_ASSOC);
+		
+		return $data['Column_name'];
 		
 	}
 	

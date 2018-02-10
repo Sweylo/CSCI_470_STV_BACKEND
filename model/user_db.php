@@ -40,7 +40,8 @@ function get_user_by_id($id) {
 function add_user($username, $password, $email) {
 	sql::insert('users', array(
 		'user_name' => $username, 
-		'user_password' => sha1($username . $password),
+		//'user_password' => sha1($username . $password),
+		'user_password' => password_hash($username . $password, PASSWORD_ARGON2I),
 		'user_email' => $email
 	));
 }
@@ -49,7 +50,7 @@ function edit_user($id, $username, $password, $email) {
 	$user = new sql('users');
 	$user->select(array('user_id', $id));
 	$user['user_name'] = $username;
-	$user['user_password'] = sha1($username . $password);
+	$user['user_password'] = password_hash($username . $password, PASSWORD_ARGON2I);
 	$user['user_email'] = $email;
 	$user->update();
 }
@@ -75,16 +76,19 @@ function delete_user($id) {
 function validate_user($username, $password) {
 	
 	$user = get_user_by_name($username);
-	
-	print_r($user);
-	echo '<br /><br />' . sha1($username . $password);
+	$pw_match = password_verify($username . $password, $user['user_password']);
 	
 	if (!$user) {
 		return USER_NOT_FOUND;
-	} else if (sha1($username . $password) != $user['user_password']) {
+	} else if (!$pw_match) {
 		return WRONG_PASSWORD;
-	} else if (sha1($username . $password) == $user['user_password']){
+	} else if ($pw_match) {
+		
+		$user['user_token'] = bin2hex(random_bytes(16));
+		$user->update();
+		
 		return USER_VALIDATED;
+		
 	}
 	
 }
