@@ -1,0 +1,70 @@
+Chess Champions Backend API Documentation
+
+This API utilizes:
+	Output: JSON via HTTP(S)
+	Input: POST variables via HTTP(S)
+
+Actions:
+
+- get_board_by_id: 
+	returns data that defines the layout and dimensions of boards
+	
+	input POST variables:
+		'board_id'
+
+	output JSON data example:
+		{
+			"board_name": "standard",
+			"row_count": "8",
+			"col_count": "8",
+			"home_col": "1",
+			"coords": [
+				{
+					"row": 1,	// row of space
+					"col": 1,	// column of space
+					"class": 4	// class of piece on space/type of space
+				},
+				...
+				{
+					"row": 8,
+					"col": 8,
+					"class": 4
+				}
+			]
+		}
+
+	output HTTP code: 200
+
+- search_matches:
+	checks if there are available matches and if so, outputs them, if not, creates an entry in the
+	database to indicate the user is looking for a game.
+
+	input POST variables:
+		'user_id'
+		'user_token'
+
+	output JSON data example (list matches):
+		{
+			"results": {
+				"match_id": 1,
+				"match_name": null,
+				"board_id": 1,
+				"match_turn_count": 1,
+				"match_status": 1
+			}
+		}
+
+	output JSON data example (new match):
+		{
+			"results": {
+				"match_id": 1,
+				"match_name": null,
+				"board_id": 1,
+				"match_turn_count": 1,
+				"match_status": 1
+			}
+		}
+
+	output HTTP code (list matches): 200
+	output HTTP code (new match): 201
+	output HTTP code (token mismatch): 401
