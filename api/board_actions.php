@@ -1,7 +1,6 @@
 <?php
 
-// set output to json
-header('Content-Type: text/json');
+require_once('../model/board_db.php');
 
 switch ($input['action']) {
     

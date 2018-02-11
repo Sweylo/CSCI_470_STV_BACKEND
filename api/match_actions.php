@@ -1,7 +1,7 @@
 <?php
 
-// set output to json
-header('Content-Type: text/json');
+require_once('../model/user_db.php');
+require_once('../model/match_db.php');
 
 switch ($input['action']) {
     
