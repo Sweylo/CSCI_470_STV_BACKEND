@@ -41,8 +41,9 @@ function add_user($username, $password, $email) {
 	sql::insert('users', array(
 		'user_name' => $username, 
 		//'user_password' => sha1($username . $password),
-		'user_password' => password_hash($username . $password, PASSWORD_ARGON2I),
-		'user_email' => $email
+		'user_password' => password_hash($username . $password, PASSWORD_DEFAULT),
+		'user_email' => $email,
+        'user_token' => bin2hex(random_bytes(16))
 	));
 }
 
@@ -50,7 +51,7 @@ function edit_user($id, $username, $password, $email) {
 	$user = new sql('users');
 	$user->select(array('user_id', $id));
 	$user['user_name'] = $username;
-	$user['user_password'] = password_hash($username . $password, PASSWORD_ARGON2I);
+	$user['user_password'] = password_hash($username . $password, PASSWORD_DEFAULT);
 	$user['user_email'] = $email;
 	$user->update();
 }
