@@ -3,7 +3,7 @@
 // set output to json
 header('Content-Type: text/json');
 
-switch ($action) {
+switch ($input['action']) {
     
     // checks if there are available matches and if so, outputs them, if not, creates an entry
 	//	in the database to indicate the user is looking for a match.

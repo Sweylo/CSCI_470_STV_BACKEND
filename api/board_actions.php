@@ -3,7 +3,7 @@
 // set output to json
 header('Content-Type: text/json');
 
-switch ($action) {
+switch ($input['action']) {
     
     // returns board data identified by the board_id
     case 'get_board_by_id':
