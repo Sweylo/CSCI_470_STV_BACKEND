@@ -350,7 +350,20 @@ class sql extends ArrayObject {
         
 	}
     
+    /**
+     * joins the current table with any number of tables
+     * 
+     * @param array $tables the table names: i.e. (where current table is 'users'):
+     *  ['users_matches', 'matches']
+     * @param array $args corresponding column names for the ON clauses
+     * @return \sql a new sql object containg the sql code for the join as the table (just needs to
+     *  run the select function to get the rows)
+     */
     public function join($tables = [], $args = []) {
+        
+        if (count($tables) != count($args)) {
+            throw new Exception('both arrays must contain the same corresponding number of rows');
+        }
         
         $join_sql = "$this->table a ";
         $alpha = ALPHA;

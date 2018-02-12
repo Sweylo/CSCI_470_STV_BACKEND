@@ -10,6 +10,7 @@ date_default_timezone_set('UTC');
 
 require_once('../model/sql.php');
 require_once('../model/input.php');
+require_once('../model/user_db.php');
 require_once('../model/board_db.php');
 
 $page = 'board';

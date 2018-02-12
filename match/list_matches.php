@@ -1,5 +1,7 @@
 <?php require('../view/header.php'); ?>
 
+<p><a href='../'>&LT;&LT; back to main</a></p>
+
 <h2>List matches</h2>
 
 <table>

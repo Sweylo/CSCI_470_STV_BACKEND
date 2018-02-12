@@ -26,7 +26,7 @@ switch ($input['action']) {
                 echo json_encode(['user_token' => $user['user_token']]);
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['user_name'] = $user['user_name'];
-                header('HTTP/1.1 200');
+                header('HTTP/1.1 202');
                 break;
                 
         }
@@ -36,7 +36,7 @@ switch ($input['action']) {
     case 'logout':
         session_unset();
 		session_destroy();
-        header('HTTP/1.1 200');
+        header('HTTP/1.1 204');
         break;
     
     case 'check_login':
