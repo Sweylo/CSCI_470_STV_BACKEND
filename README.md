@@ -15,6 +15,7 @@ CSCI B470 Backend
 * Create a folder named 'config' in the application root directory
 * In the 'config' directory create a file named 'db_config.json' and enter something similar to the following:
 
+    ```json
     {
         "mysql_host": "localhost",
         "mysql_user": "root",
@@ -22,3 +23,6 @@ CSCI B470 Backend
         "mysql_db": "chess_champions",
         "mysql_port": 3306
     }
+    ```
+
+* Execute the script 'docs/db_create_fresh.sql' on your database server
