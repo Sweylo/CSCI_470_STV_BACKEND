@@ -40,7 +40,15 @@ switch ($input['action']) {
         break;
     
     case 'check_login':
-        print_r($_SESSION);
+        
+        $login_check = [
+            'logged_in' => !empty($_SESSION),
+            'user_id' => isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'null',
+            'user_name' => isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'null'
+        ];
+        
+        //echo empty($_SESSION) ? '{"logged_in": false}' : json_encode($_SESSION);
+        echo json_encode($login_check);
         header('HTTP/1.1 200');
         break;
     
