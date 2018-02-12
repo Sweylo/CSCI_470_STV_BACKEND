@@ -9,7 +9,7 @@ CSCI B470 Backend
 * MySQLi 5+ (Tested with 5.0.12)
 * SSL/TLS enabled connection
 
-### How do I get set up? ###
+### Installation ###
 
 * Clone the repo into the appropriate directory for your web server
 * Create a folder named 'config' in the application root directory
@@ -26,3 +26,7 @@ CSCI B470 Backend
     ```
 
 * Execute the script 'docs/db_create_fresh.sql' on your database server
+
+### Documentation
+
+* Check the wiki: [text link](https://github.com/Sweylo/CSCI_470_STV_BACKEND/wiki)
