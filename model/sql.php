@@ -24,6 +24,7 @@ class sql extends ArrayObject {
 	// constants
 	const SELECT_SINGLE = 0;
 	const SELECT_MULTIPLE = 1;
+    const ALPHA = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'];
 	
 	/**
 	 * Creates new sql helper object
@@ -188,6 +189,7 @@ class sql extends ArrayObject {
 		// execute the query and store the result
 		$stmt->execute();
 		$result = $stmt->get_result();
+        
 		if ($type == sql::SELECT_SINGLE || (sql::$db->num_rows == 1 && $type == null)) {
 			$data = $result->fetch_array(MYSQLI_ASSOC);
 		} else if ($type == sql::SELECT_MULTIPLE || sql::$db->num_rows > 1) {
@@ -347,25 +349,21 @@ class sql extends ArrayObject {
 		$stmt->close();
         
 	}
-	
-	/*private static function get_db_var_type($var) {
-		
-		$type = gettype($var);
-		
-		switch ($type) {
-			
-			case 'integer': case 'boolean':
-				return 'i';
-			
-			case 'double':
-				return 'd';
-				
-			case 'string': default:
-				return 's';
-			
-		}
-		
-	}*/
+    
+    public function join($tables = [], $args = []) {
+        
+        $join_sql = "$this->table a ";
+        $alpha = ALPHA;
+        
+        for ($i = 0; $i < count($tables); $i++) {
+            $alpha[$i] = strtolower($alpha[$i]);
+            $join_sql .= "JOIN {$tables[$i]} {$alpha[$i + 1]} ON {$alpha[$i]}.{$args[$i][0]} = "
+                . "{$alpha[$i+1]}.{$args[$i][1]}";
+        }
+        
+        return new sql($join_sql);
+        
+    }
 	
 };
 

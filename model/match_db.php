@@ -3,10 +3,18 @@
 require_once('../model/sql.php');
 
 // status constants
-const MATCH_WAITING_FOR_OPPONENT = 1;
+const MATCH_WAITING = 1;
 const MATCH_PREGAME = 2;
 const MATCH_PLAYING = 3;
 const MATCH_END = 4;
+
+// text to associate with the error code
+$match_status_enum = [
+    MATCH_WAITING => 'waiting for an opponent', 
+    MATCH_PREGAME => 'setting up the match',
+    MATCH_PLAYING => 'match in being played',
+    MATCH_END => 'match has ended'
+];
 
 /**
  * gets all the matches in the database
@@ -16,14 +24,15 @@ const MATCH_END = 4;
  */
 function get_matches($limit = null) {
 	$sql = new sql('matches');
-	$matches = $sql->select(array('limit' => $limit), sql::SELECT_MULTIPLE);
+    $join = $sql->join(['match_users'], [['match_id', 'match_id']]);
+	$matches = $join->select(array('limit' => $limit), sql::SELECT_MULTIPLE);
 	return $matches;
 }
 
 function get_avail_matches($limit = null) {
 	$sql = new sql('matches');
 	$matches = $sql->select(array(
-		'column' => 'match_status', 'value' => MATCH_WAITING_FOR_OPPONENT, 'limit' => $limit
+		'column' => 'match_status', 'value' => MATCH_WAITING, 'limit' => $limit
 	), sql::SELECT_MULTIPLE);
 	return $matches;
 }
@@ -48,7 +57,7 @@ function get_match_by_id($id) {
 
 function add_match($user_id, $board_id, $color) {
 	$match = sql::insert('matches', array(
-		'board_id' => $board_id, 'match_status' => MATCH_WAITING_FOR_OPPONENT
+		'board_id' => $board_id, 'match_status' => MATCH_WAITING
 	), true);
 	if ($color == 'white') {
 		sql::insert('match_users', array(
