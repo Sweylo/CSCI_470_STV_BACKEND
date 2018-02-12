@@ -29,4 +29,4 @@ CSCI B470 Backend
 
 ### Documentation
 
-* Check the wiki: [text link](https://github.com/Sweylo/CSCI_470_STV_BACKEND/wiki)
+* Check the [wiki](https://github.com/Sweylo/CSCI_470_STV_BACKEND/wiki).
