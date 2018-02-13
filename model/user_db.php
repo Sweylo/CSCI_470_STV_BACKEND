@@ -77,19 +77,22 @@ function delete_user($id) {
 function validate_user($username, $password) {
 	
 	$user = get_user_by_name($username);
+    
+    if ($user->data === null) {
+        return USER_NOT_FOUND;
+    }
+    
 	$pw_match = password_verify($username . $password, $user['user_password']);
-	
-	if (!$user) {
-		return USER_NOT_FOUND;
-	} else if (!$pw_match) {
-		return WRONG_PASSWORD;
-	} else if ($pw_match) {
+    
+	if ($pw_match) {
 		
 		$user['user_token'] = bin2hex(random_bytes(16));
 		$user->update();
 		
 		return USER_VALIDATED;
 		
+	} else {
+		return WRONG_PASSWORD;
 	}
 	
 }

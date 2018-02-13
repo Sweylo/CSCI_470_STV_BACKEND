@@ -65,4 +65,20 @@ switch ($input['action']) {
 		
 		break;
         
+    case 'join_match':
+        
+        //echo json_encode($input);
+        
+        $match = get_match_by_id($input['match_id']);
+        
+        //echo $match['match_status'];
+        
+        if ($match['match_status'] == MATCH_WAITING) {
+            // check_match_avail($match['match_id']);
+        } else {
+            echo json_encode(['match_error_code' => 1]);
+        }
+        
+        break;
+        
 }

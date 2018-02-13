@@ -36,13 +36,13 @@ switch ($action) {
             $password = input(INPUT_POST, 'password');
             $login_error = validate_user($username, $password);
         } catch (Exception $e) {
-            echo $e;
+            //echo $e;
         }
         
 		switch ($login_error) {
 			
 			case USER_NOT_FOUND: 
-				echo 'user not found';
+				echo "user not found: '$username'";
 				break;
 				
 			case WRONG_PASSWORD:
@@ -57,7 +57,8 @@ switch ($action) {
 			
 		}
 		
-		echo "error logging in '$username'";
+		//echo "error logging in '$username'";
+        echo "<br /><a href='$referer'>back</a>";
 		
 		break;
 		
