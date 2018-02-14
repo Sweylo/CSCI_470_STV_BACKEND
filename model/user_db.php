@@ -2,10 +2,16 @@
 
 require_once('../model/sql.php');
 
-// constants
+// login constants
 const USER_NOT_FOUND = 0;
 const WRONG_PASSWORD = 1;
 const USER_VALIDATED = 2;
+
+// user type constants
+const USER_TYPE_GUEST = 1;
+const USER_TYPE_USER = 2;
+const USER_TYPE_MOD = 3;
+const USER_TYPE_ADMIN = 4;
 
 /**
  * gets all the users in the database
@@ -131,7 +137,7 @@ if (sql::is_connected()) {
 	unset($admin);*/
 
     // check to see a user is logged in
-    $me = (isset($_SESSION['user'])) ? get_user_by_name($_SESSION['user']) : false;
+    $me = (isset($_SESSION['user_id'])) ? get_user_by_id($_SESSION['user_id']) : false;
 
 }
 

@@ -8,15 +8,13 @@ switch ($input['action']) {
     // checks if there are available matches and if so, outputs them, if not, creates an entry
 	//	in the database to indicate the user is looking for a match.
 	case 'search_matches':
-		
-		$user = get_user_by_id($input['user_id']);
         
         // check if user is already associated with a match
         //$user_matches = get_user_matches();
 		
 		//echo json_encode($_REQUEST);
 		
-		if ($input['user_token'] == $user['user_token'] && empty($user_matches)) {
+		if ($input['user_token'] == $me['user_token'] && empty($user_matches)) {
 			
             // get the first 5 available matches
 			$matches = get_avail_matches(5);
@@ -40,20 +38,20 @@ switch ($input['action']) {
 			} else {
 				
 				try {
-					add_match($user['user_id'], 1, rand(0,1) ? 'white' : 'black');
+					add_match($me['user_id'], 1, rand(0,1) ? 'white' : 'black');
 				} catch(mysqli_sql_exception $e) {
 					//echo $e;
-					//header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-                    die($e);
+					header('HTTP/1.1 500');
+                    die();
 				}
 				
-				header('HTTP/1.1 201 Created');
+				header('HTTP/1.1 201');
 				
 			}
 			
-		} else if ($input['user_token'] != $user['user_token'] && empty($user_matches)) {
+		} else if ($input['user_token'] != $me['user_token'] && empty($user_matches)) {
 			header('HTTP/1.1 401 Unauthorized');
-		} else if ($input['user_token'] == $user['user_token'] && !empty($user_matches)) {
+		} else if ($input['user_token'] == $me['user_token'] && !empty($user_matches)) {
             
 			switch ($user_matches('match_status')) {
                 
@@ -67,18 +65,50 @@ switch ($input['action']) {
         
     case 'join_match':
         
-        //echo json_encode($input);
+        // if user isn't logged in or is a guest
+        if (!$me || $me['user_account_type_id'] < USER_TYPE_USER) {
+            header('HTTP/1.1 401');
+        }
         
         $match = get_match_by_id($input['match_id']);
         
-        //echo $match['match_status'];
+        $is_token_valid = $me['user_token'] == $input['user_token'];
+        $is_match_waiting = $match['match_status'] == MATCH_WAITING;
         
-        if ($match['match_status'] == MATCH_WAITING) {
-            // check_match_avail($match['match_id']);
-        } else {
+        //echo $is_token_valid ? 'true' : 'false';
+        //echo $is_match_waiting ? 'true' : 'false';
+        
+        if ($is_token_valid && $is_match_waiting) {
+            
+            $match['match_status'] = MATCH_PREGAME;
+            
+            // update the database with the new user
+            //$match->update();
+            
+            try {
+                join_match($match['match_id'], $me['user_id']);
+            } catch (Exception $e) {
+                echo $e;
+                header('HTTP/1.1 409');
+                die();
+            }
+            
+            header('HTTP/1.1 202');
+            die();
+            
+        } else if ($is_token_valed && !$is_match_waiting) {
             echo json_encode(['match_error_code' => 1]);
-        }
+            header('HTTP/1.1 403');
+            die();
+        } else if (!$is_token_valed && $is_match_waiting) {
+            echo json_encode(['match_error_code' => 2]);
+            header('HTTP/1.1 401');
+            die();
+        }    
         
         break;
+        
+    default:
+        header('HTTP/1.1 404');
         
 }

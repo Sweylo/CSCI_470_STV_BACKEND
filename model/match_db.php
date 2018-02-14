@@ -37,28 +37,22 @@ function get_avail_matches($limit = null) {
 	return $matches;
 }
 
-function get_match_by_name($match_name) {
+function get_match_by_id($match_id) {
 	$match = new sql('matches');
-	$match->select(array(
-		'column' => 'match_name', 
-		'value' => $match_name
-	));
-	return $match;
-}
-
-function get_match_by_id($id) {
-	$match = new sql('matches');
-	$match->select(array(
+    $join = $match->join(['match_users'], [['match_id', 'match_user_match_id']]);
+	$match = $join->select(array(
 		'column' => 'match_id', 
-		'value' => $id
+		'value' => $match_id
 	));
-	return $match;
+	return $join;
 }
 
 function add_match($user_id, $board_id, $color) {
+    
 	$match = sql::insert('matches', array(
 		'board_id' => $board_id, 'match_status' => MATCH_WAITING
 	), true);
+    
 	if ($color == 'white') {
 		sql::insert('match_users', array(
 			'match_white_user_id' => $user_id, 'match_id' => $match['match_id']
@@ -68,15 +62,40 @@ function add_match($user_id, $board_id, $color) {
 			'match_black_user_id' => $user_id, 'match_id' => $match['match_id']
 		));
 	}
+    
 }
 
-function edit_match($id, $matchname, $password, $email) {
-	$match = new sql('matches');
-	$match->select(array('match_id', $id));
-	$match['match_name'] = $matchname;
-	$match['match_password'] = sha1($matchname . $password);
-	$match['match_email'] = $email;
-	$match->update();
+function join_match($match_id, $user_id) {
+    
+    $match = new sql('matches');
+    $match->select(array(
+		'column' => 'match_id', 
+		'value' => $match_id
+	));
+    
+    //echo $match['match_status'] == MATCH_WAITING ? 'true' : 'false';
+    
+    if ($match['match_status'] == MATCH_WAITING) {
+        $match['match_status'] = MATCH_PREGAME;
+        print_r($match);
+        $match->update();
+    } else {
+        throw new Exception ("match is not available to join");
+    }
+    
+    $match_users = new sql('match_users');
+	$match_users->select(array('match_user_match_id', $match['match_id']));
+    
+    //print_r($match_users);
+    
+    if ($match_users['match_white_user_id']) {
+        $match_users['match_black_user_id'] = $user_id;
+    } else {
+        $match_users['match_white_user_id'] = $user_id;
+    }
+    
+	$match_users->update();
+    
 }
 
 function delete_match($id) {

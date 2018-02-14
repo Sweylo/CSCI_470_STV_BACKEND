@@ -73,11 +73,7 @@ class sql extends ArrayObject {
 	 * @throws Exception if index is not found
 	 */
 	public function &offsetSet($index, $value) {
-		if ($this->data[$index]) {
-			$this->data[$index] = $value;
-		} else {
-			throw new Exception("index is not found: '$index'");
-		}
+        $this->data[$index] = $value;
     }
 	
 	public function &append($value) {
@@ -148,32 +144,39 @@ class sql extends ArrayObject {
 	 * @return array an array containing all rows of a SELECT
 	 */
 	public function select($args = array(), $type = null) {
+        
+        // if there is an array of tables, then generate sql to join them
+        if (is_array($this->table)) {
+            $table_sql = $this->join_string($this->table, $args['join_args']);
+        } else {
+            $table_sql = $this->table;
+        }
 		
 		// get all rows
 		if (!isset($args['column']) && !isset($args['value']) && !isset($args['limit'])) {
 			
 			$sql = "SELECT * 
-					FROM $this->table";
+					FROM $table_sql";
 		
 		// get specified rows using WHERE clause
 		} else if (isset($args['column']) && isset($args['value']) && !isset($args['limit'])) {
 			
 			$sql = "SELECT * 
-					FROM $this->table 
+					FROM $table_sql 
 					WHERE $args[column] = '$args[value]'";
 		
 		// get all rows using a limit
 		} else if (!isset($args['column']) && !isset($args['value']) && isset($args['limit'])) {
 			
 			$sql = "SELECT * 
-					FROM $this->table 
+					FROM $table_sql 
 					LIMIT $args[limit]";
 		
 		// get specified rows using WHERE clause and a limit	
 		} else if (isset($args['column']) && isset($args['value']) && isset($args['limit'])) {
 			
 			$sql = "SELECT * 
-					FROM $this->table 
+					FROM $table_sql 
 					WHERE $args[column] = '$args[value]' 
 					LIMIT $args[limit]";
 		
@@ -283,6 +286,8 @@ class sql extends ArrayObject {
 		$stmt->close();
 
 		$data = $result->fetch_array(MYSQLI_ASSOC);
+        
+        print_r($data);
 		
 		return $data['Column_name'];
 		
@@ -303,31 +308,35 @@ class sql extends ArrayObject {
 			throw new Exception('select needs to be done before update');
 		}
 		
-		if (is_array($this->data)) {
+        //foreach ($this->table as $table) {
+        
+            if (is_array($this->data)) {
 
-			foreach ($this->data as $column => $value) {
-				if (!is_int($column) && $column != $this->primary_key_column) {
-					$fields .= "$column = '$value', ";
-				}
-			}
+                foreach ($this->data as $column => $value) {
+                    if (!is_int($column) && $column != $this->primary_key_column) {
+                        $fields .= "$column = '$value', ";
+                    }
+                }
 
-			// trim the last comma
-			$fields = substr($fields, 0, strlen($fields) - 2);
+                // trim the last comma
+                $fields = substr($fields, 0, strlen($fields) - 2);
 
-		} else {
-			$fields = "$column = $value";
-		}
-		
-		$sql = "UPDATE $this->table 
-				SET $fields 
-				WHERE $this->primary_key_column = '$this->primary_key_value'";
-		
-		//echo "$sql<br />";
-		
-		// prepare the statement and execute the statement
-		$stmt = sql::$db->prepare($sql);
-		$stmt->execute();
-		$stmt->close();
+            } else {
+                $fields = "$column = $value";
+            }
+
+            $sql = "UPDATE $this->table 
+                    SET $fields 
+                    WHERE $this->primary_key_column = '$this->primary_key_value'";
+
+            //echo "$sql<br />";
+
+            // prepare the statement and execute the statement
+            $stmt = sql::$db->prepare($sql);
+            $stmt->execute();
+            $stmt->close();
+        
+        //}
 		
 	}
 	
@@ -375,6 +384,25 @@ class sql extends ArrayObject {
         }
         
         return new sql($join_sql);
+        
+    }
+    
+    public function join_string($tables = [], $args = []) {
+        
+        if (count($tables) != count($args)) {
+            throw new Exception('both arrays must contain the same corresponding number of rows');
+        }
+        
+        $join_sql = "$this->table a ";
+        $alpha = ALPHA;
+        
+        for ($i = 0; $i < count($tables); $i++) {
+            $alpha[$i] = strtolower($alpha[$i]);
+            $join_sql .= "JOIN {$tables[$i]} {$alpha[$i + 1]} ON {$alpha[$i]}.{$args[$i][0]} = "
+                . "{$alpha[$i+1]}.{$args[$i][1]}";
+        }
+        
+        return $join_sql;
         
     }
 	
