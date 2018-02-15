@@ -50,7 +50,7 @@ switch ($action) {
 				break;
 			
 			case USER_VALIDATED: 
-				$_SESSION['user'] = $username;
+				$_SESSION['user_name'] = $username;
 				//echo $_SESSION['user'];
 				header("Location: $referer");
                 break;

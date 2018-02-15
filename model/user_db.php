@@ -137,7 +137,7 @@ if (sql::is_connected()) {
 	unset($admin);*/
 
     // check to see a user is logged in
-    $me = (isset($_SESSION['user_id'])) ? get_user_by_id($_SESSION['user_id']) : false;
+    $me = (isset($_SESSION['user_name'])) ? get_user_by_name($_SESSION['user_name']) : false;
 
 }
 
