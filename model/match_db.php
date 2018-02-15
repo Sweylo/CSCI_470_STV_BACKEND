@@ -27,7 +27,7 @@ $match_status_enum = [
  */
 function get_matches($limit = null) {
 	$sql = new sql('matches');
-    $join = $sql->join(['match_users'], [['match_id', 'match_id']]);
+    $join = $sql->join(['match_users'], [['match_id', 'match_user_match_id']]);
 	$matches = $join->select(array('limit' => $limit), sql::SELECT_MULTIPLE);
 	return $matches;
 }
