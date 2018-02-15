@@ -50,6 +50,23 @@ function get_match_by_id($match_id) {
 	return $join;
 }
 
+function get_match_by_user($user_id) {
+    $match = new sql('matches');
+    $join = $match->join(['match_users'], [['match_id', 'match_user_match_id']]);
+	$match = $join->select(array(
+		'column' => 'match_white_user_id', 
+		'value' => $user_id
+	));
+    if ($match->data) {
+        return $match;
+    } else {
+        return $join->select(array(
+            'column' => 'match_black_user_id', 
+            'value' => $user_id
+        ));
+    }
+}
+
 function add_match($user_id, $board_id, $color) {
     
 	$match = sql::insert('matches', array(
@@ -72,7 +89,7 @@ function add_match($user_id, $board_id, $color) {
 
 function join_match($match_id, $user_id) {
     
-    echo "join_match($match_id, $user_id);";
+    //echo "join_match($match_id, $user_id);";
     
     $match = new sql('matches');
     $match->select(array(
@@ -95,7 +112,7 @@ function join_match($match_id, $user_id) {
     $match_users = new sql('match_users');
 	$match_users->select(array('column' => 'match_user_match_id', 'value' => $match['match_id']));
     
-    print_r($match_users);
+    //print_r($match_users);
     
     if ($match_users['match_white_user_id']) {
         $match_users['match_black_user_id'] = $user_id;
@@ -125,16 +142,15 @@ function init_match($match_id) {
     foreach ($board_data['coords'] as $coord) {
         
         try {
-            //echo "coord_x: {$coord['col']}, coord_y: {$coord['row']}<br />";
             $space = add_space($match_id, $coord['col'], $coord['row']);
         } catch (Exception $e) {
             throw $e;
         }
         
-        print_r($space);
-        echo '<br />';
-        print_r($coord);
-        echo '<br />';
+        //print_r($space);
+        //echo '<br />';
+        //print_r($coord);
+        //echo '<br />';
         
         // add a piece if there's a piece id, that's not null to the associated color
         if ($coord['piece_class_id'] && $coord['piece_color'] == 'white') {
@@ -148,21 +164,9 @@ function init_match($match_id) {
 }
 
 function delete_match($id) {
-	
-	/*global $db;
-	
-	$sql = 'DELETE FROM matchs 
-			WHERE match_id = ?';
-	
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('i', $match_id);
-	$stmt->execute();
-	$stmt->closeCursor();*/
-    
     $match = new sql('matches');
     $match->select(array('match_id', $id));
     $match->delete();
-	 
 }
 
 ?>

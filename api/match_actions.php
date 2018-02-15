@@ -3,26 +3,43 @@
 require_once('../model/user_db.php');
 require_once('../model/match_db.php');
 
+$is_token_valid = $me['user_token'] == $input['user_token'];
+
 switch ($input['action']) {
     
-    case 'move_piece':
+    case 'create_match':
+        
+        // *** need to check if user is in a match already
+        if (get_match_by_user($me['user_id'])->data) {
+            header('HTTP/1.1 403');
+            die();
+        }
+        
+        if ($is_token_valid) {
+        
+            try {
+                add_match($me['user_id'], $input['board_id'], rand(0,1) ? 'white' : 'black');
+            } catch(mysqli_sql_exception $e) {
+                echo $e;
+                header('HTTP/1.1 500');
+                die();
+            }
+
+            header('HTTP/1.1 202');
+            
+        } else {
+            header('HTTP/1.1 401');
+        }
         
         break;
     
-    // checks if there are available matches and if so, outputs them, if not, creates an entry
-	//	in the database to indicate the user is looking for a match.
-    // should probably separate this into two functions: create_match and list_matches
-	case 'search_matches':
+    case 'list_matches':
         
-        // check if user is already associated with a match
-        //$user_matches = get_user_matches();
-		
-		//echo json_encode($_REQUEST);
-		
-		if ($input['user_token'] == $me['user_token'] && empty($user_matches)) {
+        if ($is_token_valid) {
 			
             // get the first 5 available matches
 			$matches = get_avail_matches(5);
+            $matches_array = [];
 			
 			//print_r($matches);
 			
@@ -32,41 +49,47 @@ switch ($input['action']) {
 				$matches_array = array();
 				
 				foreach ($matches as $match) {
-					if (!empty($match)) {
-						array_push($matches_array, $match->data);
-					}
-				}
+                    if (!empty($match)) {
+                        array_push($matches_array, $match->data);
+                    }
+                }
 				
-				echo json_encode(array('results' => $matches_array));
+				echo json_encode(array('match_list' => $matches_array));
                 
-			// add a match to the database. indicates player is looking for a match
-			} else {
-				
-				try {
-					$new_match_id = add_match($me['user_id'], 1, rand(0,1) ? 'white' : 'black');
-				} catch(mysqli_sql_exception $e) {
-					echo $e;
-					header('HTTP/1.1 500');
-                    die();
-				}
-				
-				header('HTTP/1.1 201');
-				
 			}
+            
+        }
+            
+        break;
+        
+    case 'list_all_matches':
+        
+        if ($is_token_valid) {
 			
-		} else if ($input['user_token'] != $me['user_token'] && empty($user_matches)) {
-			header('HTTP/1.1 401 Unauthorized');
-		} else if ($input['user_token'] == $me['user_token'] && !empty($user_matches)) {
-            
-			switch ($user_matches('match_status')) {
+            // get the first 5 available matches
+			$matches = get_matches(20);
+            $matches_array = [];
+			
+			//print_r($matches);
+			
+            // encode available match data to json and output the array of matches
+			if (count($matches) > 0) {
+				
+				$matches_array = array();
+				
+				foreach ($matches as $match) {
+                    if (!empty($match)) {
+                        array_push($matches_array, $match->data);
+                    }
+                }
+				
+				echo json_encode(array('match_list' => $matches_array));
                 
-                // return message associated with the current match status, i.e. 'in progress'
-                
-            }
+			}
             
-		}
-		
-		break;
+        }
+        
+        break;
         
     case 'join_match':
         
@@ -77,7 +100,7 @@ switch ($input['action']) {
         
         $match = get_match_by_id($input['match_id']);
         
-        $is_token_valid = $me['user_token'] == $input['user_token'];
+        //$is_token_valid = $me['user_token'] == $input['user_token'];
         $is_match_waiting = $match['match_status'] == MATCH_WAITING;
         
         //echo $is_token_valid ? 'true' : 'false';
