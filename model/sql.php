@@ -287,7 +287,7 @@ class sql extends ArrayObject {
 
 		$data = $result->fetch_array(MYSQLI_ASSOC);
         
-        print_r($data);
+        //print_r($data);
 		
 		return $data['Column_name'];
 		

@@ -12,6 +12,7 @@ switch ($input['action']) {
         } catch (Exception $e) {
             echo $e;
             header('HTTP/1.1 500');
+            die();
         }
         
         switch ($login_status) {

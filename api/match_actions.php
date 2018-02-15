@@ -5,6 +5,10 @@ require_once('../model/match_db.php');
 
 switch ($input['action']) {
     
+    case 'move_piece':
+        
+        break;
+    
     // checks if there are available matches and if so, outputs them, if not, creates an entry
 	//	in the database to indicate the user is looking for a match.
 	case 'search_matches':
@@ -92,6 +96,9 @@ switch ($input['action']) {
                 header('HTTP/1.1 409');
                 die();
             }
+            
+            // create database records for the match data
+            init_match($match['match_id']);
             
             header('HTTP/1.1 202');
             die();

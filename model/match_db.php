@@ -1,6 +1,9 @@
 <?php
 
 require_once('../model/sql.php');
+require_once('../model/board_db.php');
+require_once('../model/space_db.php');
+require_once('../model/piece_db.php');
 
 // status constants
 const MATCH_WAITING = 1;
@@ -98,6 +101,46 @@ function join_match($match_id, $user_id) {
     
 }
 
+// creates records in the spaces table and creates records for the pieces
+function init_match($match_id) {
+    
+    $match = get_match_by_id($match_id);
+    
+    // verify match has the right status
+    if ($match['match_status'] != MATCH_PREGAME) {
+        throw new Exception('match has the wrong status');
+    } 
+    
+    $board = get_board_by_id($match['board_id']);
+    $board_data = json_decode($board['board_data'], true);
+    
+    //print_r($board_data);
+    
+    foreach ($board_data['coords'] as $coord) {
+        
+        try {
+            //echo "coord_x: {$coord['col']}, coord_y: {$coord['row']}<br />";
+            $space = add_space($match_id, $coord['col'], $coord['row']);
+        } catch (Exception $e) {
+            throw $e;
+        }
+        
+        print_r($space);
+        echo '<br />';
+        print_r($coord);
+        echo '<br />';
+        
+        // add a piece if there's a piece id, that's not null to the associated color
+        if ($coord['piece_class_id'] && $coord['piece_color'] == 'white') {
+            add_piece($space['space_id'], $coord['piece_class_id'], $match['match_white_user_id']);
+        } else if ($coord['piece_class_id'] && $space && $coord['piece_color'] == 'black') {
+            add_piece($space['space_id'], $coord['piece_class_id'], $match['match_black_user_id']);
+        }
+        
+    }
+    
+}
+
 function delete_match($id) {
 	
 	/*global $db;
@@ -113,7 +156,7 @@ function delete_match($id) {
     $match = new sql('matches');
     $match->select(array('match_id', $id));
     $match->delete();
-	
+	 
 }
 
 ?>

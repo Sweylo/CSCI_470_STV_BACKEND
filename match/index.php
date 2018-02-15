@@ -23,6 +23,10 @@ switch ($action) {
         $matches = get_matches(input(INPUT_GET, 'limit'));
 		include('list_matches.php');
 		break;
+    
+    case 'init_match_test':
+        init_match(input(INPUT_GET, 'match_id'));
+        break;
 	
 }
 
