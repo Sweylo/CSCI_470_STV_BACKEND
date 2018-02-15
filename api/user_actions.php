@@ -23,7 +23,7 @@ switch ($input['action']) {
                 break;
                 
             case USER_VALIDATED:
-                $user = get_user_by_id($input['user_id']);
+                $user = get_user_by_name($input['user_name']);
                 echo json_encode(['user_token' => $user['user_token']]);
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['user_name'] = $user['user_name'];

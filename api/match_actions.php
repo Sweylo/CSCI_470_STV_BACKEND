@@ -11,6 +11,7 @@ switch ($input['action']) {
     
     // checks if there are available matches and if so, outputs them, if not, creates an entry
 	//	in the database to indicate the user is looking for a match.
+    // should probably separate this into two functions: create_match and list_matches
 	case 'search_matches':
         
         // check if user is already associated with a match
@@ -42,9 +43,9 @@ switch ($input['action']) {
 			} else {
 				
 				try {
-					add_match($me['user_id'], 1, rand(0,1) ? 'white' : 'black');
+					$new_match_id = add_match($me['user_id'], 1, rand(0,1) ? 'white' : 'black');
 				} catch(mysqli_sql_exception $e) {
-					//echo $e;
+					echo $e;
 					header('HTTP/1.1 500');
                     die();
 				}

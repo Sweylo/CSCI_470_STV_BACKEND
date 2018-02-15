@@ -58,17 +58,21 @@ function add_match($user_id, $board_id, $color) {
     
 	if ($color == 'white') {
 		sql::insert('match_users', array(
-			'match_white_user_id' => $user_id, 'match_id' => $match['match_id']
+			'match_white_user_id' => $user_id, 'match_user_match_id' => $match['match_id']
 		));
 	} else if ($color == 'black') {
 		sql::insert('match_users', array(
-			'match_black_user_id' => $user_id, 'match_id' => $match['match_id']
+			'match_black_user_id' => $user_id, 'match_user_match_id' => $match['match_id']
 		));
 	}
+    
+    return $match['match_id'];
     
 }
 
 function join_match($match_id, $user_id) {
+    
+    echo "join_match($match_id, $user_id);";
     
     $match = new sql('matches');
     $match->select(array(
@@ -86,10 +90,12 @@ function join_match($match_id, $user_id) {
         throw new Exception ("match is not available to join");
     }
     
-    $match_users = new sql('match_users');
-	$match_users->select(array('match_user_match_id', $match['match_id']));
+    echo "--{$match['match_id']}--";
     
-    //print_r($match_users);
+    $match_users = new sql('match_users');
+	$match_users->select(array('column' => 'match_user_match_id', 'value' => $match['match_id']));
+    
+    print_r($match_users);
     
     if ($match_users['match_white_user_id']) {
         $match_users['match_black_user_id'] = $user_id;
