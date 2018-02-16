@@ -8,6 +8,8 @@
 
 <p><a href='../'>&LT;&LT; back to main</a></p>
 
+<h2>Board Designer</h2>
+
 <?php echo isset($message) ? "<p>$message</p>" : null; ?>
 
 <form method="post" action="./">

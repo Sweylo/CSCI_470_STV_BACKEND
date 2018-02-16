@@ -9,8 +9,10 @@ switch ($input['action']) {
     
     case 'create_match':
         
-        // *** need to check if user is in a match already
-        if (get_match_by_user($me['user_id'])->data) {
+        $match_user_is_in = get_match_by_user($me['user_id']);
+        
+        // checks if the results of getting matches by user returns any data
+        if ($match_user_is_in) {
             header('HTTP/1.1 403');
             die();
         }
@@ -18,7 +20,7 @@ switch ($input['action']) {
         if ($is_token_valid) {
         
             try {
-                add_match($me['user_id'], $input['board_id'], rand(0,1) ? 'white' : 'black');
+                //add_match($me['user_id'], $input['board_id'], rand(0,1) ? 'white' : 'black');
             } catch(mysqli_sql_exception $e) {
                 echo $e;
                 header('HTTP/1.1 500');
@@ -30,6 +32,8 @@ switch ($input['action']) {
         } else {
             header('HTTP/1.1 401');
         }
+        
+        die();
         
         break;
     
@@ -59,6 +63,8 @@ switch ($input['action']) {
 			}
             
         }
+        
+        die();
             
         break;
         
@@ -88,6 +94,8 @@ switch ($input['action']) {
 			}
             
         }
+        
+        die();
         
         break;
         
@@ -125,21 +133,17 @@ switch ($input['action']) {
             init_match($match['match_id']);
             
             header('HTTP/1.1 202');
-            die();
             
         } else if ($is_token_valed && !$is_match_waiting) {
             echo json_encode(['match_error_code' => 1]);
             header('HTTP/1.1 403');
-            die();
         } else if (!$is_token_valed && $is_match_waiting) {
             echo json_encode(['match_error_code' => 2]);
             header('HTTP/1.1 401');
-            die();
         }    
         
-        break;
+        die();
         
-    default:
-        header('HTTP/1.1 404');
+        break;
         
 }

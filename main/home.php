@@ -2,7 +2,7 @@
 
 <h2>Chess Champions Management WebUI</h2>
 
-<?php if ($me['user_account_type_id'] > 2) { ?>
+<?php if ($me['user_account_type_id'] > USER_TYPE_USER) { ?>
 <p><a href="../user/?action=list_users">list users</a></p>
 <p><a href="../board/?action=board_designer">board designer - under construction</a></p>
 <?php } ?>

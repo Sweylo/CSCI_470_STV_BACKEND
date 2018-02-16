@@ -53,12 +53,13 @@ function get_match_by_id($match_id) {
 function get_match_by_user($user_id) {
     $match = new sql('matches');
     $join = $match->join(['match_users'], [['match_id', 'match_user_match_id']]);
-	$match = $join->select(array(
+	$user_match = $join->select(array(
 		'column' => 'match_white_user_id', 
 		'value' => $user_id
 	));
-    if ($match->data) {
-        return $match;
+    //print_r($user_match);
+    if ($user_match) {
+        return $user_match;
     } else {
         return $join->select(array(
             'column' => 'match_black_user_id', 

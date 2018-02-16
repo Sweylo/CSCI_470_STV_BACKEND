@@ -1,0 +1,19 @@
+game modes:
+
+ - fast game (maxed pawns or one level bishop/rook/knight)
+
+ - easy     - show threatened pieces and if it will be taken where you move
+            - show potential moves
+            - upgrade to defense path only
+            - limited to 8x8 board
+
+ - normal   - no training wheels
+            - only upgrade attack path
+            - small to medium board size (8x8 or larger)
+
+ - expert   - all boards
+            - upgrade to both paths
+
+power cards (bring in up to 3 cards at beginning of match):
+
+ - instant piece kill count increment (applies after the turn played)

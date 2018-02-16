@@ -20,8 +20,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 include('board_actions.php');
 include('match_actions.php');
 include('user_actions.php');
+include('gameplay_actions.php');
 
 // if the action is never found in the switch statements included above, return 404
-//header('HTTP/1.1 404');
-
-?>
+header('HTTP/1.1 404');

@@ -32,12 +32,15 @@ switch ($input['action']) {
                 
         }
         
+        die();
+        
         break;
     
     case 'logout':
         session_unset();
 		session_destroy();
         header('HTTP/1.1 204');
+        die();
         break;
     
     case 'check_login':
@@ -50,7 +53,9 @@ switch ($input['action']) {
         
         //echo empty($_SESSION) ? '{"logged_in": false}' : json_encode($_SESSION);
         echo json_encode($login_check);
-        header('HTTP/1.1 200');
+        
+        die();
+        
         break;
     
 }

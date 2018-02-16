@@ -8,6 +8,7 @@ switch ($input['action']) {
     case 'get_board_by_id':
         $board = get_board_by_id($input['board_id']);
         echo $board['board_data'];
+        die();
         break;
     
 }

@@ -7,6 +7,8 @@ switch ($input['action']) {
     
     case 'move_piece':
         
+        die();
+        
         break;
     
 }
