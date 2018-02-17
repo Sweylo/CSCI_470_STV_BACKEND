@@ -112,7 +112,7 @@ function validate_user($username, $password) {
  * @param string $r rating
  * @return string $url the url of the image
  */
-function get_gravatar($email, $s = 16, $d = 'mm', $r = 'g') {
+function get_gravatar_url($email, $s = 16, $d = 'mm', $r = 'g') {
 	
     $url = 'https://www.gravatar.com/avatar/';
     $url .= md5(strtolower(trim($email)));
@@ -122,23 +122,14 @@ function get_gravatar($email, $s = 16, $d = 'mm', $r = 'g') {
 	
 }
 
+// set session length
+ini_set('session.gc_maxlifetime', 3600);
+session_set_cookie_params(3600);
 session_start();
 
-if (sql::is_connected()) {
-
-	/*// check to see if the admin account has been setup
-	$admin = get_user_by_name('admin');
-	$admin_needs_pw = $admin['user_password'] == 'password';
-	
-    if ($admin_needs_pw && !$is_admin_setup_page) {
-        header('Location: ../setup/?action=admin_setup');
-    }
-	
-	unset($admin);*/
-
-    // check to see a user is logged in
-    $me = (isset($_SESSION['user_name'])) ? get_user_by_name($_SESSION['user_name']) : false;
-
+// get info of logged in user if connected to the database and the user is logged in
+if (sql::is_connected() && isset($_SESSION['user_name'])) {
+    $me = get_user_by_name($_SESSION['user_name']);
 }
 
 ?>

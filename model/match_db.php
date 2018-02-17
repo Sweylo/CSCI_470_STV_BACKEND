@@ -27,8 +27,8 @@ $match_status_enum = [
  */
 function get_matches($limit = null) {
 	$sql = new sql('matches');
-    $join = $sql->join(['match_users'], [['match_id', 'match_user_match_id']]);
-	$matches = $join->select(array('limit' => $limit), sql::SELECT_MULTIPLE);
+    //$join = $sql->join(['match_users'], [['match_id', 'match_user_match_id']]);
+	$matches = $sql->select(array('limit' => $limit), sql::SELECT_MULTIPLE);
 	return $matches;
 }
 
@@ -41,48 +41,47 @@ function get_avail_matches($limit = null) {
 }
 
 function get_match_by_id($match_id) {
-	$match = new sql('matches');
-    $join = $match->join(['match_users'], [['match_id', 'match_user_match_id']]);
-	$match = $join->select(array(
+	/*$sql = new sql('matches');
+    //$join = $match->join(['match_users'], [['match_id', 'match_user_match_id']]);
+	$match = $sql->select(array(
 		'column' => 'match_id', 
 		'value' => $match_id
 	));
-	return $join;
+    return $match;*/
+	return (new sql('matches'))->select([
+        'column' => 'match_id',
+        'value' => $match_id
+    ]);
 }
 
 function get_match_by_user($user_id) {
-    $match = new sql('matches');
-    $join = $match->join(['match_users'], [['match_id', 'match_user_match_id']]);
-	$user_match = $join->select(array(
-		'column' => 'match_white_user_id', 
-		'value' => $user_id
-	));
-    //print_r($user_match);
-    if ($user_match) {
-        return $user_match;
+    $match_user = new sql('match_users');
+    $match_user->select(['column' => 'match_user_user_id', 'value' => $user_id]);
+    if ($match_user) {
+        $match = new sql('matches');
+        //$join = $match->join(['match_users'], [['match_id', 'match_user_match_id']]);
+        return $match->select([
+            'column' => 'match_id', 
+            'value' => $match_user['match_user_match_id']]
+        );
     } else {
-        return $join->select(array(
-            'column' => 'match_black_user_id', 
-            'value' => $user_id
-        ));
+        return null;
     }
 }
 
 function add_match($user_id, $board_id, $color) {
     
+    // insert record to match table
 	$match = sql::insert('matches', array(
 		'board_id' => $board_id, 'match_status' => MATCH_WAITING
 	), true);
     
-	if ($color == 'white') {
-		sql::insert('match_users', array(
-			'match_white_user_id' => $user_id, 'match_user_match_id' => $match['match_id']
-		));
-	} else if ($color == 'black') {
-		sql::insert('match_users', array(
-			'match_black_user_id' => $user_id, 'match_user_match_id' => $match['match_id']
-		));
-	}
+    // insert record to match_users to link the user and match
+    sql::insert('match_users', [
+        'match_user_user_id' => $user_id, 
+        'match_user_match_id' => $match['match_id']
+        //'match_user_color' => $color
+    ]);
     
     return $match['match_id'];
     
@@ -102,44 +101,76 @@ function join_match($match_id, $user_id) {
     
     if ($match['match_status'] == MATCH_WAITING) {
         $match['match_status'] = MATCH_PREGAME;
-        print_r($match);
+        //print_r($match);
         $match->update();
     } else {
         throw new Exception ("match is not available to join");
     }
     
-    echo "--{$match['match_id']}--";
-    
-    $match_users = new sql('match_users');
-	$match_users->select(array('column' => 'match_user_match_id', 'value' => $match['match_id']));
-    
-    //print_r($match_users);
-    
-    if ($match_users['match_white_user_id']) {
-        $match_users['match_black_user_id'] = $user_id;
-    } else {
-        $match_users['match_white_user_id'] = $user_id;
-    }
-    
-	$match_users->update();
+    sql::insert('match_users', [
+        'match_user_user_id' => $user_id, 
+        'match_user_match_id' => $match['match_id']
+    ]);
     
 }
 
-// creates records in the spaces table and creates records for the pieces
+// creates records in the spaces table and creates records for the pieces, and randomly assigns 
+//  both users to a color
 function init_match($match_id) {
     
     $match = get_match_by_id($match_id);
+    $match_users = new sql('match_users');
+    $match_users->select(
+        ['column' => 'match_user_match_id', 'value' => $match_id], 
+        sql::SELECT_MULTIPLE
+    );
     
     // verify match has the right status
     if ($match['match_status'] != MATCH_PREGAME) {
         throw new Exception('match has the wrong status');
     } 
     
+    // verify there are the right number of users
+    if (count($match_users->data) != 2) {
+        throw new Exception('invalid number of users');
+    }
+    
+    // simulate the flip of a coin to decide who goes first
+    $coin_is_heads = (int) rand(0, 1);
+    
+    // associate the colors with the coin toss value
+    $colors = [$coin_is_heads => 'white', !$coin_is_heads => 'black'];
+    
+    // change the index to the color
+    $match_users[$colors[0]] = $match_users[0];
+    $match_users[$colors[1]] = $match_users[1];
+    
+    // set the color of the field match_user_color
+    $match_users[$colors[0]]['match_user_color'] = $colors[0];
+    $match_users[$colors[1]]['match_user_color'] = $colors[1];
+    
+    // update the rows
+    $match_users[$colors[0]]->update();
+    $match_users[$colors[1]]->update();
+    
+    // this doesn't work (Uncaught Error: Call to a member function update() on array in...)
+    /*for ($i = 0; $i < count($match_users->data); $i++) {
+        $match_users[$colors[$i]] = $match_users[$i];
+        unset($match_users[$i]);
+        $match_users[$colors[$i]]['match_user_color'] = $colors[$i];
+        $match_users[$colors[$i]]->update();
+    }*/
+    
+    //print_r($match_users);
+    
+    // get and decode the specified board's data
     $board = get_board_by_id($match['board_id']);
     $board_data = json_decode($board['board_data'], true);
     
     //print_r($board_data);
     
+    // loop through every coordinate and add a row to the database for each one and for any pieces
+    //  that start out on that space
     foreach ($board_data['coords'] as $coord) {
         
         try {
@@ -148,26 +179,25 @@ function init_match($match_id) {
             throw $e;
         }
         
-        //print_r($space);
-        //echo '<br />';
-        //print_r($coord);
-        //echo '<br />';
-        
-        // add a piece if there's a piece id, that's not null to the associated color
-        if ($coord['piece_class_id'] && $coord['piece_color'] == 'white') {
-            add_piece($space['space_id'], $coord['piece_class_id'], $match['match_white_user_id']);
-        } else if ($coord['piece_class_id'] && $space && $coord['piece_color'] == 'black') {
-            add_piece($space['space_id'], $coord['piece_class_id'], $match['match_black_user_id']);
+        /*print_r($space);
+        echo '<br />';
+        print_r($coord);
+        echo '<br />';*/
+      
+        if ($coord['piece_class_id'] && $coord['piece_color']) {
+            add_piece($space['space_id'], $coord['piece_class_id'], 
+                $match_users[$coord['piece_color']]['match_user_user_id']);
         }
         
     }
     
 }
 
-function delete_match($id) {
+function delete_match($match_id) {
     $match = new sql('matches');
-    $match->select(array('match_id', $id));
+    $match->select(array('match_id', $match_id));
     $match->delete();
+    // *** need to delete rows in: match_users, spaces, and pieces
 }
 
 ?>
