@@ -41,13 +41,6 @@ function get_avail_matches($limit = null) {
 }
 
 function get_match_by_id($match_id) {
-	/*$sql = new sql('matches');
-    //$join = $match->join(['match_users'], [['match_id', 'match_user_match_id']]);
-	$match = $sql->select(array(
-		'column' => 'match_id', 
-		'value' => $match_id
-	));
-    return $match;*/
 	return (new sql('matches'))->select([
         'column' => 'match_id',
         'value' => $match_id
@@ -55,18 +48,18 @@ function get_match_by_id($match_id) {
 }
 
 function get_match_by_user($user_id) {
-    $match_user = new sql('match_users');
-    $match_user->select(['column' => 'match_user_user_id', 'value' => $user_id]);
-    if ($match_user) {
-        $match = new sql('matches');
-        //$join = $match->join(['match_users'], [['match_id', 'match_user_match_id']]);
-        return $match->select([
+    
+    // get the match_user row for this user_id
+    (new sql('match_users'))->select(['column' => 'match_user_user_id', 'value' => $user_id]);
+    
+    // if there is a user associated with this match, return the match data
+    if ($match_user->data) {
+        return (new sql('matches'))->select([
             'column' => 'match_id', 
-            'value' => $match_user['match_user_match_id']]
-        );
-    } else {
-        return null;
+            'value' => $match_user['match_user_match_id']
+        ]); 
     }
+    
 }
 
 function add_match($user_id, $board_id, $color) {

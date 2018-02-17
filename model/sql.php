@@ -181,7 +181,7 @@ class sql extends ArrayObject {
 					LIMIT $args[limit]";
 		
 		} else {
-			throw new Exception('incorrect parameters in args array');
+            throw new Exception("incorrect parameters in args array: {$args['column']}, {$args['value']}, {$args['limit']}");
 		}
 		
 		//echo "$sql<br />";
