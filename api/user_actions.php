@@ -4,6 +4,27 @@ require_once('../model/user_db.php');
 
 switch ($action) {
     
+    case 'register':
+        
+        // forbid users that are logged in to register new users
+        if ($me) {
+            send_to_client(403);
+        }
+        
+        $username = filter_var($input['user_name']);
+		$email = filter_var($input['user_email'], FILTER_VALIDATE_EMAIL);
+		$password = filter_var($input['user_password']);
+		
+		try {
+			add_user($username, $password, $email);
+		} catch(mysqli_sql_exception $e) {
+			send_to_client(500);
+		}
+        
+        // remove the break to log the user in after successful registration
+        //send_to_client(202);
+        //break;
+    
     // attempts to log a user in
     case 'login':
         
@@ -42,17 +63,23 @@ switch ($action) {
         break;
     
     case 'check_login':
-        
-        $login_check = [
+        send_to_client(200, [
             'logged_in' => !empty($_SESSION),
             'user_id' => isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'null',
             'user_name' => isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'null'
-        ];
+        ]);
+        break;
+    
+    case 'get_token': 
+        if ($me) {
+            send_to_client(200, ['user_token' => $me['user_token']]);
+        } else {
+            send_to_client(401);
+        }
+        break;
         
-        echo send_to_client(200, $login_check);
-        
-        //die();
-        
+    case 'get_toke':
+        send_to_client(420);
         break;
     
 }
