@@ -5,7 +5,7 @@
 <html>
     
 <head>
-    <title>Chess Champions Management WebUI</title>
+    <title>Chess &amp; Conquer Management WebUI</title>
     <link rel="stylesheet" type="text/css" href="../view/css/style.css" />
 </head>
 
