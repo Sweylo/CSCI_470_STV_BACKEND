@@ -2,6 +2,15 @@
 
 require_once('../model/sql.php');
 
+// space type constants
+const SPACE_TYPE_NORMAL = 1;
+const SPACE_TYPE_VOID = 2;
+const SPACE_TYPE_WATER = 3;
+const SPACE_TYPE_MOUNTAIN = 4;
+
+// space error constants
+const SPACE_ERROR_OBSTACLE = 1;
+
 /**
  * gets all the spaces in the database
  * 
@@ -30,6 +39,27 @@ function get_space_by_id($id) {
 		'value' => $id
 	));
 	return $space;
+}
+
+function get_space_by_coords($match, $coord_x, $coord_y) {
+    
+    $db = sql::db;
+    
+    $sql = 'SELECT * FROM spaces 
+            WHERE space_match_id = ? 
+                AND space_coord_x = ? 
+                AND space_coord_y = ?';
+	
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i', $match['match_id']);
+    $stmt->bind_param('i', $coord_x);
+    $stmt->bind_param('i', $coord_y);
+	$stmt->execute();
+    $space = $stmt->fetch();
+	$stmt->closeCursor();
+    
+    return $space;
+    
 }
 
 function add_space($match_id, $coord_x, $coord_y) {

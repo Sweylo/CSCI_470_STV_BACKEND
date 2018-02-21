@@ -32,6 +32,15 @@ function get_piece_by_id($id) {
 	return $piece;
 }
 
+function get_piece_by_space($space_id) {
+    $piece = new sql('pieces');
+    $piece->select([
+        'column' => 'piece_space_id',
+        'value' => $space_id
+    ]);
+    return $piece;
+}
+
 function add_piece($space_id, $class_id, $user_id) {
 	sql::insert('pieces', array(
 		'piece_space_id' => $space_id,

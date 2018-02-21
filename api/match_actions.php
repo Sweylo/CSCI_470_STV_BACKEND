@@ -111,7 +111,7 @@ switch ($action) {
         } else if ($is_token_valid && !$is_match_waiting) {
             send_to_client(403, ['match_error_code' => 1]);
         } else if (!$is_token_valid && $is_match_waiting) {
-            send_to_client(401, ['match_error_code' => 2]);
+            send_to_client(403, ['match_error_code' => 2]);
         } else {
             
         }

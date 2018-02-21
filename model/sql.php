@@ -19,7 +19,7 @@ class sql extends ArrayObject {
 	public static $error_message;
 	protected $primary_key_column;
 	protected $primary_key_value;
-	protected static $db;
+	public static $db;
 	
 	// constants
 	const SELECT_SINGLE = 0;
