@@ -62,6 +62,82 @@ function edit_user($id, $username, $password, $email) {
 	$user->update();
 }
 
+function add_friend($user_1_id, $user_2_id) {
+    sql::insert('friends', [
+        'friend_user_1_id' => $user_1_id,
+        'friend_user_2_id' => $user_2_id
+    ]);
+}
+
+function get_friends($user_id) {
+    
+    /*$sql = 'SELECT * FROM friends 
+			WHERE (friend_user_1_id = ? OR friend_user_2_id = ?) 
+                AND friend_accepted = 1';
+    
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('ii', $user_id, $user_id);
+	$stmt->execute();
+    //$friends = $stmt->fetch_all(MYSQL_ASSOC);
+    
+    do {
+        if ($res = sql::$db->store_result()) {
+            var_dump($res->fetch_all(MYSQLI_ASSOC));
+            $res->free();
+        }
+    } while (sql::$db->more_results() && sql::$db->next_result());
+    //$friends = $result->fetch_array(MYSQLI_ASSOC);*/
+    
+    $sql = new sql('friends');
+    $friends = $sql->select([
+        'column' => "(friend_user_1_id = $user_id OR friend_user_2_id = $user_id) AND friend_accepted",
+        'value' => 1    
+    ], sql::SELECT_MULTIPLE);
+    
+    return $friends;
+    
+}
+
+function check_friendship($user_1_id, $user_2_id) {
+    
+    $sql = 'SELECT * FROM friends 
+			WHERE (friend_user_1_id = ? AND friend_user_2_id = ?)
+                OR (friend_user_1_id = ? AND friend_user_2_id = ?)';
+	
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('iiii', $user_1_id, $user_2_id, $user_2_id, $user_1_id);
+	$stmt->execute();
+    $result = $stmt->get_result();
+    $friendship = new sql('friends', $result->fetch_array(MYSQLI_ASSOC));
+    
+    return $friendship;
+    
+}
+
+function accept_friend($user_from_id, $user_to_id) {
+    
+}
+
+function get_friend_requests($user_id) {
+    
+    $sql = 'SELECT * FROM friends 
+			WHERE friend_user_2_id = ? 
+                AND friend_accepted = \'0\'';
+	
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('i', $user_id);
+	$stmt->execute();
+    $result = $stmt->get_result();
+    $friendship = $result->fetch_array(MYSQLI_BOTH);
+    
+    return $friendship;
+    
+}
+
+function remove_friend($user_you_id, $user_them_id) {
+    
+}
+
 function delete_user($id) {
 	
 	/*global $db;

@@ -43,14 +43,15 @@ class sql extends ArrayObject {
 		}
 		
 		$this->table = $table;
+        $this->data = $data;
+        $this->primary_key_column = sql::get_primary_key_column_name($table);
 		
 		// allow only 1d arrays to be stored in the object
-		if (!is_array($data[0])) {
-			$this->data = $data;
-			$this->primary_key_column = key($data);
-			$this->primary_key_value = reset($data);
-		} else {
-			throw Exception('Cannot handle 2d arrays.');
+		if (!is_null($data) && !is_array($data[0])) {
+			//$this->primary_key_column = key($data);
+			$this->primary_key_value = $data[$this->primary_key_column];
+		} else if (!is_null($data) && is_array($data[0])) {
+			throw new Exception('Cannot handle 2d arrays.');
 		}
 		
 	}
