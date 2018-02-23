@@ -37,3 +37,11 @@ body {
 #board td.normal {
     opacity: 1;
 }
+
+#board td select {
+    visibility: hidden;
+}
+
+#board td.normal select {
+    visibility: visible;
+}

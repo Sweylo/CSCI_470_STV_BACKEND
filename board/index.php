@@ -33,51 +33,38 @@ switch ($action) {
     
     case 'add_board':
         
-        //print_r($_POST);
-		
-		/*$board_name = input(INPUT_POST, 'boardName');
-		$row_count = input(INPUT_POST, 'rowCount');
-		$col_count = input(INPUT_POST, 'colCount');
-		$home_col = input(INPUT_POST, 'homeCol');*/
+        $board_name = input(INPUT_POST, 'boardName');
+        $row_count = input(INPUT_POST, 'rowCount');
+        $col_count = input(INPUT_POST, 'colCount');
+        $home_col = input(INPUT_POST, 'homeCol');
         
-        $board_array = array(
-            'board_name' => input(INPUT_POST, 'boardName'),
-            'row_count' => input(INPUT_POST, 'rowCount'),
-            'col_count' => input(INPUT_POST, 'colCount'),
-            'home_col' => input(INPUT_POST, 'homeCol'),
-            'coords' => array()
-        );
+        try {
+			$board = add_board($board_name, $row_count, $col_count, $home_col);
+		} catch(mysqli_sql_exception $e) {
+			$message = 'error adding board to the database: ' . $e;
+			include('board_designer.php');
+		}
         
-        for ($i = 0; $i <= $board_array['row_count']; $i++) {
+        for ($i = 0; $i <= $row_count; $i++) {
 			
-            for ($j = 0; $j <= $board_array['col_count']; $j++) {
+            for ($j = 0; $j <= $col_count; $j++) {
                 
-                $is_space_active = input(INPUT_POST, $i . '-' . $j);
+                $is_space_active = input(INPUT_POST, "$i-$j-is-active");
+                $class_id = input(INPUT_POST, "$i-$j-class-id");
+                $piece_color = input(INPUT_POST, "$i-$j-piece-color");
+                
+                //print_r($class_id);
+                //print_r($piece_color);
                 
                 if ($is_space_active) {
-                    //echo "<p>$i, $j</p>";
-                    //print_r(array('row' => $i, 'col' => $j));
-                    array_push($board_array['coords'], array(
-                        'row' => $i, 
-                        'col' => $j,
-                        'piece' => null
-                    ));
+                    add_board_init_space($board['board_id'], $i, $j, (int) $class_id, 
+                        $class_id ? $piece_color : null);
                 }
                 
             }
 			
         }
         
-        $board_json = json_encode($board_array);
-		
-		try {
-			add_board($board_array['board_name'], $board_json);
-		} catch(mysqli_sql_exception $e) {
-			//die('error adding board to the database: ' . $e);
-			$message = 'error adding board to the database: ' . $e;
-			include('board_designer.php');
-		}
-		
 		$message = 'board successfully added';
 		include('board_designer.php');
         

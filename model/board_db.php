@@ -27,18 +27,37 @@ function get_board_by_name($board_name) {
 
 function get_board_by_id($id) {
 	$board = new sql('boards');
-	$board->select(array(
+	$board->select([
 		'column' => 'board_id', 
 		'value' => $id
-	));
+	]);
 	return $board;
 }
 
-function add_board($board_name, $board_data) {
-	sql::insert('boards', array(
-		'board_name' => $board_name, 
-		'board_data' => $board_data
-	));
+function add_board($board_name, $row_count, $col_count, $home_col) {
+	return sql::insert('boards', [
+        'board_name' => $board_name,
+        'board_row_count' => $row_count,
+        'board_col_count' => $col_count,
+        'board_home_col' => $home_col
+    ], true);
+}
+
+function add_board_init_space($board_id, $coord_x, $coord_y, $class_id, $piece_color) {
+    sql::insert('board_init_spaces', [
+        'board_init_board_id' => $board_id,
+        'board_init_coord_x' => $coord_x,
+        'board_init_coord_y' => $coord_y,
+        'board_init_class_id' => $class_id,
+        'board_init_piece_color' => $piece_color
+    ]);
+}
+
+function get_board_init_spaces($board_id) {
+    $sql = new sql('board_init_spaces');
+    return $sql->select([
+        'board_init_board_id' => $board_id
+    ], sql::SELECT_MULTIPLE);
 }
 
 function edit_board($id, $boardname, $password, $email) {

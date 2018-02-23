@@ -35,6 +35,25 @@ CREATE TABLE `account_types` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `board_init_spaces`
+--
+
+DROP TABLE IF EXISTS `board_init_spaces`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `board_init_spaces` (
+  `board_init_id` int(11) NOT NULL AUTO_INCREMENT,
+  `board_init_board_id` int(11) NOT NULL,
+  `board_init_coord_x` int(11) NOT NULL,
+  `board_init_coord_y` int(11) NOT NULL,
+  `board_init_class_id` int(2) DEFAULT NULL,
+  `board_init_piece_color` varchar(5) DEFAULT NULL,
+  PRIMARY KEY (`board_init_id`),
+  UNIQUE KEY `board_coord_id_UNIQUE` (`board_init_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=145 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `boards`
 --
 
@@ -43,12 +62,13 @@ DROP TABLE IF EXISTS `boards`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `boards` (
   `board_id` int(11) NOT NULL AUTO_INCREMENT,
-  `board_name` varchar(45) NOT NULL,
-  `board_data` longtext NOT NULL,
+  `board_name` varchar(45) DEFAULT NULL,
+  `board_row_count` int(11) NOT NULL DEFAULT '8',
+  `board_col_count` int(11) NOT NULL DEFAULT '8',
+  `board_home_col` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`board_id`),
-  UNIQUE KEY `board_id_UNIQUE` (`board_id`),
-  UNIQUE KEY `board_name_UNIQUE` (`board_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `board_id_UNIQUE` (`board_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -96,7 +116,7 @@ CREATE TABLE `friends` (
   `friend_accepted` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`friend_id`),
   UNIQUE KEY `friend_id_UNIQUE` (`friend_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -191,7 +211,7 @@ DROP TABLE IF EXISTS `pieces`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pieces` (
   `piece_id` int(11) NOT NULL AUTO_INCREMENT,
-  `piece_space_id` int(11) NOT NULL,
+  `piece_space_id` int(11) DEFAULT NULL,
   `piece_class_id` int(11) NOT NULL,
   `piece_move_id` int(11) DEFAULT NULL,
   `piece_user_id` int(11) NOT NULL,
@@ -362,7 +382,7 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-20  9:44:34
+-- Dump completed on 2018-02-23  9:59:25
 
 -- -----------------------------------------------------
 -- Data for table `chess_n_conquer`.`account_types`
