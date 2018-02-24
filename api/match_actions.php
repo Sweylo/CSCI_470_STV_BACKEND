@@ -23,7 +23,7 @@ switch ($action) {
             
 			$board = get_board_by_id(filter_var($input['board_id'], FILTER_VALIDATE_INT));
 			
-			if (!$board) {
+			if (!$board->data) {
 				send_to_client(400, null, "no board found for id={$input['board_id']}");
 			}
 			
