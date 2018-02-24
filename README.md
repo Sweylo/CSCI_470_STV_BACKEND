@@ -1,6 +1,6 @@
 # README #
 
-CSCI B470 Backend
+Chess & Conquer Backend Server / API Host
 
 ### Requirements to run this project on a server: ###
 
@@ -20,7 +20,7 @@ CSCI B470 Backend
         "mysql_host": "localhost",
         "mysql_user": "root",
         "mysql_password": "sesame",
-        "mysql_db": "chess_champions",
+        "mysql_db": "chess_n_conquer",
         "mysql_port": 3306
     }
     ```
