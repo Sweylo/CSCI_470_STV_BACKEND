@@ -10,6 +10,10 @@ switch ($action) {
     
     case 'create_match':
         
+		if (!$me) {
+			send_to_client(401);
+		}
+		
         // checks if the results of getting matches by user returns any data
         if (get_match_by_user($me['user_id'])) {
             send_to_client(403, null, 'user is already in a match');
