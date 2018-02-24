@@ -28,12 +28,6 @@ switch ($action) {
             ];
             
             if ($space['board_init_class_id'] > 0) {
-                $this_coord = [
-                    'row' => $space['board_init_coord_x'],
-                    'col' => $space['board_init_coord_y'],
-                    'class_id' => $space['board_init_class_id']
-                ];
-                //array_push($this_coord, ['piece_color' => $space['board_init_piece_color']]);
                 $this_coord['piece_color'] = $space['board_init_piece_color'];
             }
             

@@ -17,14 +17,15 @@ switch ($action) {
         
         if ($is_token_valid) {
             
+			$board = get_board_by_id(filter_var($input['board_id'], FILTER_VALIDATE_INT));
+			
+			if (!$board) {
+				send_to_client(400, null, "no board found for id={$input['board_id']}");
+			}
+			
             try {
-                
-                $new_match_id = add_match(
-                    $me['user_id'], 
-                    filter_var($input['board_id'], FILTER_VALIDATE_INT), 
-                    rand(0,1) ? 'white' : 'black'
-                );
-                
+                $new_match_id = add_match($me['user_id'], $board['board_id'], 
+					rand(0,1) ? 'white' : 'black');
             } catch(mysqli_sql_exception $e) {
                 send_to_client(500, null, $e);
             }

@@ -65,8 +65,8 @@ switch ($action) {
     case 'check_login':
         send_to_client(200, [
             'logged_in' => !empty($_SESSION),
-            'user_id' => isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'null',
-            'user_name' => isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'null'
+            'user_id' => isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null,
+            'user_name' => isset($_SESSION['user_name']) ? $_SESSION['user_name'] : null
         ]);
         break;
     
@@ -146,13 +146,16 @@ switch ($action) {
         print_r($friends[0]->data);*/
         
         foreach ($friends as $friend) {
+			
             $friend_user_id = $friend['friend_user_1_id'] != $me['user_id']
                 ? $friend['friend_user_1_id'] : $friend['friend_user_2_id'];
             $friend_user = get_user_by_id($friend_user_id);
+			
             array_push($friends_array, [
                 'friend_user_id' => $friend_user['user_id'],
                 'friend_user_name' => $friend_user['user_name']
             ]);
+			
         }
         
         //print_r($friends_array);
@@ -176,19 +179,25 @@ switch ($action) {
             if (is_array($friend_requests[0])) {
             
                 foreach ($friend_requests as $request) {
+					
                     $this_user = get_user_by_id($request['friend_user_1_id']);
+					
                     array_push($friend_requests_array, [
                         'request_user_id' => $this_user['user_id'],
                         'request_user_name' => $this_user['user_name']
                     ]);
+					
                 }
 
             } else {
+				
                 $this_user = get_user_by_id($friend_requests['friend_user_1_id']);
+				
                 array_push($friend_requests_array, [
                     'request_user_id' => $this_user['user_id'],
                     'request_user_name' => $this_user['user_name']
                 ]);
+				
             }
             
             send_to_client(200, ['friend_requests' => $friend_requests_array]);
@@ -200,11 +209,13 @@ switch ($action) {
         break;
     
     case 'get_token': 
+		
         if ($me) {
             send_to_client(200, ['user_token' => $me['user_token']]);
         } else {
             send_to_client(401);
         }
+		
         break;
         
     case 'get_toke':
