@@ -7,6 +7,84 @@ require_once('../model/piece_db.php');
 
 switch ($action) {
     
+    case 'check_match_status':
+        
+        if (!$me) {
+            send_to_client(401, null, 'must be logged in');
+        }
+        
+        $match = get_match_by_user($me['user_id']);
+        
+        //print_r($match);
+        
+        if (!$match->data) {
+            send_to_client(200, null, 'you are not in a match');
+        }
+        
+        if ($match['match_status'] != MATCH_PLAYING) {
+            send_to_client(200, ['match_status' => (int) $match['match_status']]);
+        }
+        
+        $match_user = get_match_user($me['user_id']);
+        
+        if ($match_user['match_user_color'] == 'white') {
+            $is_my_turn = $match['match_turn_count'] % 2 != 0;
+        } else if ($match_user['match_user_color'] == 'black') {
+            $is_my_turn = $match['match_turn_count'] % 2 == 0;
+        }
+        
+        $output = [
+            'match_status' => $match['match_status'],
+            'is_my_turn' => $is_my_turn,
+            'turn_count' => $match['match_turn_count']
+        ];
+        
+        send_to_client(200, $output);
+        
+        break;
+        
+    case 'ready_to_play':
+        
+        if (!$me) {
+            send_to_client(401, null, 'must be logged in');
+        }
+        
+        $match = get_match_by_user($me['user_id']);
+        
+        if (!$match->data) {
+            send_to_client(400, null, 'you are not in a match');
+        }
+        
+        if ($match['match_status'] != MATCH_PREGAME) {
+            send_to_client(400, ['match_status' => $match['match_status']]);
+        }
+        
+        $match_users = get_match_users($match['match_id']);
+        
+        //print_r($match_users);
+        
+        $me_index = $match_users[0]['match_user_user_id'] == $me['user_id'] ? 0 : 1;
+        $them_index = $me_index ? 0 : 1;
+        
+        // check if the user has already readied up
+        if ($match_users[$me_index]['match_user_is_ready']) {
+            send_to_client(208);
+        }
+        
+        $me_match_user = $match_users[$me_index];
+        $me_match_user['match_user_is_ready'] = true;
+        $me_match_user->update();
+        
+        if ($match_users[$them_index]['match_user_is_ready']) {
+            $match['match_status'] = MATCH_PLAYING;
+            $match->update();
+            send_to_client(202, null, 'match is starting now');
+        } else {
+            send_to_client(202, null, 'waiting for opponent to ready');
+        }
+        
+        break;
+    
     case 'move_piece':
         
         if (!$me) {

@@ -47,17 +47,39 @@ function get_match_by_id($match_id) {
     ]);
 }
 
+function get_match_user($user_id) {
+    $match_user = new sql('match_users');
+    $match_user->select([
+        'column' => 'match_user_user_id', 
+        'value' => $user_id
+    ], sql::SELECT_SINGLE);
+    return $match_user;
+}
+
+function get_match_users($match_id) {
+    $match_users = new sql('match_users');
+    $match_users->select([
+        'column' => 'match_user_match_id', 
+        'value' => $match_id
+    ], sql::SELECT_MULTIPLE);
+    return $match_users;
+}
+
 function get_match_by_user($user_id) {
     
     // get the match_user row for this user_id
-    (new sql('match_users'))->select(['column' => 'match_user_user_id', 'value' => $user_id]);
+    $match_user = get_match_user($user_id);
+    
+    //print_r($match_user);
     
     // if there is a user associated with this match, return the match data
     if ($match_user->data) {
-        return (new sql('matches'))->select([
+        $match = new sql('matches');
+        $match->select([
             'column' => 'match_id', 
             'value' => $match_user['match_user_match_id']
         ]); 
+        return $match;
     }
     
 }

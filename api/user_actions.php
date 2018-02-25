@@ -28,6 +28,10 @@ switch ($action) {
     // attempts to log a user in
     case 'login':
         
+        if ($me) {
+            send_to_client(403);
+        }
+        
         $username = filter_var($input['user_name']);
         $password = filter_var($input['user_password']);
         

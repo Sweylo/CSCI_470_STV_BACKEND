@@ -10,9 +10,10 @@ switch ($action) {
     
     case 'create_match':
         
-		if (!$me) {
-			send_to_client(401);
-		}
+        // if user isn't logged in or is a guest
+        if (!$me || $me['user_account_type_id'] < USER_TYPE_USER) {
+            send_to_client(401);
+        }
 		
         // checks if the results of getting matches by user returns any data
         if (get_match_by_user($me['user_id'])) {
@@ -45,6 +46,11 @@ switch ($action) {
         break;
         
     case 'list_matches':
+        
+        // if user isn't logged in or is a guest
+        if (!$me || $me['user_account_type_id'] < USER_TYPE_USER) {
+            send_to_client(401);
+        }
         
         if ($is_token_valid) {
 			
