@@ -5,26 +5,39 @@ require_once('../model/match_db.php');
 require_once('../model/space_db.php');
 require_once('../model/piece_db.php');
 
+/**
+ * function to get and validate the match the user is currently in
+ * 
+ * @param int $match_status the match status to check the match is in
+ * @return object the sql object of the match the user is currently in
+ */
+function validate_match_status($match_status) {
+    
+    global $me;
+    
+    if (!$me) {
+        send_to_client(401, null, 'must be logged in');
+    }
+
+    $match = get_match_by_user($me['user_id']);
+
+    if (!$match->data) {
+        send_to_client(400, null, 'you are not in a match');
+    }
+
+    if ($match['match_status'] != $match_status) {
+        send_to_client(400, ['match_status' => $match['match_status']]);
+    }
+    
+    return $match;
+    
+}
+
 switch ($action) {
     
     case 'check_match_status':
         
-        if (!$me) {
-            send_to_client(401, null, 'must be logged in');
-        }
-        
-        $match = get_match_by_user($me['user_id']);
-        
-        //print_r($match);
-        
-        if (!$match->data) {
-            send_to_client(200, null, 'you are not in a match');
-        }
-        
-        if ($match['match_status'] != MATCH_PLAYING) {
-            send_to_client(200, ['match_status' => (int) $match['match_status']]);
-        }
-        
+        $match = validate_match_status(MATCH_PLAYING);
         $match_user = get_match_user($me['user_id']);
         
         if ($match_user['match_user_color'] == 'white') {
@@ -45,20 +58,7 @@ switch ($action) {
         
     case 'ready_to_play':
         
-        if (!$me) {
-            send_to_client(401, null, 'must be logged in');
-        }
-        
-        $match = get_match_by_user($me['user_id']);
-        
-        if (!$match->data) {
-            send_to_client(400, null, 'you are not in a match');
-        }
-        
-        if ($match['match_status'] != MATCH_PREGAME) {
-            send_to_client(400, ['match_status' => $match['match_status']]);
-        }
-        
+        $match = validate_match_status(MATCH_PREGAME);
         $match_users = get_match_users($match['match_id']);
         
         //print_r($match_users);
@@ -87,17 +87,8 @@ switch ($action) {
     
     case 'move_piece':
         
-        if (!$me) {
-            send_to_client(401);
-        }
-        
-        $match = get_match_by_id(filter_var($input['match_id'], FILTER_VALIDATE_INT));
+        $match = validate_match_status(MATCH_PLAYING);
         $match_user = get_match_by_user($me['user_id']);
-        
-        // check if the user is not in the requested match
-        if ($match['match_id'] != $match_user['match_id']) {
-            send_to_client(403);
-        }
         
         // read in coordinates from json
         $old_coord_x = filter_var($input['old_coord']['coord_x'], FILTER_VALIDATE_INT);
@@ -143,6 +134,23 @@ switch ($action) {
         $old_piece->update();
         
         die();
+        
+        break;
+        
+    case 'resign':
+        
+        $match = validate_match_status(MATCH_PLAYING);
+        $match_user = get_match_user($me['user_id']);
+        
+        if ($match_user['match_user_color'] == 'white') {
+            $match['match_status'] = MATCH_BLACK_WIN;
+        } else if ($match_user['match_user_color'] == 'black') {
+            $match['match_status'] = MATCH_WHITE_WIN;
+        }
+        
+        $match->update();
+        
+        send_to_client(202);
         
         break;
     
