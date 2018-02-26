@@ -206,6 +206,8 @@ session_start();
 // get info of logged in user if connected to the database and the user is logged in
 if (sql::is_connected() && isset($_SESSION['user_name'])) {
     $me = get_user_by_name($_SESSION['user_name']);
+    $is_mod = $me['user_account_type_id'] == USER_TYPE_MOD;
+    $is_admin = $me['user_account_type_id'] == USER_TYPE_ADMIN;
 }
 
 ?>

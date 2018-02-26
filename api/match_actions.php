@@ -94,7 +94,7 @@ switch ($action) {
         
         $match = get_match_by_id(filter_var($input['match_id'], FILTER_VALIDATE_INT));
         
-        if (!$match) {
+        if (!$match->data) {
             send_to_client(400, null, 'match requested is not in the database');
         }
         

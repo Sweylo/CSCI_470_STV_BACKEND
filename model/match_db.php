@@ -45,10 +45,12 @@ function get_avail_matches($limit = null) {
 }
 
 function get_match_by_id($match_id) {
-	return (new sql('matches'))->select([
+	$match = new sql('matches');
+    $match->select([
         'column' => 'match_id',
         'value' => $match_id
     ]);
+    return $match;
 }
 
 function get_match_user($user_id) {

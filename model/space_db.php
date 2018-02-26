@@ -62,6 +62,15 @@ function get_space_by_coords($match, $coord_x, $coord_y) {
     
 }
 
+function get_spaces_by_match($match_id) {
+    $spaces = new sql('spaces');
+    $spaces->select([
+        'column' => 'space_match_id',
+        'value' => $match_id
+    ], sql::SELECT_MULTIPLE);
+    return $spaces;
+}
+
 function add_space($match_id, $coord_x, $coord_y) {
 	return sql::insert('spaces', array(
 		'space_match_id' => $match_id, 

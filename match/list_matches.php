@@ -13,6 +13,9 @@
         <th>white_user_id</th>
         <th>black_user_id</th>
         <th>status</th>
+        <?php if ($is_admin) { ?>
+        <th>-</th>
+        <?php } ?>
     </tr>
     
     <?php
@@ -29,7 +32,10 @@
         echo "<td>{$match['match_white_user_id']}</td>";
         echo "<td>{$match['match_black_user_id']}</td>";
         echo "<td>{$match_status_enum[$match['match_status']]}</td>";
-        
+        echo $is_admin 
+            ? "<td><a href='./?action=delete_match&match_id={$match['match_id']}'>delete</a></td>"
+            : '';
+
         echo '</tr>';
         
     }

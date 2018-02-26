@@ -24,6 +24,43 @@ switch ($action) {
 		include('list_matches.php');
 		break;
     
+    case 'delete_match':
+        
+        if (!$is_admin) {
+            die('you must be an admin to delete matches');
+        }
+        
+        $match = get_match_by_id(input(INPUT_GET, 'match_id'));
+        
+        if (!$match->data) {
+            die('match not found');
+        }
+        
+        $match_users = get_match_users($match['match_id']);
+        $spaces = get_spaces_by_match($match['match_id']);
+        
+        //print_r($match);
+        //print_r($match_users);
+        //print_r($spaces->data);
+        
+        // *** may want to add a confirm screen at some point
+        
+        // delete spaces and pieces
+        foreach ($spaces->data as $space) {
+            
+            $piece = get_piece_by_space($space['space_id']);
+            $piece->delete();
+            $space->delete();
+        }
+        
+        foreach ($match_users->data as $match_user) {
+            $match_user->delete();
+        }
+        
+        $match->delete();
+        
+        break;
+    
     case 'init_match_test':
         init_match(input(INPUT_GET, 'match_id'));
         break;
