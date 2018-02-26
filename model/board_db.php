@@ -34,6 +34,33 @@ function get_board_by_id($id) {
 	return $board;
 }
 
+function get_board_init_space_array($board_id) {
+    
+    $board_init_spaces = get_board_init_spaces($board_id);
+    $board_coords = [];
+
+    //print_r($board);
+    //print_r($board_init_spaces);
+
+    foreach ($board_init_spaces as $space) {
+
+        $this_coord = [
+            'row' => $space['board_init_coord_x'],
+            'col' => $space['board_init_coord_y'],
+            'piece_class_id' => $space['board_init_class_id']
+        ];
+
+        if ($space['board_init_class_id'] > 0) {
+            $this_coord['piece_color'] = $space['board_init_piece_color'];
+        }
+
+        array_push($board_coords, $this_coord);
+    }
+    
+    return $board_coords;
+    
+}
+
 function add_board($board_name, $row_count, $col_count, $home_col) {
 	return sql::insert('boards', [
         'board_name' => $board_name,

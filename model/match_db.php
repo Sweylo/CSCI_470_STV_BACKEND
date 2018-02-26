@@ -184,13 +184,15 @@ function init_match($match_id) {
     
     // get and decode the specified board's data
     $board = get_board_by_id($match['board_id']);
-    $board_data = json_decode($board['board_data'], true);
+    //$board_data = json_decode($board['board_data'], true);
+    
+    $board_coords = get_board_init_space_array($board['board_id']);
     
     //print_r($board_data);
     
     // loop through every coordinate and add a row to the database for each one and for any pieces
     //  that start out on that space
-    foreach ($board_data['coords'] as $coord) {
+    foreach ($board_coords as $coord) {
         
         try {
             $space = add_space($match_id, $coord['col'], $coord['row']);

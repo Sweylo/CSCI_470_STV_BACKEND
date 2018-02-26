@@ -13,26 +13,7 @@ switch ($action) {
             send_to_client(400);
         }
         
-        $board_init_spaces = get_board_init_spaces($board['board_id']);
-        $board_coords = [];
-        
-        //print_r($board);
-        //print_r($board_init_spaces);
-        
-        foreach ($board_init_spaces as $space) {
-            
-            $this_coord = [
-                'row' => $space['board_init_coord_x'],
-                'col' => $space['board_init_coord_y'],
-                'class_id' => $space['board_init_class_id']
-            ];
-            
-            if ($space['board_init_class_id'] > 0) {
-                $this_coord['piece_color'] = $space['board_init_piece_color'];
-            }
-            
-            array_push($board_coords, $this_coord);
-        }
+        $board_coords = get_board_init_space_array($board['board_id']);
         
         send_to_client(200, ['info' => $board->data, 'spaces' => $board_coords]);
         
