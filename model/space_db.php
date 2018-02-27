@@ -1,6 +1,6 @@
 <?php
 
-require_once('../model/sql.php');
+require_once($dir_depth . 'model/sql.php');
 
 // space type constants
 const SPACE_TYPE_NORMAL = 1;

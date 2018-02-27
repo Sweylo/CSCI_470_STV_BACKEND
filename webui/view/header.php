@@ -1,4 +1,4 @@
-<?php require_once('../model/user_db.php'); ?>
+<?php require_once($dir_depth . 'model/user_db.php'); ?>
 
 <!DOCTYPE html>
 

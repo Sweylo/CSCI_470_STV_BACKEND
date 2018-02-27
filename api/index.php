@@ -8,17 +8,19 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE);
 ini_set('display_errors', 1);
 date_default_timezone_set('UTC');
 
-require_once('../model/sql.php');
-require_once('../model/input.php');
+$dir_depth = '../';
+
+require_once($dir_depth . 'model/sql.php');
+require_once($dir_depth . 'model/input.php');
 
 /**
  * final function to be called in API response to send the data back to the client
  * 
  * @param int the HTTP status code to send in the header of the response
  * @param array the data that will be converted to JSON in the body of the response
- * @param string message to be displayed after the data, usually for errors
+ * @param string to be displayed after the data, usually for errors
  */
-function send_to_client($code = 200, $data = [], $message = null) {
+function send_to_client($code = 200, $data = [], $debug_message = null) {
     
     // set http output to json
     header('Content-Type: text/json');
@@ -30,7 +32,7 @@ function send_to_client($code = 200, $data = [], $message = null) {
     echo $data ? json_encode($data) : null;
     
     // stop execution
-    die($message);
+    die($debug_message);
     
 }
 

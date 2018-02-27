@@ -1,7 +1,7 @@
 <?php
 
-require_once('../model/user_db.php');
-require_once('../model/match_db.php');
+require_once($dir_depth . 'model/user_db.php');
+require_once($dir_depth . 'model/match_db.php');
 
 //$is_token_valid = $me['user_token'] == $input['user_token'];
 $is_token_valid = true; // for testing

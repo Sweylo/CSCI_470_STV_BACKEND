@@ -1,6 +1,6 @@
 <?php
 
-require_once('../model/user_db.php');
+require_once($dir_depth . 'model/user_db.php');
 
 switch ($action) {
     
@@ -67,11 +67,16 @@ switch ($action) {
         break;
     
     case 'check_login':
-        send_to_client(200, [
-            'logged_in' => !empty($_SESSION),
-            'user_id' => isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null,
-            'user_name' => isset($_SESSION['user_name']) ? $_SESSION['user_name'] : null
-        ]);
+        
+        $output['logged_in'] = (bool) $me;
+        
+        if ($output['logged_in']) {
+            $output['user_id'] = $me['user_id'];
+            $output['user_name'] = $me['user_name'];
+        }
+        
+        send_to_client(200, $output);
+        
         break;
     
     case 'add_friend': 

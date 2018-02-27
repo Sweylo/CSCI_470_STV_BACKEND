@@ -1,9 +1,9 @@
 <?php
 
-require_once('../model/user_db.php');
-require_once('../model/match_db.php');
-require_once('../model/space_db.php');
-require_once('../model/piece_db.php');
+require_once($dir_depth . 'model/user_db.php');
+require_once($dir_depth . 'model/match_db.php');
+require_once($dir_depth . 'model/space_db.php');
+require_once($dir_depth . 'model/piece_db.php');
 
 /**
  * function to get and validate the match the user is currently in

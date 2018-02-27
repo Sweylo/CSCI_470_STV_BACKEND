@@ -1,6 +1,6 @@
 <?php
 
-require_once('../model/sql.php');
+require_once($dir_depth . 'model/sql.php');
 
 /**
  * gets all the pieces in the database

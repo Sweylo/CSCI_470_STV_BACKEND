@@ -1,6 +1,6 @@
 <?php
 
-require_once('../model/sql.php');
+require_once($dir_depth . 'model/sql.php');
 
 // login constants
 const USER_NOT_FOUND = 0;

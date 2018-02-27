@@ -1,9 +1,9 @@
 <?php
 
-require_once('../model/sql.php');
-require_once('../model/board_db.php');
-require_once('../model/space_db.php');
-require_once('../model/piece_db.php');
+require_once($dir_depth . 'model/sql.php');
+require_once($dir_depth . 'model/board_db.php');
+require_once($dir_depth . 'model/space_db.php');
+require_once($dir_depth . 'model/piece_db.php');
 
 // status constants
 const MATCH_WAITING = 1;

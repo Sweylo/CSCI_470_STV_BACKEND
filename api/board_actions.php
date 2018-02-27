@@ -1,6 +1,6 @@
 <?php
 
-require_once('../model/board_db.php');
+require_once($dir_depth . 'model/board_db.php');
 
 switch ($action) {
     

@@ -1,1 +1,6 @@
-<?php header('Location: main/'); ?>
+<?php 
+
+// redirect to the webui main page
+header('Location: webui/main/'); 
+
+?>
