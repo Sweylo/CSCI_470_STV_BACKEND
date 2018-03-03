@@ -14,9 +14,7 @@ require_once($dir_depth . 'model/sql.php');
 require_once($dir_depth . 'model/input.php');
 require_once($dir_depth . 'model/user_db.php');
 
-$action = input(INPUT_GET, 'action', true) === null 
-	? input(INPUT_POST, 'action', true) 
-	: input(INPUT_GET, 'action', true);
+$action = input(INPUT_GET, 'action', true);
 
 switch ($action) {
 

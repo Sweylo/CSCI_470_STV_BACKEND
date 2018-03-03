@@ -15,7 +15,7 @@ class sql extends ArrayObject {
 
 	// fields
 	public $table;
-	//public $data;
+	public $data;
 	public static $error_message;
 	protected $primary_key_column;
 	protected $primary_key_value;
@@ -24,8 +24,7 @@ class sql extends ArrayObject {
 	// constants
 	const SELECT_SINGLE = 0;
 	const SELECT_MULTIPLE = 1;
-    const ALPHA = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o,', 'p',
-		'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'aa', 'ab', 'ac', 'ad', 'ae'];
+    const ALPHA = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'];
 	
 	/**
 	 * Creates new sql helper object
@@ -33,10 +32,10 @@ class sql extends ArrayObject {
 	 * @param string $table name of the table in the database
 	 * @param array $data the row of the table
 	 */
-	public function __construct($table, $data = []) {
+	public function __construct($table, $data = array()) {
 		
         // call constructor for ArrayObject
-		parent::__construct($data);
+		parent::__construct();
 		
 		// check to make sure the database has been connected to
 		if (!sql::$db) {
@@ -44,17 +43,16 @@ class sql extends ArrayObject {
 		}
 		
 		$this->table = $table;
-        //$this->data = $data;
+        $this->data = $data;
         $this->primary_key_column = sql::get_primary_key_column_name($table);
-		$this->primary_key_value = $data[$this->primary_key_column];
 		
 		// allow only 1d arrays to be stored in the object
-		/*if (!is_null($data) && !is_array($data[0])) {
+		if (!is_null($data) && !is_array($data[0])) {
 			//$this->primary_key_column = key($data);
 			$this->primary_key_value = $data[$this->primary_key_column];
 		} else if (!is_null($data) && is_array($data[0])) {
 			throw new Exception('Cannot handle 2d arrays.');
-		}*/
+		}
 		
 	}
 	
@@ -65,7 +63,7 @@ class sql extends ArrayObject {
 	 * @return mixed the value contained at the given index
 	 */
 	public function &offsetGet($index) {
-		return $this[$index];
+		return $this->data[$index];
     }
 	
 	/**
@@ -76,11 +74,11 @@ class sql extends ArrayObject {
 	 * @throws Exception if index is not found
 	 */
 	public function &offsetSet($index, $value) {
-        $this[$index] = $value;
+        $this->data[$index] = $value;
     }
 	
 	public function &append($value) {
-		array_push($this, $value);
+		
     }
 	
 	/**
@@ -92,6 +90,8 @@ class sql extends ArrayObject {
 	 * @throws Exception
 	 */
     public static function connect($config) {
+		
+		global $is_db_setup_page;
 		
 		if ($config) {
 			
@@ -106,6 +106,12 @@ class sql extends ArrayObject {
 				);
 				
 			} catch (mysqli_sql_exception $e) {
+				
+				/*if (isset($is_db_setup_page) && $is_db_setup_page) {
+					sql::$error_message = $e->getMessage();
+				} else {
+					header("Location: ../setup/?action=db_setup");
+				}*/
 				
 				sql::$error_message = $e->getMessage();
 				
@@ -188,20 +194,18 @@ class sql extends ArrayObject {
 		$stmt->execute();
 		$result = $stmt->get_result();
         
-		/*if ($type == sql::SELECT_SINGLE || (sql::$db->num_rows == 1 && $type == null)) {
+		if ($type == sql::SELECT_SINGLE || (sql::$db->num_rows == 1 && $type == null)) {
 			$data = $result->fetch_array(MYSQLI_ASSOC);
-		} else if ($type == sql::SELECT_MULTIPLE || sql::$db->num_rows > 1) {*/
+		} else if ($type == sql::SELECT_MULTIPLE || sql::$db->num_rows > 1) {
 			
-			$data = [];
+			$data = array();
 
 			// push each row of the result as a new sql object to the local array
 			while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 				array_push($data, new sql($this->table, $row));
 			}
 			
-			array_merge($this, $data);
-			
-		//} 
+		} 
 		
 		//var_dump($data);
 		//echo '<br /><br />';
@@ -210,6 +214,7 @@ class sql extends ArrayObject {
 		$stmt->close();
 		
 		// assign only the first row of data to the global variable
+		$this->data = $data;
 		//$this->data = $data;
 		
 		// store the primary key column name and its value

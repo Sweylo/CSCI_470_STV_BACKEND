@@ -26,6 +26,7 @@ function get_users($limit = null) {
 }
 
 function get_user_by_name($username) {
+	echo $username;
 	$user = new sql('users');
 	$user->select(array(
 		'column' => 'user_name', 
@@ -208,6 +209,12 @@ if (sql::is_connected() && isset($_SESSION['user_name'])) {
     $me = get_user_by_name($_SESSION['user_name']);
     $is_mod = $me['user_account_type_id'] == USER_TYPE_MOD;
     $is_admin = $me['user_account_type_id'] == USER_TYPE_ADMIN;
+} else {
+	//header('Location: ' . $dir_depth . 'webui/login/');
 }
+
+print_r((new sql('users'))->select());
+
+die();
 
 ?>

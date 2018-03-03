@@ -15,9 +15,7 @@ require_once($dir_depth . 'model/input.php');
 require_once($dir_depth . 'model/user_db.php');
 
 $referer = input(INPUT_SERVER, 'HTTP_REFERER');
-$action = input(INPUT_GET, 'action', true) === null 
-	? input(INPUT_POST, 'action', true) 
-	: input(INPUT_GET, 'action', true);
+$action = input(INPUT_GET, 'action', true);
 
 switch ($action) {
 
@@ -30,7 +28,7 @@ switch ($action) {
         include('list_users.php');
         break;
     
-    case 'login': 
+    case 'validate_user': 
         
         try {
             $username = input(INPUT_POST, 'username');

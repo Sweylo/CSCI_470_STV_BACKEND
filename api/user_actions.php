@@ -99,7 +99,7 @@ switch ($action) {
         
         // check to see if the users are friends already
         $friendship = check_friendship($me['user_id'], $friend_user_id);
-        if (is_array($friendship->data)) {
+        if (!empty($friendship)) {
             send_to_client(409);
         }
         
