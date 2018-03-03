@@ -30,7 +30,7 @@ function send_to_client($code = 200, $data = [], $debug_message = null) {
     
     // output the encoded data
     echo $data ? json_encode($data) : null;
-    
+	
     // stop execution
     die($debug_message);
     

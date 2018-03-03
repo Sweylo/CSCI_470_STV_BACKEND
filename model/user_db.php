@@ -213,8 +213,4 @@ if (sql::is_connected() && isset($_SESSION['user_name'])) {
 	//header('Location: ' . $dir_depth . 'webui/login/');
 }
 
-print_r((new sql('users'))->select());
-
-die();
-
 ?>
