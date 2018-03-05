@@ -1,7 +1,7 @@
 <?php require('../view/default/header.php'); ?>
 
-<script type="text/javascript" src="../../js/jquery-3.2.1.min.js"></script>
-<script type="text/javascript" src="../../js/jquery.boardDesigner.js"></script>
+<script type="text/javascript" src="../view/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../view/js/jquery.boardDesigner.js"></script>
 <script type="text/javascript">
 	var board_data = <?php echo isset($board_data) ? $board_data : 'null' ?>;
 </script>
