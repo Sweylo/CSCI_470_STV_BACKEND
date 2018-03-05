@@ -26,7 +26,6 @@ function get_users($limit = null) {
 }
 
 function get_user_by_name($username) {
-	echo $username;
 	$user = new sql('users');
 	$user->select(array(
 		'column' => 'user_name', 
@@ -204,13 +203,17 @@ ini_set('session.gc_maxlifetime', 3600);
 session_set_cookie_params(3600);
 session_start();
 
-// get info of logged in user if connected to the database and the user is logged in
-if (sql::is_connected() && isset($_SESSION['user_name'])) {
-    $me = get_user_by_name($_SESSION['user_name']);
-    $is_mod = $me['user_account_type_id'] == USER_TYPE_MOD;
-    $is_admin = $me['user_account_type_id'] == USER_TYPE_ADMIN;
-} else {
-	//header('Location: ' . $dir_depth . 'webui/login/');
+if (!$is_login_page) {
+
+	// get info of logged in user if connected to the database and the user is logged in
+	if (sql::is_connected() && isset($_SESSION['user_name'])) {
+		$me = get_user_by_name($_SESSION['user_name']);
+		$is_mod = $me['user_account_type_id'] == USER_TYPE_MOD;
+		$is_admin = $me['user_account_type_id'] == USER_TYPE_ADMIN;
+	} else {
+		header('Location: ' . $dir_depth . 'webui/login/');
+	}
+
 }
 
 ?>

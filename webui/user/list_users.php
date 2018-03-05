@@ -1,6 +1,4 @@
-<?php require('../view/header.php'); ?>
-
-<p><a href='../'>&LT;&LT; back to main</a></p>
+<?php require('../view/default/header.php'); ?>
 
 <h2>List Users</h2>
 

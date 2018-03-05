@@ -3,13 +3,9 @@
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 /**
- * SQL helper class to make moving data between the pages and db easier
- * Extends the ArrayObject class allowing the object to be treated like an array
- * 
- * Objects of this class represent rows/tuples of a given table in a database
- * 
- * Assumes the database has been setup with the following constraints:
- *	- The primary key of every table is the first column/field for said table.
+ * SQL helper class to make moving data between the pages and db easier. Extends the ArrayObject 
+ * class allowing the object to be treated like an array. Objects of this class represent 
+ * rows/tuples of a given table in a database.
  */
 class sql extends ArrayObject {
 
@@ -38,8 +34,8 @@ class sql extends ArrayObject {
 		parent::__construct();
 		
 		// check to make sure the database has been connected to
-		if (!sql::$db) {
-			throw new Exception('You forgot to run the connect() function.');
+		if (!sql::is_connected()) {
+			throw new Exception('database not connected');
 		}
 		
 		$this->table = $table;

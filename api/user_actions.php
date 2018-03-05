@@ -51,7 +51,8 @@ switch ($action) {
                 $user = get_user_by_name($username);
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['user_name'] = $user['user_name'];
-                send_to_client(202, ['user_token' => $user['user_token']]);
+                //send_to_client(202, ['user_token' => $user['user_token']]);
+				send_to_client(204);
                 break;
                 
         }

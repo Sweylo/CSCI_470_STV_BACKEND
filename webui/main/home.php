@@ -1,4 +1,4 @@
-<?php require('../view/header.php'); ?>
+<?php require('../view/default/header.php'); ?>
 
 <h2>Chess &amp; Conquer Admin WebUI</h2>
 
