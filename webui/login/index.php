@@ -32,7 +32,7 @@ switch ($action) {
 		session_unset();
 		session_destroy();
         
-        header('Location: ./?action=login');
+        header('Location: ./');
 		break;
 	
 	case 'add_user':
@@ -42,9 +42,6 @@ switch ($action) {
 		$password = input(INPUT_POST, 'password');
 		$confirm = input(INPUT_POST, 'confirm');
 		$secret = input(INPUT_POST, 'secret');
-		
-		$webui_config = json_decode(file_get_contents($dir_depth . 'config/webui_config.json'), 
-			true);
 		
 		// check registration secret
 		if ($secret != $webui_config['registration_secret']) {

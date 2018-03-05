@@ -3,12 +3,12 @@
 <html>
 
 	<head>
-		<title>Chess &amp; Conquer Admin WebUI - Login</title>
+		<title><?php echo $webui_config['site_title']; ?> - Login</title>
 	</head>
 
 	<body>
 		
-		<h1>Chess &amp; Conquer Admin WebUI - Login</h1>
+		<h1><?php echo $webui_config['site_title']; ?> - Login</h1>
 		
 		<form method="post" action="./?action=validate_user">
 			

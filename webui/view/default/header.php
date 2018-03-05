@@ -5,7 +5,7 @@
 <html>
     
 <head>
-    <title>Chess &amp; Conquer Admin WebUI</title>
+    <title><?php echo $webui_config['site_title']; ?></title>
     <link rel="stylesheet" type="text/css" href="../view/default/style.css" />
 </head>
 
@@ -13,7 +13,7 @@
 	
 	<header>
 		
-		<h1>Chess &amp; Conquer Admin WebUI</h1>
+		<h1><?php echo $webui_config['site_title']; ?></h1>
 	
 		<?php 
 

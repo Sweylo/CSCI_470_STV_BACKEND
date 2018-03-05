@@ -410,15 +410,17 @@ $config = file_exists($dir_depth . 'config/db_config.json')
 	? json_decode(file_get_contents($dir_depth . 'config/db_config.json'), true)
 	: null;
 
+// read site-specific info from the config file
+$webui_config = file_exists($dir_depth . 'config/webui_config.json')
+	? json_decode(file_get_contents($dir_depth . 'config/webui_config.json'), true)
+	: null;
+
 // try to connect to the database
 try {
 	sql::connect($config);
 } catch (Exception $e) {
-	//sql::$error_message = 'Unable to connect to the database';
-	//include('../setup/db_setup_form.php');
 	echo $e;
 	die('Unable to connect to the database: ' . sql::$error_message);
-    //echo 'Unable to connect to the database.';
 }
 
 ?>
