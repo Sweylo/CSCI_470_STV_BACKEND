@@ -4,7 +4,7 @@ require_once($dir_depth . 'model/user_db.php');
 require_once('../view/html.php');
 
 $actual_link = "$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-echo $actual_link;
+//echo $actual_link;
 
 ?>
 
