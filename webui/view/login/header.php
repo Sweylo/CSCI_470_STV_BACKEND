@@ -1,8 +1,12 @@
-<?php
+<!DOCTYPE html>
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+<html>
 
+	<head>
+		<title><?php echo $webui_config['site_title']; ?></title>
+		<link rel="stylesheet" type="text/css" href="../view/login/style.css" />
+	</head>
+
+	<body>
+		
+		<h1><?php echo $webui_config['site_title']; ?></h1>

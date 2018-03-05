@@ -144,7 +144,7 @@ class sql extends ArrayObject {
         
         // if there is an array of tables, then generate sql to join them
         if (is_array($this->table)) {
-            $table_sql = $this->join_string($this->table, $args['join_args']);
+            $table_sql = $this->join($this->table, $args['join_args'], true);
         } else {
             $table_sql = $this->table;
         }
@@ -362,10 +362,10 @@ class sql extends ArrayObject {
      * @param array $tables the table names: i.e. (where current table is 'users'):
      *  ['users_matches', 'matches']
      * @param array $args corresponding column names for the ON clauses
-     * @return \sql a new sql object containg the sql code for the join as the table (just needs to
+     * @return sql a new sql object containg the sql code for the join as the table (just needs to
      *  run the select function to get the rows)
      */
-    public function join($tables = [], $args = []) {
+    public function join($tables = [], $args = [], $return_str = true) {
         
         if (count($tables) != count($args)) {
             throw new Exception('both arrays must contain the same corresponding number of rows');
@@ -380,26 +380,7 @@ class sql extends ArrayObject {
                 . "{$alpha[$i+1]}.{$args[$i][1]}";
         }
         
-        return new sql($join_sql);
-        
-    }
-    
-    public function join_string($tables = [], $args = []) {
-        
-        if (count($tables) != count($args)) {
-            throw new Exception('both arrays must contain the same corresponding number of rows');
-        }
-        
-        $join_sql = "$this->table a ";
-        $alpha = sql::ALPHA;
-        
-        for ($i = 0; $i < count($tables); $i++) {
-            $alpha[$i] = strtolower($alpha[$i]);
-            $join_sql .= "JOIN {$tables[$i]} {$alpha[$i + 1]} ON {$alpha[$i]}.{$args[$i][0]} = "
-                . "{$alpha[$i+1]}.{$args[$i][1]}";
-        }
-        
-        return $join_sql;
+        return $return_str ? $join_sql : new sql($join_sql);
         
     }
 	

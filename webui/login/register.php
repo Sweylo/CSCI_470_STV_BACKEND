@@ -1,4 +1,6 @@
-<h2>Registration</h2>
+<?php include('../view/login/header.php'); ?>
+
+<h2>Register</h2>
 
 <p class="message <?php echo $is_error_message ? 'error' : 'info';  ?>"><?php echo $message; ?></p>
 
@@ -36,3 +38,5 @@
 	<input class="button start" type="submit" value="Register">
     
 </form>
+
+<?php include('../view/login/footer.php'); ?>

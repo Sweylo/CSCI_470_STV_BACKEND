@@ -1,30 +1,20 @@
-<!DOCTYPE html>
+<?php include('../view/login/header.php'); ?>
 
-<html>
-
-	<head>
-		<title><?php echo $webui_config['site_title']; ?> - Login</title>
-	</head>
-
-	<body>
+<h2>Login</h2>
 		
-		<h1><?php echo $webui_config['site_title']; ?> - Login</h1>
-		
-		<form method="post" action="./?action=validate_user">
-			
-			<div>Username&nbsp;<input type="text" name="username"></div>
-			<div>Password&nbsp;<input type="password" name="password"></div>
-			
-			<br />
-			
-			<div>
-				<input type="submit" value="Login"> 
-				<span>&nbsp;or&nbsp;</span> 
-				<a href="./?action=register">Register</a>
-			</div>
-			
-		</form>
+<form method="post" action="./?action=validate_user">
 
-	</body>
+	<div>Username&nbsp;<input type="text" name="username"></div>
+	<div>Password&nbsp;<input type="password" name="password"></div>
 
-</html>
+	<br />
+
+	<div>
+		<input type="submit" value="Login"> 
+		<span>&nbsp;or&nbsp;</span> 
+		<a href="./?action=register">Register</a>
+	</div>
+
+</form>
+
+<?php include('../view/login/footer.php'); ?>

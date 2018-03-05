@@ -2,18 +2,17 @@
 
 Chess & Conquer Backend Server / API Host
 
-### Requirements to run this project on a server: ###
+### Software Prerequisites ###
+* PHP 7.x
+* MySQL 5.7.x
 
-* PHP 7.0.25 or higher
-* MySQL 5.7.21 or higher
-* MySQLi 5+ (Tested with 5.0.12)
+### Suggestions ###
 * SSL/TLS enabled connection
 
 ### Installation ###
-
-* Clone the repo into the appropriate directory for your web server
-* Create a folder named 'config' in the application root directory
-* In the 'config' directory create a file named 'db_config.json' and enter something similar to the following:
+* Clone the repo into the appropriate directory for your web server.
+* Create a directory named **config** under the application root directory.
+* Create and enter the following (with your info) into the file **config/db_config.json**:
 
     ```json
     {
@@ -25,8 +24,18 @@ Chess & Conquer Backend Server / API Host
     }
     ```
 
-* Execute the script 'docs/db_create_fresh.sql' on your database server
+* Create and enter the following (with your info) into the file **config/webui_config.json**:
 
-### Documentation
+    ```json
+    {
+        "site_title": "Chess & Conquer",
+        "registration_secret": "drink_your_ovaltine"
+    }
+    ```
+
+* Execute the script **docs/db_create.sql** on your database server to create the database and tables.
+* Currently, you must manually manipulate the database to make a user an admin. So, register your admin user and in the database, set the *user_perm_level_id* to **4**.
+
+### Documentation ###
 
 * Check the [wiki](https://github.com/Sweylo/CSCI_470_STV_BACKEND/wiki).
