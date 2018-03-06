@@ -11,7 +11,7 @@ require_once($dir_depth . 'model/piece_db.php');
  * @param int $match_status the match status to check the match is in
  * @return object the sql object of the match the user is currently in
  */
-function validate_match_status($match_status) {
+function get_match_and_validate_match_status($match_status) {
     
     global $me;
     
@@ -37,7 +37,7 @@ switch ($action) {
     
     case 'check_match_status':
         
-        $match = validate_match_status(MATCH_PLAYING);
+        $match = get_match_and_validate_match_status(MATCH_PLAYING);
         $match_user = get_match_user($me['user_id']);
         
         if ($match_user['match_user_color'] == 'white') {
@@ -58,7 +58,7 @@ switch ($action) {
         
     case 'ready_to_play':
         
-        $match = validate_match_status(MATCH_PREGAME);
+        $match = get_match_and_validate_match_status(MATCH_PREGAME);
         $match_users = get_match_users($match['match_id']);
         
         //print_r($match_users);
@@ -87,7 +87,7 @@ switch ($action) {
     
     case 'move_piece':
         
-        $match = validate_match_status(MATCH_PLAYING);
+        $match = get_match_and_validate_match_status(MATCH_PLAYING);
         $match_user = get_match_by_user($me['user_id']);
         
         // read in coordinates from json
@@ -109,7 +109,7 @@ switch ($action) {
         $old_piece = get_piece_by_space($old_space['space_id']);
         
         if (!$old_piece) {
-            send_to_client(400);
+            send_to_client(400, json_encode(['space_error' => SPACE_ERROR_NO_PIECE_TO_MOVE]));
         }
         
         // get the piece from the new space (if there is one)
@@ -124,7 +124,7 @@ switch ($action) {
             
         // there is a piece in this space and it's yours, can't move here
         } else if ($new_piece && $new_piece['piece_user_id'] == $me['user_id']) {
-            send_to_client(400);
+            send_to_client(400, json_encode(['space_error' => SPACE_ERROR_INVALID_MOVE]));
         } else {
             
         }
@@ -139,7 +139,7 @@ switch ($action) {
         
     case 'resign':
         
-        $match = validate_match_status(MATCH_PLAYING);
+        $match = get_match_and_validate_match_status(MATCH_PLAYING);
         $match_user = get_match_user($me['user_id']);
         
         if ($match_user['match_user_color'] == 'white') {

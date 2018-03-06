@@ -10,6 +10,8 @@ const SPACE_TYPE_MOUNTAIN = 4;
 
 // space error constants
 const SPACE_ERROR_OBSTACLE = 1;
+const SPACE_ERROR_NO_PIECE_TO_MOVE = 2;
+const SPACE_ERROR_INVALID_MOVE = 3;
 
 /**
  * gets all the spaces in the database
