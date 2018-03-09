@@ -2,6 +2,14 @@
 
 require_once($dir_depth . 'model/sql.php');
 
+// piece class constants
+const PIECE_CLASS_KING = 1;
+const PIECE_CLASS_QUEEN = 2;
+const PIECE_CLASS_BISHOP = 3;
+const PIECE_CLASS_ROOK = 4;
+const PIECE_CLASS_KNIGHT = 5;
+const PIECE_CLASS_PAWN = 6;
+
 /**
  * gets all the pieces in the database
  * 

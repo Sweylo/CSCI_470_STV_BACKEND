@@ -45,21 +45,17 @@ function get_space_by_id($id) {
 
 function get_space_by_coords($match, $coord_x, $coord_y) {
     
-    $db = sql::db;
-    
     $sql = 'SELECT * FROM spaces 
             WHERE space_match_id = ? 
                 AND space_coord_x = ? 
                 AND space_coord_y = ?';
 	
-	$stmt = $db->prepare($sql);
-	$stmt->bind_param('i', $match['match_id']);
-    $stmt->bind_param('i', $coord_x);
-    $stmt->bind_param('i', $coord_y);
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('iii', $match['match_id'], $coord_x, $coord_y);
 	$stmt->execute();
-    $space = $stmt->fetch();
-	$stmt->closeCursor();
-    
+	$result = $stmt->get_result();
+    $space = $result->fetch_array(MYSQLI_ASSOC);
+	
     return $space;
     
 }

@@ -45,3 +45,7 @@ body {
 #board td.normal select {
     visibility: visible;
 }
+
+#board td .piece {
+	font-size: 4em;
+}

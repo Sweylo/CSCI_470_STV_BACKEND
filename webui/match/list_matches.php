@@ -11,9 +11,8 @@
         <th>white_user_id</th>
         <th>black_user_id</th>
         <th>status</th>
-        <?php if ($is_admin) { ?>
         <th>-</th>
-        <?php } ?>
+		<th>-</th>
     </tr>
     
     <?php
@@ -22,19 +21,26 @@
     
     foreach ($matches as $match) {
         
-        echo '<tr>';
-        
-        echo "<td>{$match['match_id']}</td>";
-        echo "<td>{$match['match_name']}</td>";
-        echo "<td>{$match['board_id']}</td>";
-        echo "<td>{$match['match_white_user_id']}</td>";
-        echo "<td>{$match['match_black_user_id']}</td>";
-        echo "<td>{$match_status_enum[$match['match_status']]}</td>";
-        echo $is_admin 
-            ? "<td><a href='./?action=delete_match&match_id={$match['match_id']}'>delete</a></td>"
-            : '';
-
-        echo '</tr>';
+		echo html('tr', [], [
+			
+			html('td', [], $match['match_id']),
+			html('td', [], $match['match_name']),
+			html('td', [], $match['board_id']),
+			html('td', [], $match['match_white_user_id']),
+			html('td', [], $match['match_black_user_id']),
+			html('td', [], $match_status_enum[$match['match_status']]),
+			
+			html('td', [], [
+				html('a', ['href' => "./?action=watch_match&match_id={$match['match_id']}"], 
+					'watch')
+			]),
+						
+			html('td', [], [
+				html('a', ['href' => "./?action=delete_match&match_id={$match['match_id']}"], 
+				'delete')
+			])
+						
+		]);
         
     }
     
