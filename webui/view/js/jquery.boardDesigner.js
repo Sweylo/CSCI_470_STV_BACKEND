@@ -70,31 +70,31 @@ $(document).ready(function() {
         var boardHtml = '';
         
         // draw all potential spaces first
-        for (var i = $('#rowCount').val() - 1; i >= 0; i--) {
+        for (var y = $('#rowCount').val() - 1; y >= 0; y--) {
             
             boardHtml += '<tr>';
             
-            for (var j = 0; j < $('#colCount').val(); j++) {
+            for (var x = 0; x < $('#colCount').val(); x++) {
                 
                 //console.log($('#rowCount').val() - i + ', ' + (parseInt(j) + 1));
                 
-                var spaceIsBlack = i % 2 == 0 && j % 2 == 0 || i % 2 != 0 && j % 2 != 0;
+                var spaceIsBlack = y % 2 == 0 && x % 2 == 0 || y % 2 != 0 && x % 2 != 0;
                 
                 boardHtml 
                     += '<td class="' + (spaceIsBlack ? 'black' : 'white') + '">'
-                        + '<span>' + (alpha[i] + (j + 1)) + '</span>'
+                        + '<span>' + (alpha[x] + (y + 1)) + '</span>'
                         + '<input type="checkbox" class="space-toggle" name="' 
-                            + (i + 1) + '-' + (j + 1) + '-is-active">'
-                        + '<select name="' + (i + 1) + '-' + (j + 1) + '-class-id">'
+                            + (x + 1) + '-' + (y + 1) + '-is-active">'
+                        + '<select name="' + (x + 1) + '-' + (y + 1) + '-class-id">'
                             + '<option value="0">no piece</option>'
                             + '<option value="6">pawn</option>'
                             + '<option value="5">knight</option>'
-                            + '<option value="4">rook</option>'
-                            + '<option value="3">bishop</option>'
+                            + '<option value="3">rook</option>'
+                            + '<option value="4">bishop</option>'
                             + '<option value="2">queen</option>'
                             + '<option value="1">king</option>'
                         + '</select>'
-                        + '<select name="' + (i + 1) + '-' + (j + 1) + '-piece-color">'
+                        + '<select name="' + (x + 1) + '-' + (y + 1) + '-piece-color">'
                             + '<option value="white">white</option>'
                             + '<option value="black">black</option>'
                         + '</select>'

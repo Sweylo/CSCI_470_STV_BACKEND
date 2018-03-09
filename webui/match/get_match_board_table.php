@@ -11,7 +11,7 @@
 			$is_space_black = $x % 2 == 0 && $y % 2 == 0 || $x % 2 != 0 && $y % 2 != 0;
 			echo '<td class="normal ' . ($is_space_black ? 'black' : 'white') . '">';
 			
-			$space = get_space_by_coords($match, $y, $x);
+			$space = get_space_by_coords($match, $x, $y);
 			$piece = get_piece_by_space($space['space_id']);
 			
 			echo html('div', [], "space_id: {$space['space_id']}");

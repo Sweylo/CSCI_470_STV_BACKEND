@@ -29,7 +29,7 @@ CREATE TABLE `account_types` (
   PRIMARY KEY (`account_type_id`),
   UNIQUE KEY `type_id_UNIQUE` (`account_type_id`),
   UNIQUE KEY `type_name_UNIQUE` (`account_type_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,7 +48,7 @@ CREATE TABLE `board_init_spaces` (
   `board_init_piece_color` varchar(5) DEFAULT NULL,
   PRIMARY KEY (`board_init_id`),
   UNIQUE KEY `board_coord_id_UNIQUE` (`board_init_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=145 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,7 +66,7 @@ CREATE TABLE `boards` (
   `board_home_col` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`board_id`),
   UNIQUE KEY `board_id_UNIQUE` (`board_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,7 +98,7 @@ CREATE TABLE `classes` (
   PRIMARY KEY (`class_id`),
   UNIQUE KEY `class_id_UNIQUE` (`class_id`),
   UNIQUE KEY `class_name_UNIQUE` (`class_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -115,7 +115,7 @@ CREATE TABLE `friends` (
   `friend_accepted` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`friend_id`),
   UNIQUE KEY `friend_id_UNIQUE` (`friend_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -179,7 +179,7 @@ CREATE TABLE `match_users` (
   KEY `match_user_match_id_idx` (`match_user_match_id`),
   CONSTRAINT `match_user_match_id` FOREIGN KEY (`match_user_match_id`) REFERENCES `matches` (`match_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `match_user_white_user_id` FOREIGN KEY (`match_user_user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,7 +199,7 @@ CREATE TABLE `matches` (
   UNIQUE KEY `match_id_UNIQUE` (`match_id`),
   KEY `match_board_id_idx` (`match_board_id`),
   CONSTRAINT `match_board_id` FOREIGN KEY (`match_board_id`) REFERENCES `boards` (`board_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -245,7 +245,7 @@ CREATE TABLE `pieces` (
   CONSTRAINT `piece_move_id` FOREIGN KEY (`piece_move_id`) REFERENCES `moves` (`move_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `piece_space_id` FOREIGN KEY (`piece_space_id`) REFERENCES `spaces` (`space_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `piece_user_id` FOREIGN KEY (`piece_user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=113 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -281,7 +281,7 @@ CREATE TABLE `space_types` (
   PRIMARY KEY (`space_type_id`),
   UNIQUE KEY `space_type_id_UNIQUE` (`space_type_id`),
   UNIQUE KEY `space_type_name_UNIQUE` (`space_type_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -302,7 +302,7 @@ CREATE TABLE `spaces` (
   KEY `match_space_id_idx` (`space_match_id`),
   KEY `match_space_type_id_idx` (`space_type_id`),
   CONSTRAINT `match_space_id` FOREIGN KEY (`space_match_id`) REFERENCES `matches` (`match_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=307 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -390,7 +390,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `user_token_UNIQUE` (`user_token`),
   KEY `user_account_type_id_idx` (`user_account_type_id`),
   CONSTRAINT `user_account_type_id` FOREIGN KEY (`user_account_type_id`) REFERENCES `account_types` (`account_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -424,8 +424,8 @@ START TRANSACTION;
 USE `chess_n_conquer`;
 INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (1, 'king');
 INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (2, 'queen');
-INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (4, 'bishop');
 INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (3, 'rook');
+INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (4, 'bishop');
 INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (5, 'knight');
 INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (6, 'pawn');
 

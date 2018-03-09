@@ -46,19 +46,19 @@ switch ($action) {
 			include('board_designer.php');
 		}
         
-        for ($i = 0; $i <= $row_count; $i++) {
+        for ($y = 0; $y <= $row_count; $y++) {
 			
-            for ($j = 0; $j <= $col_count; $j++) {
+            for ($x = 0; $x <= $col_count; $x++) {
                 
-                $is_space_active = input(INPUT_POST, "$i-$j-is-active");
-                $class_id = input(INPUT_POST, "$i-$j-class-id");
-                $piece_color = input(INPUT_POST, "$i-$j-piece-color");
+                $is_space_active = input(INPUT_POST, "$x-$y-is-active");
+                $class_id = input(INPUT_POST, "$x-$y-class-id");
+                $piece_color = input(INPUT_POST, "$x-$y-piece-color");
                 
                 //print_r($class_id);
                 //print_r($piece_color);
                 
                 if ($is_space_active) {
-                    add_board_init_space($board['board_id'], $i, $j, (int) $class_id, 
+                    add_board_init_space($board['board_id'], $x, $y, (int) $class_id, 
                         $class_id ? $piece_color : null);
                 }
                 
