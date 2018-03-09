@@ -94,7 +94,7 @@ function add_match($user_id, $board_id, $color) {
     
     // insert record to match table
 	$match = sql::insert('matches', array(
-		'board_id' => $board_id, 'match_status' => MATCH_WAITING
+		'match_board_id' => $board_id, 'match_status' => MATCH_WAITING
 	), true);
     
     // insert record to match_users to link the user and match
@@ -185,7 +185,7 @@ function init_match($match_id) {
     //print_r($match_users);
     
     // get and decode the specified board's data
-    $board = get_board_by_id($match['board_id']);
+    $board = get_board_by_id($match['match_board_id']);
     //$board_data = json_decode($board['board_data'], true);
     
     $board_coords = get_board_init_space_array($board['board_id']);
