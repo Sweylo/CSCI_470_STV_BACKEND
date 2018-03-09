@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `chess_n_conquer` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `chess_n_conquer`;
 -- MySQL dump 10.13  Distrib 5.7.21, for Linux (x86_64)
 --
 -- Host: 127.0.0.1    Database: chess_n_conquer
@@ -81,6 +79,7 @@ DROP TABLE IF EXISTS `cards`;
 CREATE TABLE `cards` (
   `card_id` int(11) NOT NULL AUTO_INCREMENT,
   `card_rarity` int(11) NOT NULL,
+  `card_play_opportunity` int(1) DEFAULT '0' COMMENT '0 represents that a card can only be played before the game begins. 1 represents a that a card can only be played during the game (1 per turn)',
   PRIMARY KEY (`card_id`),
   UNIQUE KEY `card_id_UNIQUE` (`card_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -116,7 +115,7 @@ CREATE TABLE `friends` (
   `friend_accepted` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`friend_id`),
   UNIQUE KEY `friend_id_UNIQUE` (`friend_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -143,6 +142,25 @@ CREATE TABLE `laid_traps` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `match_move_log`
+--
+
+DROP TABLE IF EXISTS `match_move_log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `match_move_log` (
+  `match_move_log_id` int(11) NOT NULL AUTO_INCREMENT,
+  `match_move_match_id` int(11) NOT NULL,
+  `match_move_move_id` int(11) NOT NULL,
+  `match_move_piece_id` int(11) NOT NULL,
+  `match_move_new_space_id` int(11) NOT NULL,
+  `match_move_timestamp` varchar(20) NOT NULL,
+  PRIMARY KEY (`match_move_log_id`),
+  UNIQUE KEY `match_move_log_id_UNIQUE` (`match_move_log_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `match_users`
 --
 
@@ -154,13 +172,14 @@ CREATE TABLE `match_users` (
   `match_user_user_id` int(11) DEFAULT NULL,
   `match_user_match_id` int(11) NOT NULL,
   `match_user_color` varchar(45) DEFAULT NULL,
+  `match_user_is_ready` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`match_user_id`),
   UNIQUE KEY `match_user_id_UNIQUE` (`match_user_id`),
   KEY `match_user_white_user_id_idx` (`match_user_user_id`),
   KEY `match_user_match_id_idx` (`match_user_match_id`),
   CONSTRAINT `match_user_match_id` FOREIGN KEY (`match_user_match_id`) REFERENCES `matches` (`match_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `match_user_white_user_id` FOREIGN KEY (`match_user_user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -173,14 +192,14 @@ DROP TABLE IF EXISTS `matches`;
 CREATE TABLE `matches` (
   `match_id` int(11) NOT NULL AUTO_INCREMENT,
   `match_name` varchar(45) DEFAULT NULL,
-  `board_id` int(11) NOT NULL,
+  `match_board_id` int(11) NOT NULL,
   `match_turn_count` int(11) NOT NULL DEFAULT '1',
   `match_status` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`match_id`),
   UNIQUE KEY `match_id_UNIQUE` (`match_id`),
-  KEY `match_board_id_idx` (`board_id`),
-  CONSTRAINT `match_board_id` FOREIGN KEY (`board_id`) REFERENCES `boards` (`board_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+  KEY `match_board_id_idx` (`match_board_id`),
+  CONSTRAINT `match_board_id` FOREIGN KEY (`match_board_id`) REFERENCES `boards` (`board_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -215,6 +234,7 @@ CREATE TABLE `pieces` (
   `piece_class_id` int(11) NOT NULL,
   `piece_move_id` int(11) DEFAULT NULL,
   `piece_user_id` int(11) NOT NULL,
+  `piece_kill_count` int(11) NOT NULL,
   PRIMARY KEY (`piece_id`),
   UNIQUE KEY `piece_space_id_UNIQUE` (`piece_id`),
   KEY `piece_class_id_idx` (`piece_class_id`),
@@ -225,7 +245,7 @@ CREATE TABLE `pieces` (
   CONSTRAINT `piece_move_id` FOREIGN KEY (`piece_move_id`) REFERENCES `moves` (`move_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `piece_space_id` FOREIGN KEY (`piece_space_id`) REFERENCES `spaces` (`space_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `piece_user_id` FOREIGN KEY (`piece_user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=113 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -282,7 +302,7 @@ CREATE TABLE `spaces` (
   KEY `match_space_id_idx` (`space_match_id`),
   KEY `match_space_type_id_idx` (`space_type_id`),
   CONSTRAINT `match_space_id` FOREIGN KEY (`space_match_id`) REFERENCES `matches` (`match_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=243 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=307 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -370,7 +390,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `user_token_UNIQUE` (`user_token`),
   KEY `user_account_type_id_idx` (`user_account_type_id`),
   CONSTRAINT `user_account_type_id` FOREIGN KEY (`user_account_type_id`) REFERENCES `account_types` (`account_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -382,7 +402,7 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-23  9:59:25
+-- Dump completed on 2018-03-09 15:16:26
 
 -- -----------------------------------------------------
 -- Data for table `chess_n_conquer`.`account_types`
@@ -404,8 +424,8 @@ START TRANSACTION;
 USE `chess_n_conquer`;
 INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (1, 'king');
 INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (2, 'queen');
-INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (3, 'bishop');
-INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (4, 'rook');
+INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (4, 'bishop');
+INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (3, 'rook');
 INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (5, 'knight');
 INSERT INTO `chess_n_conquer`.`classes` (`class_id`, `class_name`) VALUES (6, 'pawn');
 
