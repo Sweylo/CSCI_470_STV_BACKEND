@@ -234,7 +234,7 @@ CREATE TABLE `pieces` (
   `piece_class_id` int(11) NOT NULL,
   `piece_move_id` int(11) DEFAULT NULL,
   `piece_user_id` int(11) NOT NULL,
-  `piece_kill_count` int(11) NOT NULL,
+  `piece_kill_count` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`piece_id`),
   UNIQUE KEY `piece_space_id_UNIQUE` (`piece_id`),
   KEY `piece_class_id_idx` (`piece_class_id`),
