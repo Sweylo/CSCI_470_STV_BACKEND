@@ -31,6 +31,7 @@ switch ($action) {
 		$board = get_board_by_id($match['match_board_id']);
 		$spaces = get_spaces_by_match($match['match_id']);
 		$match_users = get_match_users($match['match_id'])->data;
+		$captured_pieces = get_captured_pieces($match['match_id']);
 		
 		if ($match_users[0]['match_user_color'] == 'white') {
 			$white_match_user = $match_users[0];
@@ -50,6 +51,7 @@ switch ($action) {
 		$match = get_match_by_id(input(INPUT_GET, 'match_id'));
 		$board = get_board_by_id($match['match_board_id']);
 		$match_users = get_match_users($match['match_id'])->data;
+		$captured_pieces = get_captured_pieces($match['match_id']);
 		
 		if ($match_users[0]['match_user_color'] == 'white') {
 			$white_match_user = $match_users[0];

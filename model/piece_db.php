@@ -49,20 +49,27 @@ function get_piece_by_space($space_id) {
     return $piece;
 }
 
-function delete_piece_by_space($space_id) {
-    /*($piece = new sql('pieces');
-    $piece->select([
-        'column' => 'piece_space_id',
-        'value' => $space_id
-    ]);
-    $piece->delete();*/
+function get_captured_pieces($match_id) {
 	
-	$sql = 'DELETE FROM pieces 
-			WHERE piece_space_id = ?';
+	$match_users = get_match_users($match_id);
+	$user_1_id = $match_users[0]['match_user_user_id'];
+	$user_2_id = $match_users[1]['match_user_user_id'];
+	
+	$sql = "SELECT * FROM pieces
+			WHERE piece_space_id = 0
+                AND (piece_user_id = $user_1_id OR piece_user_id = $user_2_id)";
 	
 	$stmt = sql::$db->prepare($sql);
-	$stmt->bind_param('i', $space_id);
+	//$stmt->bind_param('iii', 0, $user_1_id, $user_2_id);
 	$stmt->execute();
+    $result = $stmt->get_result();
+    $pieces = [];
+	
+	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+		array_push($pieces, $row);
+	}
+    
+	return $pieces;
 	
 }
 
@@ -98,6 +105,23 @@ function delete_piece($id) {
     $piece = new sql('pieces');
     $piece->select(array('piece_id', $id));
     $piece->delete();
+	
+}
+
+function delete_piece_by_space($space_id) {
+    /*($piece = new sql('pieces');
+    $piece->select([
+        'column' => 'piece_space_id',
+        'value' => $space_id
+    ]);
+    $piece->delete();*/
+	
+	$sql = 'DELETE FROM pieces 
+			WHERE piece_space_id = ?';
+	
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('i', $space_id);
+	$stmt->execute();
 	
 }
 

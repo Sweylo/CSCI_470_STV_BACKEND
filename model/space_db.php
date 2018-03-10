@@ -12,6 +12,7 @@ const SPACE_TYPE_MOUNTAIN = 4;
 const SPACE_ERROR_OBSTACLE = 1;
 const SPACE_ERROR_NO_PIECE_TO_MOVE = 2;
 const SPACE_ERROR_INVALID_MOVE = 3;
+const SPACE_ERROR_NOT_YOUR_PIECE = 4;
 
 /**
  * gets all the spaces in the database

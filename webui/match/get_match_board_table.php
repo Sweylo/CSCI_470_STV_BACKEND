@@ -1,5 +1,11 @@
 <table id="board">
 	
+	<tr>
+		<th colspan="<?php echo $board['board_col_count']; ?>">
+			<p>turn count: <?php echo $match['match_turn_count'];?></p>
+		</th>
+	</tr>
+	
 	<?php
 	
 	for ($y = $board['board_row_count']; $y >= 1; $y--) {
@@ -16,9 +22,9 @@
 			
 			echo html('div', [], "space_id: {$space['space_id']}");
 			
-			echo html('div', [], "x: $x y: $y");
-			
-			if ($piece->data) {
+			if ($piece['piece_id']) {
+				
+				echo html('div', [], "piece_id: {$piece['piece_id']}");
 				
 				$piece_html_code = 9811 + $piece['piece_class_id'] + 
 					($piece['piece_user_id'] == $white_match_user['match_user_user_id'] ? 0 : 6);
@@ -29,6 +35,8 @@
 					
 			}
 			
+			echo html('div', [], "x: $x y: $y");
+			
 			echo '</td>';
 			
 		}
@@ -38,5 +46,31 @@
 	}
 	
 	?>
+	
+	<tr>
+		<td class="normal" colspan="<?php echo $board['board_col_count']; ?>">
+			<h4>captures</h4>
+			<ul id="captured">
+				
+				<?php
+				
+				foreach ($captured_pieces as $piece) {
+				
+					$piece_html_code = 9811 + $piece['piece_class_id'] + 
+						($piece['piece_user_id'] == $white_match_user['match_user_user_id'] 
+							? 0 : 6);
+					
+					echo html('li', [], [
+						html('div', [], "piece_id: {$piece['piece_id']}"),
+						html('div', ['class' => 'piece'], "&#$piece_html_code;")
+					]);
+				
+				}
+					
+				?>
+				
+			</ul>
+		</td>
+	</tr>
 	
 </table>

@@ -236,15 +236,7 @@ CREATE TABLE `pieces` (
   `piece_user_id` int(11) NOT NULL,
   `piece_kill_count` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`piece_id`),
-  UNIQUE KEY `piece_space_id_UNIQUE` (`piece_id`),
-  KEY `piece_class_id_idx` (`piece_class_id`),
-  KEY `piece_move_id_idx` (`piece_move_id`),
-  KEY `piece_space_id_idx` (`piece_space_id`),
-  KEY `piece_user_id_idx` (`piece_user_id`),
-  CONSTRAINT `piece_class_id` FOREIGN KEY (`piece_class_id`) REFERENCES `classes` (`class_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `piece_move_id` FOREIGN KEY (`piece_move_id`) REFERENCES `moves` (`move_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `piece_space_id` FOREIGN KEY (`piece_space_id`) REFERENCES `spaces` (`space_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `piece_user_id` FOREIGN KEY (`piece_user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  UNIQUE KEY `piece_space_id_UNIQUE` (`piece_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

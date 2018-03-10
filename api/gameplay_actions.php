@@ -89,51 +89,60 @@ switch ($action) {
         
         $match = get_match_and_validate_match_status(MATCH_PLAYING);
         $match_user = get_match_by_user($me['user_id']);
+		$moving_piece = get_piece_by_id(filter_var($input['piece_id'], FILTER_VALIDATE_INT));
         
+		if (!$moving_piece) {
+            send_to_client(400, ['space_error' => SPACE_ERROR_NO_PIECE_TO_MOVE]);
+        }
+		
+		if ($moving_piece['piece_user_id'] != $me['user_id']) {
+			send_to_client(400, ['space_error' => SPACE_ERROR_NOT_YOUR_PIECE]);
+		}
+		
         // read in coordinates from json
-        $old_coord_x = filter_var($input['old_coord']['coord_x'], FILTER_VALIDATE_INT);
-        $old_coord_y = filter_var($input['old_coord']['coord_y'], FILTER_VALIDATE_INT);
-        $new_coord_x = filter_var($input['new_coord']['coord_x'], FILTER_VALIDATE_INT);
-        $new_coord_y = filter_var($input['new_coord']['coord_y'], FILTER_VALIDATE_INT);
+        $new_coord_x = filter_var($input['new_coord_x'], FILTER_VALIDATE_INT);
+        $new_coord_y = filter_var($input['new_coord_y'], FILTER_VALIDATE_INT);
 
         // get space records from the database
-        $old_space = get_space_by_coords($match, $old_coord_x, $old_coord_y);
+        $old_space = get_space_by_id($moving_piece['piece_space_id']);
         $new_space = get_space_by_coords($match, $new_coord_x, $new_coord_y);
+		
+		// *** make sure new space is within piece's ability to move
 
         // check to make sure the space is a normal space (not an obstacle)
         if ($new_space['space_type_id'] != SPACE_TYPE_NORMAL) {
-            send_to_client(409, json_encode(['space_error' => SPACE_ERROR_OBSTACLE]));
-        }
-        
-        // get the piece from the old space
-        $old_piece = get_piece_by_space($old_space['space_id']);
-        
-        if (!$old_piece) {
-            send_to_client(400, json_encode(['space_error' => SPACE_ERROR_NO_PIECE_TO_MOVE]));
+            send_to_client(409, ['space_error' => SPACE_ERROR_OBSTACLE]);
         }
         
         // get the piece from the new space (if there is one)
-        $new_piece = get_piece_by_space($new_space['space_id']);
+        $other_piece = get_piece_by_space($new_space['space_id']);
         
         // there is a piece in this space and it's not yours, capture it
-        if ($new_piece && $new_piece['piece_user_id'] != $me['user_id']) {
+        if ($other_piece['piece_id'] && $other_piece['piece_user_id'] != $me['user_id']) {
             
             // update space_id column to null to indicate it's been captured
-            $new_piece['space_id'] = null;
-            $new_piece->update();
+            $other_piece['piece_space_id'] = null;
+            $other_piece->update();
+			
+			// update the kill count on the moving piece
+			$moving_piece['piece_kill_count'] += 1;
             
         // there is a piece in this space and it's yours, can't move here
-        } else if ($new_piece && $new_piece['piece_user_id'] == $me['user_id']) {
-            send_to_client(400, json_encode(['space_error' => SPACE_ERROR_INVALID_MOVE]));
+        } else if ($other_piece['piece_id'] && $other_piece['piece_user_id'] == $me['user_id']) {
+            send_to_client(400, ['space_error' => SPACE_ERROR_INVALID_MOVE]);
         } else {
             
         }
         
-        // move old piece to new space
-        $old_piece['piece_space_id'] = $new_space['space_id'];
-        $old_piece->update();
+        // move moving piece to new space
+        $moving_piece['piece_space_id'] = $new_space['space_id'];
+        $moving_piece->update();
+		
+		// increment match turn count
+		$match['match_turn_count'] += 1;
+		$match->update();
         
-        die();
+        send_to_client(202);
         
         break;
         
