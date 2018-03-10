@@ -16,6 +16,23 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `abilities`
+--
+
+DROP TABLE IF EXISTS `abilities`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `abilities` (
+  `ability_id` int(11) NOT NULL AUTO_INCREMENT,
+  `ability_data` longtext NOT NULL,
+  `ability_class_id` int(11) NOT NULL,
+  `ability_level` int(11) NOT NULL,
+  PRIMARY KEY (`ability_id`),
+  UNIQUE KEY `ability_id_UNIQUE` (`ability_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `account_types`
 --
 
@@ -202,24 +219,7 @@ CREATE TABLE `matches` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `moves`
---
 
-DROP TABLE IF EXISTS `moves`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `moves` (
-  `move_id` int(11) NOT NULL AUTO_INCREMENT,
-  `move_data` varchar(45) NOT NULL,
-  `class_id` int(11) NOT NULL,
-  `move_level` int(11) NOT NULL,
-  PRIMARY KEY (`move_id`),
-  UNIQUE KEY `movement_id_UNIQUE` (`move_id`),
-  KEY `class_id_idx` (`class_id`),
-  CONSTRAINT `move_class_id` FOREIGN KEY (`class_id`) REFERENCES `classes` (`class_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `pieces`
@@ -232,7 +232,7 @@ CREATE TABLE `pieces` (
   `piece_id` int(11) NOT NULL AUTO_INCREMENT,
   `piece_space_id` int(11) DEFAULT NULL,
   `piece_class_id` int(11) NOT NULL,
-  `piece_move_id` int(11) DEFAULT NULL,
+  `piece_ability_id` int(11) DEFAULT NULL,
   `piece_user_id` int(11) NOT NULL,
   `piece_kill_count` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`piece_id`),
@@ -252,11 +252,10 @@ CREATE TABLE `power_card` (
   `power_card_name` varchar(45) NOT NULL,
   `power_card_description` varchar(45) NOT NULL,
   `power_card_card_id` int(11) NOT NULL,
-  `power_card_move_id` int(11) NOT NULL,
+  `power_card_ability_id` int(11) NOT NULL,
   PRIMARY KEY (`power_card_id`),
   UNIQUE KEY `tarrot_card_id_UNIQUE` (`power_card_id`),
-  UNIQUE KEY `card_id_UNIQUE` (`power_card_card_id`),
-  KEY `movement_id_idx` (`power_card_move_id`)
+  UNIQUE KEY `card_id_UNIQUE` (`power_card_card_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
