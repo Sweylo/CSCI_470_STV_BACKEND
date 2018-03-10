@@ -67,6 +67,8 @@ switch ($action) {
         if (!$is_admin) {
             die('you must be an admin to delete matches');
         }
+		
+		//delete_match(input(INPUT_GET, 'match_id'));
         
         $match = get_match_by_id(input(INPUT_GET, 'match_id'));
         
@@ -85,9 +87,9 @@ switch ($action) {
         
         // delete spaces and pieces
         foreach ($spaces->data as $space) {
-            
-            $piece = get_piece_by_space($space['space_id']);
-            $piece->delete();
+            //$piece = get_piece_by_space($space['space_id']);
+            //$piece->delete();
+			delete_piece_by_space($space['space_id']);
             $space->delete();
         }
         
@@ -97,6 +99,7 @@ switch ($action) {
         
         $match->delete();
         
+		header('Location: ./?action=list_matches');
         break;
     
     case 'init_match_test':

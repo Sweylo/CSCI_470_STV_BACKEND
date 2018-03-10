@@ -217,10 +217,20 @@ function init_match($match_id) {
 }
 
 function delete_match($match_id) {
+	
     $match = new sql('matches');
     $match->select(array('match_id', $match_id));
+	
+	$sql = 'DELETE FROM pieces 
+			WHERE piece_id = ?';
+	
+	$stmt = $db->prepare($sql);
+	$stmt->bind_param('i', $piece_id);
+	$stmt->execute();
+	$stmt->closeCursor();
+	
     $match->delete();
-    // *** need to delete rows in: match_users, spaces, and pieces
+	
 }
 
 ?>

@@ -34,7 +34,7 @@ $(document).ready(function() {
 
 	}
 
-	autorefresh = setInterval(refresh, 2000);
+	autorefresh = setInterval(refresh, 5000);
 	
 	refresh();
 

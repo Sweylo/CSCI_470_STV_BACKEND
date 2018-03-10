@@ -45,8 +45,8 @@ function get_board_init_space_array($board_id) {
     foreach ($board_init_spaces as $space) {
 
         $this_coord = [
-            'row' => $space['board_init_coord_x'],
-            'col' => $space['board_init_coord_y'],
+            'col' => $space['board_init_coord_x'],
+            'row' => $space['board_init_coord_y'],
             'piece_class_id' => $space['board_init_class_id']
         ];
 

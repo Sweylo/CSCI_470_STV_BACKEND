@@ -49,6 +49,23 @@ function get_piece_by_space($space_id) {
     return $piece;
 }
 
+function delete_piece_by_space($space_id) {
+    /*($piece = new sql('pieces');
+    $piece->select([
+        'column' => 'piece_space_id',
+        'value' => $space_id
+    ]);
+    $piece->delete();*/
+	
+	$sql = 'DELETE FROM pieces 
+			WHERE piece_space_id = ?';
+	
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('i', $space_id);
+	$stmt->execute();
+	
+}
+
 function add_piece($space_id, $class_id, $user_id) {
 	sql::insert('pieces', array(
 		'piece_space_id' => $space_id,

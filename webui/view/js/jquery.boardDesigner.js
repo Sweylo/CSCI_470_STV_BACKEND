@@ -64,6 +64,8 @@ $(document).ready(function() {
             $(this).parent().removeClass('normal');
         }
     });
+	
+	$('.space-toggle').prop('checked', true).parent().addClass('normal');
     
     function drawBoard() {
         
