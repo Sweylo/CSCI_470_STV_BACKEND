@@ -12,8 +12,10 @@ switch ($action) {
             send_to_client(401);
         }
 		
+		$user_match = get_match_by_user($me['user_id']);
+		
         // checks if the results of getting matches by user returns any data
-        if (get_match_by_user($me['user_id'])) {
+        if ($user_match['match_status'] <= MATCH_PLAYING) {
             send_to_client(403, null, 'user is already in a match');
         }
 		
@@ -41,8 +43,8 @@ switch ($action) {
             send_to_client(401);
         }
 		
-		// get the first 50 matches
-		$matches = get_matches(50);
+		// get the first 5 matches
+		$matches = get_avail_matches(5);
 		$matches_array = [];
 
 		//print_r($matches);
@@ -50,7 +52,7 @@ switch ($action) {
 		// encode available match data to json and output the array of matches
 		if (count($matches) > 0) {
 
-			$matches_array = array();
+			$matches_array = [];
 
 			foreach ($matches as $match) {
 				if (!empty($match)) {

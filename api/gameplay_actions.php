@@ -11,21 +11,23 @@ require_once($dir_depth . 'model/piece_db.php');
  * @param int $match_status the match status to check the match is in
  * @return object the sql object of the match the user is currently in
  */
-function get_match_and_validate_match_status($match_status) {
+function get_match_and_validate_match_status($match_status, $no_more_than = false) {
     
     global $me;
     
     if (!$me) {
-        send_to_client(401, null, 'must be logged in');
+        send_to_client(401, ['match_error' => MATCH_ERROR_NOT_LOGGED_IN]);
     }
 
     $match = get_match_by_user($me['user_id']);
 
     if (!$match->data) {
-        send_to_client(400, null, 'you are not in a match');
+        send_to_client(400, ['match_error' => MATCH_ERROR_NOT_IN_A_MATCH]);
     }
 
-    if ($match['match_status'] != $match_status) {
+    if (!$no_more_than && $match['match_status'] != $match_status) {
+        send_to_client(400, ['match_status' => $match['match_status']]);
+    } else if ($no_more_than && $match['match_status'] > $match_status) {
         send_to_client(400, ['match_status' => $match['match_status']]);
     }
     
@@ -37,7 +39,7 @@ switch ($action) {
     
     case 'check_match_status':
         
-        $match = get_match_and_validate_match_status(MATCH_PLAYING);
+        $match = get_match_and_validate_match_status(MATCH_PLAYING, true);
         $match_user = get_match_user($me['user_id']);
         
         if ($match_user['match_user_color'] == 'white') {
@@ -78,9 +80,9 @@ switch ($action) {
         if ($match_users[$them_index]['match_user_is_ready']) {
             $match['match_status'] = MATCH_PLAYING;
             $match->update();
-            send_to_client(202, null, 'match is starting now');
+            send_to_client(202, ['match_message' => MATCH_MESSAGE_MATCH_IS_STARTING]);
         } else {
-            send_to_client(202, null, 'waiting for opponent to ready');
+            send_to_client(202, ['match_message' => MATCH_MESSAGE_WAITING_FOR_OPPONENT_READY]);
         }
         
         break;
@@ -125,7 +127,7 @@ switch ($action) {
             $other_piece->update();
 			
 			// update the kill count on the moving piece
-			$moving_piece['piece_kill_count'] += 1;
+			$moving_piece['piece_kill_count']++;
             
         // there is a piece in this space and it's yours, can't move here
         } else if ($other_piece['piece_id'] && $other_piece['piece_user_id'] == $me['user_id']) {
@@ -139,7 +141,7 @@ switch ($action) {
         $moving_piece->update();
 		
 		// increment match turn count
-		$match['match_turn_count'] += 1;
+		$match['match_turn_count']++;
 		$match->update();
         
         send_to_client(202);

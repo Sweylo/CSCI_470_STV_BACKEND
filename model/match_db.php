@@ -23,6 +23,14 @@ $match_status_enum = [
     MATCH_BLACK_WIN => 'match is over (black win)'
 ];
 
+// error constants
+const MATCH_ERROR_NOT_LOGGED_IN = 1;
+const MATCH_ERROR_NOT_IN_A_MATCH = 2;
+
+// message constants
+const MATCH_MESSAGE_WAITING_FOR_OPPONENT_READY = 1;
+const MATCH_MESSAGE_MATCH_IS_STARTING = 2;
+
 /**
  * gets all the matches in the database
  * 
