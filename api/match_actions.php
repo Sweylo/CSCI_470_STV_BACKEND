@@ -81,8 +81,10 @@ switch ($action) {
             send_to_client(400, null, 'match requested is not in the database');
         }
 		
-		// checks if the results of getting matches by user returns any data
-        if (get_match_by_user($me['user_id'])) {
+	$user_match = get_match_by_user($me['user_id']);
+		
+	// checks if the user is playing a match (match status <= 3)
+        if ($user_match['match_status'] <= MATCH_PLAYING) {
             send_to_client(403, null, 'user is already in a match');
         }
 		
