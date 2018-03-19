@@ -53,4 +53,4 @@ include('user_actions.php');
 include('gameplay_actions.php');
 
 // if no action is matched, return not found
-send_to_client('404');
+send_to_client(404);

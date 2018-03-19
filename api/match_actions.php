@@ -15,7 +15,7 @@ switch ($action) {
 		$user_match = get_match_by_user($me['user_id']);
 		
         // checks if the results of getting matches by user returns any data
-        if ($user_match['match_status'] <= MATCH_PLAYING) {
+        if ($user_match && $user_match['match_status'] <= MATCH_PLAYING) {
             send_to_client(403, null, 'user is already in a match');
         }
 		
@@ -81,10 +81,10 @@ switch ($action) {
             send_to_client(400, null, 'match requested is not in the database');
         }
 		
-	$user_match = get_match_by_user($me['user_id']);
+		$user_match = get_match_by_user($me['user_id']);
 		
-	// checks if the user is playing a match (match status <= 3)
-        if ($user_match['match_status'] <= MATCH_PLAYING) {
+		// checks if the user is playing a match (match status <= 3)
+        if ($user_match && $user_match['match_status'] <= MATCH_PLAYING) {
             send_to_client(403, null, 'user is already in a match');
         }
 		
@@ -99,7 +99,7 @@ switch ($action) {
                 send_to_client(409, null, $e);
             }
             
-            // create database records for the match data
+            // create database records for the match data (spaces and pieces)
             init_match($match['match_id']);
             
             send_to_client(202);
