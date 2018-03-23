@@ -105,7 +105,7 @@ switch ($action) {
             send_to_client(202);
             
         } else {
-            send_to_client(403, ['match_error_code' => 1]);
+            send_to_client(403, ['match_error' => 1]);
         }
         
         break;
