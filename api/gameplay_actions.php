@@ -109,6 +109,8 @@ switch ($action) {
         $old_space = get_space_by_id($moving_piece['piece_space_id']);
         $new_space = get_space_by_coords($match, $new_coord_x, $new_coord_y);
 		
+		//print_r($new_space);
+		
 		// *** make sure new space is within piece's ability to move
 
         // check to make sure the space is a normal space (not an obstacle)

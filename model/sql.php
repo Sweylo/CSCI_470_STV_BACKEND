@@ -311,7 +311,8 @@ class sql extends ArrayObject {
 
                 foreach ($this->data as $column => $value) {
                     if (!is_int($column) && $column != $this->primary_key_column) {
-                        $fields .= "$column = '$value', ";
+						$this_value = is_null($value) ? 'NULL' : "'$value'";
+                        $fields .= "$column = $this_value, ";
                     }
                 }
 
