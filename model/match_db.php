@@ -17,7 +17,7 @@ const MATCH_BLACK_WIN = 6;
 $match_status_enum = [
     MATCH_WAITING => 'waiting for an opponent', 
     MATCH_PREGAME => 'setting up the match',
-    MATCH_PLAYING => 'match in being played',
+    MATCH_PLAYING => 'match is being played',
     MATCH_STALEMATE => 'match is over (stalemate)',
     MATCH_WHITE_WIN => 'match is over (white win)',
     MATCH_BLACK_WIN => 'match is over (black win)'
@@ -232,7 +232,7 @@ function delete_match($match_id) {
 	$sql = 'DELETE FROM pieces 
 			WHERE piece_id = ?';
 	
-	$stmt = $db->prepare($sql);
+	$stmt = sql::$db->prepare($sql);
 	$stmt->bind_param('i', $piece_id);
 	$stmt->execute();
 	$stmt->closeCursor();

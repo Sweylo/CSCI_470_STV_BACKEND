@@ -4,6 +4,7 @@ require_once($dir_depth . 'model/user_db.php');
 require_once($dir_depth . 'model/match_db.php');
 require_once($dir_depth . 'model/space_db.php');
 require_once($dir_depth . 'model/piece_db.php');
+require_once($dir_depth . 'model/card_db.php');
 
 /**
  * function to get and validate the match the user is currently in
@@ -72,12 +73,53 @@ switch ($action) {
         if ($match_users[$me_index]['match_user_is_ready']) {
             send_to_client(208);
         }
+		
+		// get all cards belonging to the user (the deck)
+		$user_cards = get_cards_by_user($me['user_id']);
+		
+		// check each card input from the client
+		foreach ($input['cards'] as $card_data) {
+			
+			// get the card data from the database
+			$card = get_card_by_id($card_data['card_id']);
+			//print_r($card);
+			
+			// boolean flag to determine whether or not the user has the card specified
+			$user_has_card = false;
+			
+			// check to see if the user has the card available
+			foreach ($user_cards as $user_card) {
+				
+				// check if the user has the card, and if it has been used already
+				if (
+					$user_card['card_id'] == $card['card_id'] 
+					&& 
+					is_null($user_card['card_match_id'])
+				) {
+					$user_has_card = true;
+					break;
+				}
+				
+ 			}
+			
+			if (!$user_has_card) {
+				// return error if user doesn't have card
+				send_to_client(400, [
+					'card_error' => CARD_NOT_IN_DECK, 
+					'card_id' => $card_data['card_id']
+				]);
+			} else {
+				// set the match_id field to indicate that the card has been used for this match
+				use_card($card_data['card_id'], $me['user_id'], $match['match_id']);
+			}
+			
+		}
         
         $me_match_user = $match_users[$me_index];
         $me_match_user['match_user_is_ready'] = true;
         $me_match_user->update();
         
-        if ($match_users[$them_index]['match_user_is_ready']) {
+        if ((bool) $match_users[$them_index]['match_user_is_ready']) {
             $match['match_status'] = MATCH_PLAYING;
             $match->update();
             send_to_client(202, ['match_message' => MATCH_MESSAGE_MATCH_IS_STARTING]);
