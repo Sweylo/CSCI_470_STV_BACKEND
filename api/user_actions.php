@@ -1,6 +1,7 @@
 <?php
 
 require_once($dir_depth . 'model/user_db.php');
+require_once($dir_depth . 'model/card_db.php');
 
 switch ($action) {
     
@@ -232,4 +233,16 @@ switch ($action) {
         send_to_client(420);
         break;
     
+	case 'get_all_my_cards': 
+		
+		if (!$me) {
+            send_to_client(401);
+        }
+		
+		$my_cards = get_cards_by_user($me['user_id']);
+		
+		send_to_client(200, ['my_cards' => $my_cards]);
+		
+		break;
+	
 }
