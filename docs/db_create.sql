@@ -26,10 +26,10 @@ CREATE TABLE `abilities` (
   `ability_id` int(11) NOT NULL AUTO_INCREMENT,
   `ability_data` longtext NOT NULL,
   `ability_class_id` int(11) NOT NULL,
-  `ability_level` int(11) NOT NULL,
+  `ability_level` int(11) DEFAULT '0',
   PRIMARY KEY (`ability_id`),
   UNIQUE KEY `ability_id_UNIQUE` (`ability_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -46,7 +46,7 @@ CREATE TABLE `account_types` (
   PRIMARY KEY (`account_type_id`),
   UNIQUE KEY `type_id_UNIQUE` (`account_type_id`),
   UNIQUE KEY `type_name_UNIQUE` (`account_type_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,7 +65,7 @@ CREATE TABLE `board_init_spaces` (
   `board_init_piece_color` varchar(5) DEFAULT NULL,
   PRIMARY KEY (`board_init_id`),
   UNIQUE KEY `board_coord_id_UNIQUE` (`board_init_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -83,7 +83,7 @@ CREATE TABLE `boards` (
   `board_home_col` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`board_id`),
   UNIQUE KEY `board_id_UNIQUE` (`board_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,11 +95,11 @@ DROP TABLE IF EXISTS `cards`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cards` (
   `card_id` int(11) NOT NULL AUTO_INCREMENT,
-  `card_rarity` int(11) NOT NULL,
-  `card_play_opportunity` int(1) DEFAULT '0' COMMENT '0 represents that a card can only be played before the game begins. 1 represents a that a card can only be played during the game (1 per turn)',
+  `card_rarity` int(11) NOT NULL DEFAULT '1',
+  `card_play_opportunity` int(1) NOT NULL DEFAULT '0' COMMENT '0 represents that a card can only be played before the game begins. 1 represents a that a card can only be played during the game (1 per turn)',
   PRIMARY KEY (`card_id`),
   UNIQUE KEY `card_id_UNIQUE` (`card_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -115,7 +115,7 @@ CREATE TABLE `classes` (
   PRIMARY KEY (`class_id`),
   UNIQUE KEY `class_id_UNIQUE` (`class_id`),
   UNIQUE KEY `class_name_UNIQUE` (`class_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -132,7 +132,7 @@ CREATE TABLE `friends` (
   `friend_accepted` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`friend_id`),
   UNIQUE KEY `friend_id_UNIQUE` (`friend_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -196,7 +196,7 @@ CREATE TABLE `match_users` (
   KEY `match_user_match_id_idx` (`match_user_match_id`),
   CONSTRAINT `match_user_match_id` FOREIGN KEY (`match_user_match_id`) REFERENCES `matches` (`match_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `match_user_white_user_id` FOREIGN KEY (`match_user_user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,10 +216,8 @@ CREATE TABLE `matches` (
   UNIQUE KEY `match_id_UNIQUE` (`match_id`),
   KEY `match_board_id_idx` (`match_board_id`),
   CONSTRAINT `match_board_id` FOREIGN KEY (`match_board_id`) REFERENCES `boards` (`board_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
-
 
 --
 -- Table structure for table `pieces`
@@ -237,26 +235,26 @@ CREATE TABLE `pieces` (
   `piece_kill_count` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`piece_id`),
   UNIQUE KEY `piece_space_id_UNIQUE` (`piece_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `power_card`
+-- Table structure for table `power_cards`
 --
 
-DROP TABLE IF EXISTS `power_card`;
+DROP TABLE IF EXISTS `power_cards`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `power_card` (
-  `power_card_id` int(11) NOT NULL,
-  `power_card_name` varchar(45) NOT NULL,
-  `power_card_description` varchar(45) NOT NULL,
+CREATE TABLE `power_cards` (
+  `power_card_id` int(11) NOT NULL AUTO_INCREMENT,
+  `power_card_name` varchar(100) NOT NULL,
+  `power_card_description` mediumtext NOT NULL,
   `power_card_card_id` int(11) NOT NULL,
   `power_card_ability_id` int(11) NOT NULL,
   PRIMARY KEY (`power_card_id`),
   UNIQUE KEY `tarrot_card_id_UNIQUE` (`power_card_id`),
   UNIQUE KEY `card_id_UNIQUE` (`power_card_card_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -272,7 +270,7 @@ CREATE TABLE `space_types` (
   PRIMARY KEY (`space_type_id`),
   UNIQUE KEY `space_type_id_UNIQUE` (`space_type_id`),
   UNIQUE KEY `space_type_name_UNIQUE` (`space_type_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -293,30 +291,27 @@ CREATE TABLE `spaces` (
   KEY `match_space_id_idx` (`space_match_id`),
   KEY `match_space_type_id_idx` (`space_type_id`),
   CONSTRAINT `match_space_id` FOREIGN KEY (`space_match_id`) REFERENCES `matches` (`match_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=129 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `trap_card`
+-- Table structure for table `trap_cards`
 --
 
-DROP TABLE IF EXISTS `trap_card`;
+DROP TABLE IF EXISTS `trap_cards`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `trap_card` (
+CREATE TABLE `trap_cards` (
   `trap_card_id` int(11) NOT NULL AUTO_INCREMENT,
   `trap_card_name` varchar(45) NOT NULL,
   `trap_card_description` varchar(45) NOT NULL,
-  `card_id` int(11) NOT NULL,
-  `trap_id` int(11) NOT NULL,
+  `trap_card_card_id` int(11) NOT NULL,
+  `trap_card_trap_id` int(11) NOT NULL,
   PRIMARY KEY (`trap_card_id`),
   UNIQUE KEY `trap_card_id_UNIQUE` (`trap_card_id`),
   UNIQUE KEY `trap_card_name_UNIQUE` (`trap_card_name`),
-  UNIQUE KEY `card_id_UNIQUE` (`card_id`),
-  KEY `trap_card_trap_id_idx` (`trap_id`),
-  CONSTRAINT `trap_card_id` FOREIGN KEY (`card_id`) REFERENCES `cards` (`card_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `trap_card_trap_id` FOREIGN KEY (`trap_id`) REFERENCES `traps` (`trap_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  UNIQUE KEY `card_id_UNIQUE` (`trap_card_card_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -354,7 +349,7 @@ CREATE TABLE `user_cards` (
   KEY `user_id_idx` (`user_card_user_id`),
   CONSTRAINT `card_id` FOREIGN KEY (`user_card_card_id`) REFERENCES `cards` (`card_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `card_user_id` FOREIGN KEY (`user_card_user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -381,7 +376,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `user_token_UNIQUE` (`user_token`),
   KEY `user_account_type_id_idx` (`user_account_type_id`),
   CONSTRAINT `user_account_type_id` FOREIGN KEY (`user_account_type_id`) REFERENCES `account_types` (`account_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -393,7 +388,7 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-09 15:16:26
+-- Dump completed on 2018-03-30 19:17:44
 
 -- -----------------------------------------------------
 -- Data for table `chess_n_conquer`.`account_types`
