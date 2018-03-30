@@ -36,6 +36,7 @@ function get_card_by_id($id) {
 					trap_card_card_id as card_id,
 					trap_card_name as card_name, 
 					trap_card_description as card_description, 
+					trap_card_trap_id as attr_id,
 					\'trap\' as card_type
 				FROM cards c
 					JOIN trap_cards tc ON c.card_id = tc.trap_card_card_id
@@ -46,6 +47,7 @@ function get_card_by_id($id) {
 					power_card_card_id as card_id,
 					power_card_name as card_name, 
 					power_card_description as card_description, 
+					power_card_ability_id as attr_id,
 					\'power\' as card_type
 				FROM cards c
 					JOIN power_cards pc ON c.card_id = pc.power_card_card_id
@@ -101,12 +103,21 @@ function use_card($card_id, $user_id, $match_id) {
 	
 }
 
-function add_card($match_id, $coord_x, $coord_y) {
-	return sql::insert('cards', array(
-		'card_match_id' => $match_id, 
-		'card_coord_x' => $coord_x,
-		'card_coord_y' => $coord_y
-	), true);
+function add_card() {
+	return sql::insert('cards', [], true);
+}
+
+function add_power_card($card_name, $card_desc, $card_ability_id) {
+	
+	$card = add_card();
+	
+	return sql::insert('power_cards', [
+		'power_card_name' => $card_name, 
+		'power_card_description' => $card_desc,
+		'power_card_card_id' => $card['card_id'],
+		'power_card_ability_id' => $card_ability_id
+	], true);
+	
 }
 
 function edit_card($id, $cardname, $password, $email) {

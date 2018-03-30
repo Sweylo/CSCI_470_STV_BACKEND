@@ -23,11 +23,11 @@ function get_ability_by_id($id) {
 	return $ability;
 }
 
-function add_ability($space_id, $class_id, $user_id) {
+function add_ability($data, $class_id, $level) {
 	sql::insert('abilities', array(
-		'ability_space_id' => $space_id,
+		'ability_data' => $data,
 		'ability_class_id' => $class_id,
-        'ability_user_id' => $user_id
+        'ability_level' => $level
 	));
 }
 

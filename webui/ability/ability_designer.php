@@ -2,6 +2,8 @@
 
 <h2>Ability Designer</h2>
 
+<?php echo isset($message) ? "<p>$message</p>" : ''; ?>
+
 <form method="post" action="./?action=add_ability">
 	
 	<table>
@@ -52,7 +54,7 @@
 		
 	</table>
 	
-	level: <input type="number" name="level" value="0"><br />
+	level: <input type="number" name="level" value="1"><br />
 	
 	<input type="submit" value="Save Ability">
 	

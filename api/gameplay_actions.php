@@ -184,6 +184,8 @@ switch ($action) {
         $moving_piece['piece_space_id'] = $new_space['space_id'];
         $moving_piece->update();
 		
+		// *** check for checkmate
+		
 		// increment match turn count
 		$match['match_turn_count']++;
 		$match->update();

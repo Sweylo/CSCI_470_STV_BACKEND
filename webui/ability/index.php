@@ -33,11 +33,11 @@ switch ($action) {
 	
 	case 'add_ability': 
 		
-		$output['abilities'] = [];
+		$output = [];
 		
-		for ($x = -2; $x <= 2; $x++) {
+		for ($y = -2; $y <= 2; $y++) {
 			
-			for ($y = -2; $y <= 2; $y++) {
+			for ($x = -2; $x <= 2; $x++) {
 				
 				$piece_class_id = input(INPUT_POST, 'piece_class_id');
 				$level = input(INPUT_POST, 'level');
@@ -50,18 +50,27 @@ switch ($action) {
 				
 				//echo "$x, $y: $move_code<br />";
 				
-				array_push($output['abilities'], [
+				$output[$x][$y] = [
 					'move_code' => $move_code,
-					'relative_x' => $x,
-					'relative_y' => $y,
+					//'relative_x' => $x,
+					//'relative_y' => $y,
 					'move_range' => $range ? $range : 0
-				]);
+				];
 				
 			}
 			
 		}
 		
-		echo json_encode($output);
+		//die (json_encode($output, JSON_PRETTY_PRINT));
+		
+		try {
+			add_ability(json_encode($output), $piece_class_id, $level);
+		} catch (Exception $e) {
+			die($e);
+		}
+		
+		$message = 'Ability successfully added.';
+		include('ability_designer.php');
 		
 		break;
 	
