@@ -24,7 +24,7 @@
 			
 			if ($piece['piece_id']) {
 				
-				echo html('div', [], "piece_id: {$piece['piece_id']}");
+				echo html('div', [], "piece_rel_id: {$piece['piece_relative_id']}");
 				
 				$piece_html_code = 9811 + $piece['piece_class_id'] + 
 					($piece['piece_user_id'] == $white_match_user['match_user_user_id'] ? 0 : 6);

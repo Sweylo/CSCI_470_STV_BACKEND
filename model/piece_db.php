@@ -49,6 +49,22 @@ function get_piece_by_space($space_id) {
     return $piece;
 }
 
+function get_piece_by_relative_id($user_id, $relative_id) {
+	
+	$sql = 'SELECT * FROM pieces
+			WHERE piece_user_id = ? 
+				AND piece_relative_id = ?';
+	
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('ii', $user_id, $relative_id);
+	$stmt->execute();
+	$result = $stmt->get_result();
+    $piece = new sql('pieces', $result->fetch_array(MYSQLI_ASSOC));
+	
+	return $piece;
+	
+}
+
 function get_captured_pieces($match_id) {
 	
 	$match_users = get_match_users($match_id);

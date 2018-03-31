@@ -6,6 +6,9 @@ require_once($dir_depth . 'model/space_db.php');
 require_once($dir_depth . 'model/piece_db.php');
 require_once($dir_depth . 'model/card_db.php');
 
+// move error constants
+const MOVE_ERROR_NOT_YOUR_TURN = 1;
+
 /**
  * function to get and validate the match the user is currently in
  * 
@@ -132,10 +135,24 @@ switch ($action) {
     case 'move_piece':
         
         $match = get_match_and_validate_match_status(MATCH_PLAYING);
-        $match_user = get_match_by_user($me['user_id']);
-		//$moving_piece = get_piece_by_id(filter_var($input['piece_id'], FILTER_VALIDATE_INT));
-		$relative_piece_id = filter_var($input['piece_id'], FILTER_VALIDATE_INT);
+        //$match_user = get_match_by_user($me['user_id']);
+		$match_user = get_match_user($me['user_id']);
+        
+        if ($match_user['match_user_color'] == 'white') {
+            $is_my_turn = $match['match_turn_count'] % 2 != 0;
+        } else if ($match_user['match_user_color'] == 'black') {
+            $is_my_turn = $match['match_turn_count'] % 2 == 0;
+        }
 		
+		if (!$is_my_turn) {
+			send_to_client(400, ['move_error' => MOVE_ERROR_NOT_YOUR_TURN]);
+		}
+		
+		$relative_piece_id = filter_var($input['piece_id'], FILTER_VALIDATE_INT);
+		$moving_piece = get_piece_by_relative_id($me['user_id'], $relative_piece_id);
+		
+		//print_r($moving_piece);
+		//die();
         
 		if (!$moving_piece) {
             send_to_client(400, ['space_error' => SPACE_ERROR_NO_PIECE_TO_MOVE]);
