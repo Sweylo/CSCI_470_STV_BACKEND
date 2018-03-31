@@ -133,7 +133,9 @@ switch ($action) {
         
         $match = get_match_and_validate_match_status(MATCH_PLAYING);
         $match_user = get_match_by_user($me['user_id']);
-		$moving_piece = get_piece_by_id(filter_var($input['piece_id'], FILTER_VALIDATE_INT));
+		//$moving_piece = get_piece_by_id(filter_var($input['piece_id'], FILTER_VALIDATE_INT));
+		$relative_piece_id = filter_var($input['piece_id'], FILTER_VALIDATE_INT);
+		
         
 		if (!$moving_piece) {
             send_to_client(400, ['space_error' => SPACE_ERROR_NO_PIECE_TO_MOVE]);

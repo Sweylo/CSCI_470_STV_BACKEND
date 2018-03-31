@@ -73,11 +73,12 @@ function get_captured_pieces($match_id) {
 	
 }
 
-function add_piece($space_id, $class_id, $user_id) {
+function add_piece($space_id, $class_id, $user_id, $relative_id = null) {
 	sql::insert('pieces', array(
 		'piece_space_id' => $space_id,
 		'piece_class_id' => $class_id,
-        'piece_user_id' => $user_id
+        'piece_user_id' => $user_id,
+		'piece_relative_id' => $relative_id
 	));
 }
 

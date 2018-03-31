@@ -196,7 +196,7 @@ CREATE TABLE `match_users` (
   KEY `match_user_match_id_idx` (`match_user_match_id`),
   CONSTRAINT `match_user_match_id` FOREIGN KEY (`match_user_match_id`) REFERENCES `matches` (`match_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `match_user_white_user_id` FOREIGN KEY (`match_user_user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,7 +216,7 @@ CREATE TABLE `matches` (
   UNIQUE KEY `match_id_UNIQUE` (`match_id`),
   KEY `match_board_id_idx` (`match_board_id`),
   CONSTRAINT `match_board_id` FOREIGN KEY (`match_board_id`) REFERENCES `boards` (`board_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -233,9 +233,10 @@ CREATE TABLE `pieces` (
   `piece_ability_id` int(11) DEFAULT NULL,
   `piece_user_id` int(11) NOT NULL,
   `piece_kill_count` int(11) NOT NULL DEFAULT '0',
+  `piece_relative_id` int(3) DEFAULT NULL,
   PRIMARY KEY (`piece_id`),
   UNIQUE KEY `piece_space_id_UNIQUE` (`piece_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -291,7 +292,7 @@ CREATE TABLE `spaces` (
   KEY `match_space_id_idx` (`space_match_id`),
   KEY `match_space_type_id_idx` (`space_type_id`),
   CONSTRAINT `match_space_id` FOREIGN KEY (`space_match_id`) REFERENCES `matches` (`match_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=129 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=193 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -388,7 +389,7 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-30 19:17:44
+-- Dump completed on 2018-03-30 20:14:37
 
 -- -----------------------------------------------------
 -- Data for table `chess_n_conquer`.`account_types`

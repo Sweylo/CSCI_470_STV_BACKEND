@@ -199,6 +199,8 @@ function init_match($match_id) {
     $board_coords = get_board_init_space_array($board['board_id']);
     
     //print_r($board_data);
+	
+	$relative_id = 1;
     
     // loop through every coordinate and add a row to the database for each one and for any pieces
     //  that start out on that space
@@ -217,7 +219,8 @@ function init_match($match_id) {
       
         if ($coord['piece_class_id'] && $coord['piece_color']) {
             add_piece($space['space_id'], $coord['piece_class_id'], 
-                $match_users[$coord['piece_color']]['match_user_user_id']);
+                $match_users[$coord['piece_color']]['match_user_user_id'], $relative_id);
+			$relative_id++;
         }
         
     }
