@@ -6,7 +6,32 @@
 		</th>
 	</tr>
 	
+	<tr>
+		<?php
+		
+		foreach ($match_users as $match_user) {
+		
+			$this_user = get_user_by_id($match_user['match_user_user_id']);
+			
+			if ($match_user['match_user_color'] == 'white') {
+				$is_my_turn = $match['match_turn_count'] % 2 != 0;
+			} else if ($match_user['match_user_color'] == 'black') {
+				$is_my_turn = $match['match_turn_count'] % 2 == 0;
+			}
+			
+			echo html('th', ['colspan' => 4, 'class' => ($is_my_turn ? 'current' : '')],
+				"{$match_user['match_user_color']}: {$this_user['user_name']} "
+				. "(#{$this_user['user_id']})"
+			);
+				
+		}
+				
+		?>
+	</tr>
+	
 	<?php
+	
+	$alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N'];
 	
 	for ($y = $board['board_row_count']; $y >= 1; $y--) {
 		
@@ -17,10 +42,12 @@
 			$is_space_black = $x % 2 == 0 && $y % 2 == 0 || $x % 2 != 0 && $y % 2 != 0;
 			echo '<td class="normal ' . ($is_space_black ? 'black' : 'white') . '">';
 			
+			echo html('div', [], "{$alpha[$x - 1]}$y");
+			
 			$space = get_space_by_coords($match, $x, $y);
 			$piece = get_piece_by_space($space['space_id']);
 			
-			echo html('div', [], "space_id: {$space['space_id']}");
+			//echo html('div', [], "space_id: {$space['space_id']}");
 			
 			if ($piece['piece_id']) {
 				
@@ -34,8 +61,6 @@
 				echo html('div', ['class' => 'kills'], "kills: {$piece['piece_kill_count']}");
 					
 			}
-			
-			echo html('div', [], "x: $x y: $y");
 			
 			echo '</td>';
 			

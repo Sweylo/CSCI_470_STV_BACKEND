@@ -175,13 +175,12 @@ switch ($action) {
 		// *** make sure new space is within piece's ability to move
 		$move_code = get_piece_move_code($match, $moving_piece, $new_coord_x, $new_coord_y);
 		
-		echo "move_code: $move_code";
+		//echo "move_code: $move_code";
+		//die();
 		
 		if ($move_code < 1) {
 			send_to_client(400, ['move_error' => $move_code]);
 		}
-		
-		die();
 
         // check to make sure the space is a normal space (not an obstacle)
         if ($new_space['space_type_id'] != SPACE_TYPE_NORMAL) {

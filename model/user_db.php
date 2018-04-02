@@ -199,8 +199,8 @@ function get_gravatar_url($email, $s = 16, $d = 'mm', $r = 'g') {
 }
 
 // set session length
-ini_set('session.gc_maxlifetime', 3600);
-session_set_cookie_params(3600);
+ini_set('session.gc_maxlifetime', 7200);
+session_set_cookie_params(7200);
 session_start();
 
 if (!$is_login_page) {

@@ -9,13 +9,6 @@ echo html('h3', [],
 		? $match['match_status'] 
 		: "Match #{$match['match_id']}")
 );
-		
-foreach ($match_users as $match_user) {
-	$this_user = get_user_by_id($match_user['match_user_user_id']);
-	echo html('p', [],
-		"{$match_user['match_user_color']}: {$this_user['user_name']} (#{$this_user['user_id']})"
-	);
-}
 
 ?>
 

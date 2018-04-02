@@ -49,3 +49,7 @@ body {
 #board td .piece {
 	font-size: 4em;
 }
+
+#board .current {
+	color: #393;
+}

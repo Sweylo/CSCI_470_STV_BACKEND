@@ -28,7 +28,9 @@ function get_ability_by_class_and_kill_count($piece_class_id, $piece_kill_count)
 	$sql = 'SELECT * FROM abilities a 
 				JOIN upgrades u ON a.ability_id = u.upgrade_ability_id 
 			WHERE upgrade_class_id = ? 
-				AND upgrade_kill_count = ?';
+				AND upgrade_kill_count <= ? 
+			ORDER BY upgrade_kill_count
+			LIMIT 1';
 	
 	$stmt = sql::$db->prepare($sql);
 	$stmt->bind_param('ii', $piece_class_id, $piece_kill_count);
