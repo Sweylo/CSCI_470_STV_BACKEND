@@ -199,7 +199,7 @@ switch ($action) {
 		//die();
 		
 		if ($move_code < 1) {
-			send_to_client(400, ['move_error' => $move_code]);
+			send_to_client(400, ['move_ability_error' => $move_code]);
 		}
 
         // check to make sure the space is a normal space (not an obstacle)
@@ -231,13 +231,16 @@ switch ($action) {
         $moving_piece['piece_space_id'] = $new_space['space_id'];
         $moving_piece->update();
 		
-		// *** check for checkmate
-		
 		// increment match turn count
 		$match['match_turn_count']++;
 		$match->update();
+		
+		// check for check
+		$check_status = get_check_status($me['user_id'], $match);
+		
+		// *** check for checkmate
         
-        send_to_client(202);
+        send_to_client(202, ['check_status' => $check_status]);
         
         break;
         

@@ -79,6 +79,22 @@ function get_match_users($match_id) {
     return $match_users;
 }
 
+function get_opponent_match_user($match_id, $user_id) {
+	
+    $sql = 'SELECT * FROM match_users 
+			WHERE match_user_match_id = ? 
+				AND match_user_user_id != ?';
+	
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('ii', $match_id, $user_id);
+	$stmt->execute();
+	$result = $stmt->get_result();
+    $opponent = new sql('match_users', $result->fetch_array(MYSQLI_ASSOC));
+	
+	return $opponent;
+	
+}
+
 function get_match_by_user($user_id) {
     
     // get the match_user row for this user_id

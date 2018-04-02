@@ -2,6 +2,7 @@
 
 require_once($dir_depth . 'model/sql.php');
 require_once($dir_depth . 'model/board_db.php');
+require_once($dir_depth . 'model/match_db.php');
 require_once($dir_depth . 'model/space_db.php');
 require_once($dir_depth . 'model/ability_db.php');
 
@@ -18,6 +19,7 @@ const INVALID_MOVE = 0;
 const INVALID_MOVE_OFF_BOARD = -1;
 const INVALID_MOVE_BLOCKED = -2;
 const INVALID_MOVE_KING_JEOPARDY = -3;
+const INVALID_MOVE_OUT_OF_RANGE = -4;
 
 /**
  * gets all the pieces in the database
@@ -29,6 +31,22 @@ function get_pieces($limit = null) {
 	$sql = new sql('pieces');
 	$pieces = $sql->select(array('limit' => $limit), sql::SELECT_MULTIPLE);
 	return $pieces;
+}
+
+function get_my_pieces($user_id) {
+	
+	$sql = 'SELECT * FROM pieces
+			WHERE piece_user_id = ? 
+				AND piece_space_id IS NOT NULL';
+	
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('i', $user_id);
+	$stmt->execute();
+	$result = $stmt->get_result();
+    $pieces = $result->fetch_all(MYSQLI_ASSOC);
+	
+	return $pieces;
+	
 }
 
 function get_piece_by_name($piecename) {
@@ -56,6 +74,22 @@ function get_piece_by_space($space_id) {
         'value' => $space_id
     ]);
     return $piece;
+}
+
+function get_piece_by_user_and_class($user_id, $piece_class_id) {
+	
+	$sql = 'SELECT * FROM pieces
+			WHERE piece_user_id = ? 
+				AND piece_class_id = ?';
+	
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('ii', $user_id, $piece_class_id);
+	$stmt->execute();
+	$result = $stmt->get_result();
+    $piece = new sql('pieces', $result->fetch_array(MYSQLI_ASSOC));
+	
+	return $piece;
+	
 }
 
 function get_piece_by_relative_id($user_id, $relative_id) {
@@ -106,6 +140,8 @@ function get_piece_move_code($match, $piece, $new_x, $new_y) {
 	
 	$ability = get_ability_by_class_and_kill_count($piece['piece_class_id'], 
 		$piece['piece_kill_count']);
+	
+	//print_r($piece);
 	$space = get_space_by_id($piece['piece_space_id']);
 	$board = get_board_by_id($match['match_board_id']);
 	
@@ -144,14 +180,10 @@ function get_piece_move_code($match, $piece, $new_x, $new_y) {
 	} else if (
 		!$move_is_in_matrix
 		||
-		(
-			$move_is_in_matrix
-			&& 
-			$ability_data[$rel_y][$rel_x]['move_code'] == 0
-		)
+		($move_is_in_matrix && $ability_data[$rel_y][$rel_x]['move_code'] == 0)
 	) {
 		
-		// diagonal move
+		// diagonal moves
 		if (abs($rel_x) == abs($rel_y)) {
 		
 			$x_dir = $rel_x > 0 ? 1 : -1;
@@ -174,8 +206,7 @@ function get_piece_move_code($match, $piece, $new_x, $new_y) {
 			
 		// invalid moves
 		} else {
-			echo '1';
-			return false;
+			return INVALID_MOVE;
 		}
 		
 		if (
@@ -184,16 +215,57 @@ function get_piece_move_code($match, $piece, $new_x, $new_y) {
 			$ability_data[$y_dir][$x_dir]['move_range'] < 0
 		) {
 			return $ability_data[$y_dir][$x_dir]['move_code'];
+		} else {
+			return INVALID_MOVE_OUT_OF_RANGE;
 		}
 		
-	} else {
-		echo '2';
-		return false;
 	}
 	
-	echo '3';
+	throw new Exception();
+	
+}
+
+function get_check_status($user_id, $match) {
+	
+	$opp_match_user = get_opponent_match_user($match['match_id'], $user_id);
+	
+	$opp_king_piece = get_piece_by_user_and_class(
+		$opp_match_user['match_user_user_id'], 
+		PIECE_CLASS_KING
+	);
+	
+	$opp_king_space = get_space_by_id($opp_king_piece['piece_space_id']);
+	$opp_king_x = $opp_king_space['space_coord_x'];
+	$opp_king_y = $opp_king_space['space_coord_y'];
+	
+	$my_pieces = get_my_pieces($user_id);
+	
+	//print_r($my_pieces);
+	
+	foreach ($my_pieces as $piece) {
+		
+		$move_code = get_piece_move_code($match, $piece, $opp_king_x, $opp_king_y);
+		
+		if (piece_can_attack($move_code)) {
+			return true;
+		}
+		
+	}
+	
 	return false;
 	
+}
+
+function piece_can_move($move_code) {
+	return $move_code == 1 || $move_code == 3 || $move_code == 5 || $move_code == 7;
+}
+
+function piece_can_attack($move_code) {
+	return $move_code == 2 || $move_code == 3 || $move_code == 6 || $move_code == 7;
+}
+
+function piece_can_defend($move_code) {
+	return $move_code == 4 || $move_code == 5 || $move_code == 6 || $move_code == 7;
 }
 
 function add_piece($space_id, $class_id, $user_id, $relative_id = null) {
