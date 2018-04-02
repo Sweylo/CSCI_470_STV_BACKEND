@@ -37,6 +37,7 @@ function get_card_by_id($id) {
 					trap_card_name as card_name, 
 					trap_card_description as card_description, 
 					trap_card_trap_id as attr_id,
+					card_play_opportunity as card_play_opportunity,
 					\'trap\' as card_type
 				FROM cards c
 					JOIN trap_cards tc ON c.card_id = tc.trap_card_card_id
@@ -48,6 +49,8 @@ function get_card_by_id($id) {
 					power_card_name as card_name, 
 					power_card_description as card_description, 
 					power_card_ability_id as attr_id,
+					power_card_upgrade_id as card_upgrade_id,
+					card_play_opportunity as card_play_opportunity,
 					\'power\' as card_type
 				FROM cards c
 					JOIN power_cards pc ON c.card_id = pc.power_card_card_id
@@ -90,7 +93,7 @@ function get_cards_by_user($user_id) {
 	
 }
 
-function use_card($card_id, $user_id, $match_id) {
+function assign_card($card_id, $user_id, $match_id) {
 	
 	$sql = 'UPDATE user_cards 
 				SET user_card_match_id = ? 
@@ -99,6 +102,46 @@ function use_card($card_id, $user_id, $match_id) {
 	
 	$stmt = sql::$db->prepare($sql);
 	$stmt->bind_param('iii', $match_id, $card_id, $user_id);
+	$stmt->execute();
+	
+}
+
+function use_power_card($card_id, $user_id, $piece_id) {
+	
+	$card = get_card_by_id($card_id);
+	
+	$sql = 'SELECT * FROM upgrades u 
+			JOIN abilities a 
+				ON u.upgrade_ability_id = a.ability_id
+			WHERE upgrade_id = ?';
+			
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('i', $card['card_upgrade_id']);
+	$stmt->execute();
+	$result = $stmt->get_result();
+    $upgrade = $result->fetch_array(MYSQLI_ASSOC); 
+	
+	$piece = get_piece_by_id($piece_id);
+	$piece['piece_kill_count'] = $upgrade['upgrade_kill_count'];
+	$piece->update();
+	
+	send_card_to_discard($card_id, $user_id);
+	
+}
+
+function use_trap_card($card, $user, $space_id) {
+	
+}
+
+function send_card_to_discard($card_id, $user_id) {
+	
+	$sql = 'UPDATE user_cards 
+				SET user_card_is_used = 1
+			WHERE user_card_card_id = ?
+				AND user_card_user_id = ?';
+	
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('iii', $card_id, $user_id);
 	$stmt->execute();
 	
 }

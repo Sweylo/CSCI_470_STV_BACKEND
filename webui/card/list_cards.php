@@ -10,6 +10,7 @@
 		<th>card_id</th>
 		<th>card name</th>
 		<th>card description</th>
+		<th>play opportunity</th>
 		<th>card type</th>
 	</tr>
 	
@@ -24,6 +25,7 @@ foreach ($cards as $card) {
 	echo html('td', [], $this_card['card_id']);
 	echo html('td', [], $this_card['card_name']);
 	echo html('td', [], $this_card['card_description']);
+	echo html('td', [], $this_card['card_play_opportunity'] ? 'during' : 'before');
 	
 	/*if ($this_card['card_type'] == 'power') {
 		echo html('td', [], "power (#{$this_card['power_card_ability_id']})");

@@ -191,7 +191,7 @@ function init_match($match_id) {
     }*/
     
     //print_r($match_users);
-    
+	
     // get and decode the specified board's data
     $board = get_board_by_id($match['match_board_id']);
     //$board_data = json_decode($board['board_data'], true);

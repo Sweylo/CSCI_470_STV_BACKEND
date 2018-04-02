@@ -109,6 +109,35 @@ switch ($action) {
         }
         
         break;
+		
+	case 'join_random_match':
+		
+		// if user isn't logged in or is a guest
+        if (!$me || $me['user_account_type_id'] < USER_TYPE_USER) {
+            send_to_client(401);
+        }
+		
+		$matches = get_avail_matches(10);
+		
+		if (is_null($matches[0])) {
+			send_to_client(404);
+		}
+			
+		$match = $matches[0];
+
+		// update the database with the new user
+		try {
+			join_match($match['match_id'], $me['user_id']);
+		} catch (Exception $e) {
+			send_to_client(409, null, $e);
+		}
+
+		// create database records for the match data (spaces and pieces)
+		init_match($match['match_id']);
+
+		send_to_client(202, ['match_id' => $match['match_id']]);
+		
+		break;
         
     /*case 'init_match':
         $match = get_match_by_id(filter_var($input['match_id'], FILTER_VALIDATE_INT));

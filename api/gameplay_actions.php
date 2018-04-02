@@ -77,6 +77,10 @@ switch ($action) {
             send_to_client(208);
         }
 		
+		if (!is_array($input['cards'])) {
+			send_to_client(400);
+		}
+		
 		// get all cards belonging to the user (the deck)
 		$user_cards = get_cards_by_user($me['user_id']);
 		
@@ -84,7 +88,8 @@ switch ($action) {
 		foreach ($input['cards'] as $card_data) {
 			
 			// get the card data from the database
-			$card = get_card_by_id($card_data['card_id']);
+			$card_id = filter_var($card_data['card_id'], FILTER_VALIDATE_INT);
+			$card = get_card_by_id($card_id);
 			//print_r($card);
 			
 			// boolean flag to determine whether or not the user has the card specified
@@ -111,9 +116,24 @@ switch ($action) {
 					'card_error' => CARD_NOT_IN_DECK, 
 					'card_id' => $card_data['card_id']
 				]);
-			} else {
-				// set the match_id field to indicate that the card has been used for this match
-				use_card($card_data['card_id'], $me['user_id'], $match['match_id']);
+			}
+			
+			// get piece if is a power card
+			if ($card['card_type'] == 'power' && isset($input['piece_id'])) {
+				$piece_id = filter_var($card_data['piece_id'], FILTER_VALIDATE_INT);
+			// get space if is a trap card
+			} else if ($card['card_type'] == 'trap' && isset($input['space_id'])) {
+				$space_id = filter_var($card_data['space_id'], FILTER_VALIDATE_INT);
+			}
+			
+			// set the match_id field to indicate that the card has been used for this match
+			assign_card($card_data['card_id'], $me['user_id'], $match['match_id']);
+			
+			// if card is used in the beginning, send to discard
+			if ($card['card_play_opportunity'] == 0 && $card['card_type'] == 'power') {
+				use_power_card($card['card_id'], $piece_id);
+			} else if ($card['card_play_opportunity'] == 0 && $card['card_type'] == 'trap') {
+				use_trap_card($card['card_id'], $space_id);
 			}
 			
 		}
@@ -172,7 +192,7 @@ switch ($action) {
 		
 		//print_r($new_space);
 		
-		// *** make sure new space is within piece's ability to move
+		// get pieces move code for the coordinate specified
 		$move_code = get_piece_move_code($match, $moving_piece, $new_coord_x, $new_coord_y);
 		
 		//echo "move_code: $move_code";
