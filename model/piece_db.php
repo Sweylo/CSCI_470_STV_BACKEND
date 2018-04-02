@@ -1,6 +1,9 @@
 <?php
 
 require_once($dir_depth . 'model/sql.php');
+require_once($dir_depth . 'model/board_db.php');
+require_once($dir_depth . 'model/space_db.php');
+require_once($dir_depth . 'model/ability_db.php');
 
 // piece class constants
 const PIECE_CLASS_KING = 1;
@@ -9,6 +12,12 @@ const PIECE_CLASS_ROOK = 3;
 const PIECE_CLASS_BISHOP = 4;
 const PIECE_CLASS_KNIGHT = 5;
 const PIECE_CLASS_PAWN = 6;
+
+// move constants
+const INVALID_MOVE = -1;
+const INVALID_MOVE_OFF_BOARD = -2;
+const INVALID_MOVE_BLOCKED = -3;
+const INVALID_MOVE_KING_JEOPARDY = -4;
 
 /**
  * gets all the pieces in the database
@@ -86,6 +95,110 @@ function get_captured_pieces($match_id) {
 	}
     
 	return $pieces;
+	
+}
+
+function get_piece_move_code($match, $piece, $new_x, $new_y) {
+	
+	$ability = get_ability_by_class_and_kill_count($piece['piece_class_id'], 
+		$piece['piece_kill_count']);
+	$space = get_space_by_id($piece['piece_space_id']);
+	$board = get_board_by_id($match['match_board_id']);
+	
+	$max_x = $board['board_col_count'];
+	$max_y = $board['board_row_count'];
+	$current_x = $space['space_coord_x'];
+	$current_y = $space['space_coord_y'];
+	
+	// check that the move is in the bounds of the board
+	if (($new_x > $max_x || $new_x < 1) && ($new_y > $max_y || $new_y < 1)) {
+		return INVALID_MOVE_OFF_BOARD;
+	}
+	
+	$rel_x = $new_x - $current_x;
+	$rel_y = $new_y - $current_y;
+	
+	//echo "rel_x: $rel_x | rel_y: $rel_y<br />";
+	
+	$ability_data = json_decode($ability['ability_data'], true);
+	
+	//print_r($ability_data[$rel_y][$rel_x]);
+	//echo $ability_data[$rel_y][$rel_x]['move_code'];
+	
+	$move_is_in_matrix = !is_null($ability_data[$rel_y][$rel_x]);
+	
+	// move is in ability matrix with a move code above 0
+	if ($move_is_in_matrix && $ability_data[$rel_y][$rel_x]['move_code'] != 0) {
+		
+		return $ability_data[$rel_y][$rel_x]['move_code'];
+		
+	// move is outside ability matrix, but is a diagonal move (need to check inner values)
+	} else if (
+		!$move_is_in_matrix
+		||
+		(
+			$move_is_in_matrix
+			&& 
+			$ability_data[$rel_y][$rel_x]['move_code'] == 0
+		)
+	) {
+		
+		echo "rel_x: $rel_x | rel_y: $rel_y<br />";
+		
+		// diagonal move
+		if (abs($rel_x) == abs($rel_y)) {
+			
+			$x_dir = $rel_x > 0 ? 1 : -1;
+			$y_dir = $rel_y > 0 ? 1 : -1;
+			
+			echo "x_dir: $x_dir | y_dir: $y_dir<br />";
+			
+			print_r($ability_data[$y_dir][$x_dir]);
+			
+			if (
+				$ability_data[$y_dir][$x_dir]['move_range'] >= abs($rel_x)
+				||
+				$ability_data[$y_dir][$x_dir]['move_range'] < 0
+			) {
+				return $ability_data[$y_dir][$x_dir]['move_code'];
+			}
+			
+		// up/down moves
+		} else if ($rel_x == 0 && abs($rel_y) > 0) {
+			
+			$y_dir = $rel_y > 0 ? 1 : -1;
+			
+			if (
+				$ability_data[$y_dir][0]['move_range'] >= abs($rel_y)
+				||
+				$ability_data[$y_dir][0]['move_range'] < 0
+			) {
+				return $ability_data[$y_dir][0]['move_code'];
+			}
+			
+		// left/right moves
+		} else if ($rel_y == 0 && abs($rel_x) > 0) {
+			
+			$x_dir = $rel_x > 0 ? 1 : -1;
+			
+			if (
+				$ability_data[0][$x_dir]['move_range'] >= abs($rel_x)
+				||
+				$ability_data[0][$x_dir]['move_range'] < 0
+			) {
+				return $ability_data[0][$x_dir]['move_code'];
+			}
+			
+		// invalid moves
+		} else {
+			return false;
+		}
+		
+	} else {
+		return false;
+	}
+	
+	return false;
 	
 }
 

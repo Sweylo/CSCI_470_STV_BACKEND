@@ -23,11 +23,27 @@ function get_ability_by_id($id) {
 	return $ability;
 }
 
+function get_ability_by_class_and_kill_count($piece_class_id, $piece_kill_count) {
+	
+	$sql = 'SELECT * FROM abilities a 
+				JOIN upgrades u ON a.ability_id = u.upgrade_ability_id 
+			WHERE upgrade_class_id = ? 
+				AND upgrade_kill_count = ?';
+	
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('ii', $piece_class_id, $piece_kill_count);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	
+	return $result->fetch_array(MYSQLI_ASSOC);
+	
+}
+
 function add_ability($data, $class_id, $level) {
 	sql::insert('abilities', array(
 		'ability_data' => $data,
 		'ability_class_id' => $class_id,
-        'ability_level' => $level
+        'ability_level' => (int) $level
 	));
 }
 
