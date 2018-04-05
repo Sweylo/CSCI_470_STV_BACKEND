@@ -80,6 +80,21 @@ switch ($action) {
         send_to_client(200, $output);
         
         break;
+		
+	case 'get_user_info':
+		
+		if (!$me) {
+            send_to_client(401);
+        }
+		
+		$user = get_user_by_name(filter_var($input['user_name']));
+		
+		send_to_client(200, [
+			'user_id' => $user['user_id'],
+			'user_name' => $user['user_name']
+		]);
+		
+		break;
     
     case 'add_friend': 
         

@@ -138,13 +138,17 @@ function get_captured_pieces($match_id) {
 
 function get_piece_move_code($match, $piece, $new_x, $new_y) {
 	
+	// get the ability record
 	$ability = get_ability_by_class_and_kill_count($piece['piece_class_id'], 
 		$piece['piece_kill_count']);
 	
 	//print_r($piece);
+	
+	// get the board and space records
 	$space = get_space_by_id($piece['piece_space_id']);
 	$board = get_board_by_id($match['match_board_id']);
 	
+	// extract values from database records
 	$max_x = $board['board_col_count'];
 	$max_y = $board['board_row_count'];
 	$current_x = $space['space_coord_x'];
@@ -155,16 +159,19 @@ function get_piece_move_code($match, $piece, $new_x, $new_y) {
 		return INVALID_MOVE_OFF_BOARD;
 	}
 	
+	// get coordinates relative to current space coordinate
 	$rel_x = $new_x - $current_x;
 	$rel_y = ($new_y - $current_y) * (get_piece_color($piece) == 'black' ? -1 : 1);
 	
 	//echo "rel_x: $rel_x | rel_y: $rel_y<br />";
 	
+	// decode the json data from the database record
 	$ability_data = json_decode($ability['ability_data'], true);
 	
 	//print_r($ability_data);
 	//echo $ability_data[$rel_y][$rel_x]['move_code'];
 	
+	// apply king upgrade
 	if ($piece['piece_class_id'] == PIECE_CLASS_KING) {
 		$ability_data[$y_dir][$x_dir]['move_range'] *= $piece['piece_kill_count'] + 1;
 	}
@@ -176,7 +183,7 @@ function get_piece_move_code($match, $piece, $new_x, $new_y) {
 		
 		return $ability_data[$rel_y][$rel_x]['move_code'];
 		
-	// move is outside ability matrix
+	// move is outside ability matrix or is in the matrix but has a move code of 0
 	} else if (
 		!$move_is_in_matrix
 		||
@@ -212,7 +219,7 @@ function get_piece_move_code($match, $piece, $new_x, $new_y) {
 		if (
 			$ability_data[$y_dir][$x_dir]['move_range'] >= abs($magnitude)
 			||
-			$ability_data[$y_dir][$x_dir]['move_range'] < 0
+			$ability_data[$y_dir][$x_dir]['move_range'] == -1
 		) {
 			return $ability_data[$y_dir][$x_dir]['move_code'];
 		} else {
@@ -225,34 +232,47 @@ function get_piece_move_code($match, $piece, $new_x, $new_y) {
 	
 }
 
-function get_check_status($user_id, $match) {
+function get_check_status($user_id, $match, $return_threats = false) {
 	
+	// get the match user record of the opponent
 	$opp_match_user = get_opponent_match_user($match['match_id'], $user_id);
 	
+	// get the piece record of the opponent's king
 	$opp_king_piece = get_piece_by_user_and_class(
 		$opp_match_user['match_user_user_id'], 
 		PIECE_CLASS_KING
 	);
 	
+	// get the opponent's king's coordinates
 	$opp_king_space = get_space_by_id($opp_king_piece['piece_space_id']);
 	$opp_king_x = $opp_king_space['space_coord_x'];
 	$opp_king_y = $opp_king_space['space_coord_y'];
 	
+	// get array of this player's pieces
 	$my_pieces = get_my_pieces($user_id);
 	
 	//print_r($my_pieces);
+	
+	$threats = [];
 	
 	foreach ($my_pieces as $piece) {
 		
 		$move_code = get_piece_move_code($match, $piece, $opp_king_x, $opp_king_y);
 		
-		if (piece_can_attack($move_code)) {
+		if (!$return_threats && piece_can_attack($move_code)) {
 			return true;
+		} else if ($return_threats && piece_can_attack($move_code)) {
+			array_push($threats, $piece);
 		}
 		
 	}
 	
-	return false;
+	if ($return_threats) {
+		return $threats;
+	} else {
+		return false;
+	}
+	
 	
 }
 

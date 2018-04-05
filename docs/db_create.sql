@@ -29,7 +29,7 @@ CREATE TABLE `abilities` (
   `ability_level` int(11) DEFAULT '0',
   PRIMARY KEY (`ability_id`),
   UNIQUE KEY `ability_id_UNIQUE` (`ability_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -63,6 +63,7 @@ CREATE TABLE `board_init_spaces` (
   `board_init_coord_y` int(11) NOT NULL,
   `board_init_class_id` int(2) DEFAULT NULL,
   `board_init_piece_color` varchar(5) DEFAULT NULL,
+  `board_init_piece_ability_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`board_init_id`),
   UNIQUE KEY `board_coord_id_UNIQUE` (`board_init_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8;
@@ -196,7 +197,7 @@ CREATE TABLE `match_users` (
   KEY `match_user_match_id_idx` (`match_user_match_id`),
   CONSTRAINT `match_user_match_id` FOREIGN KEY (`match_user_match_id`) REFERENCES `matches` (`match_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `match_user_white_user_id` FOREIGN KEY (`match_user_user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,7 +217,7 @@ CREATE TABLE `matches` (
   UNIQUE KEY `match_id_UNIQUE` (`match_id`),
   KEY `match_board_id_idx` (`match_board_id`),
   CONSTRAINT `match_board_id` FOREIGN KEY (`match_board_id`) REFERENCES `boards` (`board_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -236,7 +237,7 @@ CREATE TABLE `pieces` (
   `piece_relative_id` int(3) DEFAULT NULL,
   PRIMARY KEY (`piece_id`),
   UNIQUE KEY `piece_space_id_UNIQUE` (`piece_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=129 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -251,7 +252,7 @@ CREATE TABLE `power_cards` (
   `power_card_name` varchar(100) NOT NULL,
   `power_card_description` mediumtext NOT NULL,
   `power_card_card_id` int(11) NOT NULL,
-  `power_card_ability_id` int(11) NOT NULL,
+  `power_card_upgrade_id` int(11) NOT NULL,
   PRIMARY KEY (`power_card_id`),
   UNIQUE KEY `tarrot_card_id_UNIQUE` (`power_card_id`),
   UNIQUE KEY `card_id_UNIQUE` (`power_card_card_id`)
@@ -292,7 +293,7 @@ CREATE TABLE `spaces` (
   KEY `match_space_id_idx` (`space_match_id`),
   KEY `match_space_type_id_idx` (`space_type_id`),
   CONSTRAINT `match_space_id` FOREIGN KEY (`space_match_id`) REFERENCES `matches` (`match_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=193 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=257 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -329,6 +330,40 @@ CREATE TABLE `traps` (
   PRIMARY KEY (`trap_id`),
   UNIQUE KEY `trap_id_UNIQUE` (`trap_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `upgrade_paths`
+--
+
+DROP TABLE IF EXISTS `upgrade_paths`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `upgrade_paths` (
+  `upgrade_path_id` int(11) NOT NULL AUTO_INCREMENT,
+  `upgrade_path_name` varchar(45) NOT NULL,
+  PRIMARY KEY (`upgrade_path_id`),
+  UNIQUE KEY `upgrade_path_id_UNIQUE` (`upgrade_path_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `upgrades`
+--
+
+DROP TABLE IF EXISTS `upgrades`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `upgrades` (
+  `upgrade_id` int(11) NOT NULL AUTO_INCREMENT,
+  `upgrade_class_id` int(11) NOT NULL,
+  `upgrade_ability_id` int(11) NOT NULL,
+  `upgrade_path_id` int(11) DEFAULT NULL COMMENT 'attack or defense',
+  `upgrade_kill_count` int(3) NOT NULL,
+  `upgrade_level` int(11) NOT NULL,
+  PRIMARY KEY (`upgrade_id`),
+  UNIQUE KEY `upgrade_id_UNIQUE` (`upgrade_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -377,7 +412,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `user_token_UNIQUE` (`user_token`),
   KEY `user_account_type_id_idx` (`user_account_type_id`),
   CONSTRAINT `user_account_type_id` FOREIGN KEY (`user_account_type_id`) REFERENCES `account_types` (`account_type_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -389,7 +424,7 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-30 20:14:37
+-- Dump completed on 2018-04-05 14:38:22
 
 -- -----------------------------------------------------
 -- Data for table `chess_n_conquer`.`account_types`
@@ -428,5 +463,63 @@ INSERT INTO `chess_n_conquer`.`space_types` (`space_type_id`, `space_type_name`)
 INSERT INTO `chess_n_conquer`.`space_types` (`space_type_id`, `space_type_name`) VALUES (2, 'void');
 INSERT INTO `chess_n_conquer`.`space_types` (`space_type_id`, `space_type_name`) VALUES (3, 'water');
 INSERT INTO `chess_n_conquer`.`space_types` (`space_type_id`, `space_type_name`) VALUES (4, 'mountain');
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `chess_n_conquer`.`abilities`
+-- -----------------------------------------------------
+START TRANSACTION;
+INSERT INTO `abilities` VALUES 
+(1,'{\"-2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}},\"-1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":0,\"move_range\":\"1\"},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"0\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":2,\"move_range\":\"1\"},\"0\":{\"move_code\":1,\"move_range\":\"2\"},\"1\":{\"move_code\":2,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}}}',6,1),
+(2,'{\"-2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}},\"-1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":0,\"move_range\":\"1\"},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"0\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":2,\"move_range\":\"1\"},\"0\":{\"move_code\":3,\"move_range\":\"1\"},\"1\":{\"move_code\":2,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}}}',6,1),
+(3,'{\"-2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":3,\"move_range\":0},\"0\":{\"move_code\":3,\"move_range\":0},\"1\":{\"move_code\":3,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}},\"-1\":{\"-2\":{\"move_code\":3,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":3,\"move_range\":\"1\"},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":3,\"move_range\":0}},\"0\":{\"-2\":{\"move_code\":3,\"move_range\":0},\"-1\":{\"move_code\":3,\"move_range\":\"1\"},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":3,\"move_range\":\"1\"},\"2\":{\"move_code\":3,\"move_range\":0}},\"1\":{\"-2\":{\"move_code\":3,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":3,\"move_range\":\"1\"},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":3,\"move_range\":0}},\"2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":3,\"move_range\":0},\"0\":{\"move_code\":3,\"move_range\":0},\"1\":{\"move_code\":3,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}}}',5,3),
+(4,'{\"-2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}},\"-1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":3,\"move_range\":\"-1\"},\"0\":{\"move_code\":3,\"move_range\":\"-1\"},\"1\":{\"move_code\":3,\"move_range\":\"-1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"0\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":3,\"move_range\":\"-1\"},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":3,\"move_range\":\"-1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":3,\"move_range\":\"-1\"},\"0\":{\"move_code\":3,\"move_range\":\"-1\"},\"1\":{\"move_code\":3,\"move_range\":\"-1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}}}',2,0),
+(5,'{\"-2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}},\"-1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":3,\"move_range\":\"1\"},\"0\":{\"move_code\":3,\"move_range\":\"1\"},\"1\":{\"move_code\":3,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"0\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":3,\"move_range\":\"1\"},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":3,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":3,\"move_range\":\"1\"},\"0\":{\"move_code\":3,\"move_range\":\"1\"},\"1\":{\"move_code\":3,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}}}',1,0),
+(6,'{\"-2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}},\"-1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":3,\"move_range\":\"-1\"},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"0\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":3,\"move_range\":\"-1\"},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":3,\"move_range\":\"-1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":3,\"move_range\":\"-1\"},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}}}',3,0),
+(7,'{\"-2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}},\"-1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":3,\"move_range\":\"-1\"},\"0\":{\"move_code\":0,\"move_range\":\"1\"},\"1\":{\"move_code\":3,\"move_range\":\"-1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"0\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":3,\"move_range\":\"-1\"},\"0\":{\"move_code\":0,\"move_range\":\"1\"},\"1\":{\"move_code\":3,\"move_range\":\"-1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}}}',4,0),
+(8,'{\"-2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":3,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":3,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}},\"-1\":{\"-2\":{\"move_code\":3,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":0,\"move_range\":\"1\"},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":3,\"move_range\":0}},\"0\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"1\":{\"-2\":{\"move_code\":3,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":0,\"move_range\":\"1\"},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":3,\"move_range\":0}},\"2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":3,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":3,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}}}',5,0),
+(9,'{\"-2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}},\"-1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":0,\"move_range\":\"1\"},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"0\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":2,\"move_range\":\"1\"},\"0\":{\"move_code\":1,\"move_range\":\"1\"},\"1\":{\"move_code\":2,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}}}',6,0),
+(10,'{\"-2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}},\"-1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":0,\"move_range\":\"1\"},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"0\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":\"1\"},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"1\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":2,\"move_range\":\"1\"},\"0\":{\"move_code\":3,\"move_range\":\"1\"},\"1\":{\"move_code\":2,\"move_range\":\"1\"},\"2\":{\"move_code\":0,\"move_range\":0}},\"2\":{\"-2\":{\"move_code\":0,\"move_range\":0},\"-1\":{\"move_code\":0,\"move_range\":0},\"0\":{\"move_code\":0,\"move_range\":0},\"1\":{\"move_code\":0,\"move_range\":0},\"2\":{\"move_code\":0,\"move_range\":0}}}',6,1);
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `chess_n_conquer`.`board_init_spaces`
+-- -----------------------------------------------------
+START TRANSACTION;
+INSERT INTO `board_init_spaces` VALUES (1,1,1,1,3,'white',NULL),(2,1,2,1,5,'white',NULL),(3,1,3,1,4,'white',NULL),(4,1,4,1,2,'white',NULL),(5,1,5,1,1,'white',NULL),(6,1,6,1,4,'white',NULL),(7,1,7,1,5,'white',NULL),(8,1,8,1,3,'white',NULL),(9,1,1,2,6,'white',NULL),(10,1,2,2,6,'white',NULL),(11,1,3,2,6,'white',NULL),(12,1,4,2,6,'white',NULL),(13,1,5,2,6,'white',NULL),(14,1,6,2,6,'white',NULL),(15,1,7,2,6,'white',NULL),(16,1,8,2,6,'white',NULL),(17,1,1,3,0,'',NULL),(18,1,2,3,0,'',NULL),(19,1,3,3,0,'',NULL),(20,1,4,3,0,'',NULL),(21,1,5,3,0,'',NULL),(22,1,6,3,0,'',NULL),(23,1,7,3,0,'',NULL),(24,1,8,3,0,'',NULL),(25,1,1,4,0,'',NULL),(26,1,2,4,0,'',NULL),(27,1,3,4,0,'',NULL),(28,1,4,4,0,'',NULL),(29,1,5,4,0,'',NULL),(30,1,6,4,0,'',NULL),(31,1,7,4,0,'',NULL),(32,1,8,4,0,'',NULL),(33,1,1,5,0,'',NULL),(34,1,2,5,0,'',NULL),(35,1,3,5,0,'',NULL),(36,1,4,5,0,'',NULL),(37,1,5,5,0,'',NULL),(38,1,6,5,0,'',NULL),(39,1,7,5,0,'',NULL),(40,1,8,5,0,'',NULL),(41,1,1,6,0,'',NULL),(42,1,2,6,0,'',NULL),(43,1,3,6,0,'',NULL),(44,1,4,6,0,'',NULL),(45,1,5,6,0,'',NULL),(46,1,6,6,0,'',NULL),(47,1,7,6,0,'',NULL),(48,1,8,6,0,'',NULL),(49,1,1,7,6,'black',NULL),(50,1,2,7,6,'black',NULL),(51,1,3,7,6,'black',NULL),(52,1,4,7,6,'black',NULL),(53,1,5,7,6,'black',NULL),(54,1,6,7,6,'black',NULL),(55,1,7,7,6,'black',NULL),(56,1,8,7,6,'black',NULL),(57,1,1,8,3,'black',NULL),(58,1,2,8,5,'black',NULL),(59,1,3,8,4,'black',NULL),(60,1,4,8,2,'black',NULL),(61,1,5,8,1,'black',NULL),(62,1,6,8,4,'black',NULL),(63,1,7,8,5,'black',NULL),(64,1,8,8,3,'black',NULL);
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `chess_n_conquer`.`boards`
+-- -----------------------------------------------------
+START TRANSACTION;
+INSERT INTO `boards` VALUES (1,'standard',8,8,1);
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `chess_n_conquer`.`upgrade_paths`
+-- -----------------------------------------------------
+START TRANSACTION;
+INSERT INTO `upgrade_paths` VALUES (1,'attack'),(2,'defense');
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `chess_n_conquer`.`upgrades`
+-- -----------------------------------------------------
+START TRANSACTION;
+INSERT INTO `upgrades` VALUES 
+(1,1,1,NULL,0,0),
+(2,2,2,NULL,0,0),
+(3,3,3,NULL,0,0),
+(4,4,4,NULL,0,0),
+(5,5,5,NULL,0,0),
+(6,6,6,NULL,0,0),
+(7,6,7,NULL,1,1);
+
 
 COMMIT;

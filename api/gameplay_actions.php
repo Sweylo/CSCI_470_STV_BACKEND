@@ -243,6 +243,15 @@ switch ($action) {
         send_to_client(202, ['check_status' => $check_status]);
         
         break;
+		
+	case 'get_check_status':
+		
+		$match = get_match_and_validate_match_status(MATCH_PLAYING);
+		$check_status = get_check_status($me['user_id'], $match);
+		
+		send_to_client(200, ['match_id' => $match['match_id'], 'check_status' => $check_status]);
+		
+		break;
         
     case 'resign':
         

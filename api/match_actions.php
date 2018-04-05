@@ -120,22 +120,39 @@ switch ($action) {
 		$matches = get_avail_matches(10);
 		
 		if (is_null($matches[0])) {
-			send_to_client(404);
+			
+			//send_to_client(404);
+			
+			try {
+				$new_match_id = add_match($me['user_id'], $board['board_id'], 
+					rand(0,1) ? 'white' : 'black');
+			} catch(mysqli_sql_exception $e) {
+				send_to_client(500, ['add_match_error' => $e]);
+			}
+			
+			$match = get_match_by_id($new_match_id);
+			
+			$code = 201;
+			
+		} else {
+			
+			$match = $matches[0];
+
+				// update the database with the new user
+			try {
+				join_match($match['match_id'], $me['user_id']);
+			} catch (Exception $e) {
+				send_to_client(409, ['join_match_error' => $e]);
+			}
+
+			// create database records for the match data (spaces and pieces)
+			init_match($match['match_id']);
+			
+			$code = 202;
+			
 		}
 			
-		$match = $matches[0];
-
-		// update the database with the new user
-		try {
-			join_match($match['match_id'], $me['user_id']);
-		} catch (Exception $e) {
-			send_to_client(409, null, $e);
-		}
-
-		// create database records for the match data (spaces and pieces)
-		init_match($match['match_id']);
-
-		send_to_client(202, ['match_id' => $match['match_id']]);
+		send_to_client($code, ['match_id' => $match['match_id']]);
 		
 		break;
         
