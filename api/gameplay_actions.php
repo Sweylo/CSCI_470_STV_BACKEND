@@ -77,65 +77,71 @@ switch ($action) {
             send_to_client(208);
         }
 		
-		if (!is_array($input['cards'])) {
-			send_to_client(400);
-		}
-		
-		// get all cards belonging to the user (the deck)
-		$user_cards = get_cards_by_user($me['user_id']);
-		
-		// check each card input from the client
-		foreach ($input['cards'] as $card_data) {
+		if (!is_null($input['cards']) && is_array($input['cards'])) {
 			
-			// get the card data from the database
-			$card_id = filter_var($card_data['card_id'], FILTER_VALIDATE_INT);
-			$card = get_card_by_id($card_id);
-			//print_r($card);
 			
-			// boolean flag to determine whether or not the user has the card specified
-			$user_has_card = false;
-			
-			// check to see if the user has the card available
-			foreach ($user_cards as $user_card) {
-				
-				// check if the user has the card, and if it has been used already
-				if (
-					$user_card['card_id'] == $card['card_id'] 
-					&& 
-					is_null($user_card['card_match_id'])
-				) {
-					$user_has_card = true;
-					break;
+
+			// get all cards belonging to the user (the deck)
+			$user_cards = get_cards_by_user($me['user_id']);
+
+			if (!is_array($user_cards) && is_array($input['cards'])) {
+				send_to_client(404);
+			}
+
+			// check each card input from the client
+			foreach ($input['cards'] as $card_data) {
+
+				// get the card data from the database
+				$card_id = filter_var($card_data['card_id'], FILTER_VALIDATE_INT);
+				$card = get_card_by_id($card_id);
+				//print_r($card);
+
+				// boolean flag to determine whether or not the user has the card specified
+				$user_has_card = false;
+
+				// check to see if the user has the card available
+				foreach ($user_cards as $user_card) {
+
+					// check if the user has the card, and if it has been used already
+					if (
+						$user_card['card_id'] == $card['card_id'] 
+						&& 
+						is_null($user_card['card_match_id'])
+					) {
+						$user_has_card = true;
+						break;
+					}
+
 				}
-				
- 			}
-			
-			if (!$user_has_card) {
-				// return error if user doesn't have card
-				send_to_client(400, [
-					'card_error' => CARD_NOT_IN_DECK, 
-					'card_id' => $card_data['card_id']
-				]);
+
+				if (!$user_has_card) {
+					// return error if user doesn't have card
+					send_to_client(400, [
+						'card_error' => CARD_NOT_IN_DECK, 
+						'card_id' => $card_data['card_id']
+					]);
+				}
+
+				// get piece if is a power card
+				if ($card['card_type'] == 'power' && isset($input['piece_id'])) {
+					$piece_id = filter_var($card_data['piece_id'], FILTER_VALIDATE_INT);
+				// get space if is a trap card
+				} else if ($card['card_type'] == 'trap' && isset($input['space_id'])) {
+					$space_id = filter_var($card_data['space_id'], FILTER_VALIDATE_INT);
+				}
+
+				// set the match_id field to indicate that the card has been used for this match
+				assign_card($card_data['card_id'], $me['user_id'], $match['match_id']);
+
+				// if card is used in the beginning, send to discard
+				if ($card['card_play_opportunity'] == 0 && $card['card_type'] == 'power') {
+					use_power_card($card['card_id'], $piece_id);
+				} else if ($card['card_play_opportunity'] == 0 && $card['card_type'] == 'trap') {
+					use_trap_card($card['card_id'], $space_id);
+				}
+
 			}
-			
-			// get piece if is a power card
-			if ($card['card_type'] == 'power' && isset($input['piece_id'])) {
-				$piece_id = filter_var($card_data['piece_id'], FILTER_VALIDATE_INT);
-			// get space if is a trap card
-			} else if ($card['card_type'] == 'trap' && isset($input['space_id'])) {
-				$space_id = filter_var($card_data['space_id'], FILTER_VALIDATE_INT);
-			}
-			
-			// set the match_id field to indicate that the card has been used for this match
-			assign_card($card_data['card_id'], $me['user_id'], $match['match_id']);
-			
-			// if card is used in the beginning, send to discard
-			if ($card['card_play_opportunity'] == 0 && $card['card_type'] == 'power') {
-				use_power_card($card['card_id'], $piece_id);
-			} else if ($card['card_play_opportunity'] == 0 && $card['card_type'] == 'trap') {
-				use_trap_card($card['card_id'], $space_id);
-			}
-			
+		
 		}
         
         $me_match_user = $match_users[$me_index];
@@ -192,8 +198,10 @@ switch ($action) {
 		
 		//print_r($new_space);
 		
+		$board = get_board_by_id($match['match_board_id']);
+		
 		// get pieces move code for the coordinate specified
-		$move_code = get_piece_move_code($match, $moving_piece, $new_coord_x, $new_coord_y);
+		$move_code = get_piece_move_code($board, $moving_piece, $new_coord_x, $new_coord_y);
 		
 		//echo "move_code: $move_code";
 		//die();
@@ -233,14 +241,30 @@ switch ($action) {
 		
 		// increment match turn count
 		$match['match_turn_count']++;
-		$match->update();
 		
 		// check for check
-		$check_status = get_check_status($me['user_id'], $match);
+		$opp_is_in_check = get_check_status($me['user_id'], $match);
 		
-		// *** check for checkmate
-        
-        send_to_client(202, ['check_status' => $check_status]);
+		if ($opp_is_in_check) {
+			
+			// check for checkmate
+			if (get_checkmate_status($me['user_id'], $match, $moving_piece)) {
+				
+				$match['match_status'] = $match_user['match_user_color'] == 'white' 
+					? MATCH_WHITE_WIN : MATCH_BLACK_WIN;
+				
+				send_to_client(202, ['match_status' => $match['match_status']]);
+				
+			}
+			
+		}
+		
+		// update match record
+		$match->update();
+		
+        send_to_client(202, [
+			'check_status' => $opp_is_in_check
+		]);
         
         break;
 		
@@ -250,6 +274,18 @@ switch ($action) {
 		$check_status = get_check_status($me['user_id'], $match);
 		
 		send_to_client(200, ['match_id' => $match['match_id'], 'check_status' => $check_status]);
+		
+		break;
+	
+	case 'get_checkmate_status':
+		
+		$match = get_match_and_validate_match_status(MATCH_PLAYING);
+		$checkmate_status = get_checkmate_status($me['user_id'], $match);
+		
+		send_to_client(200, [
+			'match_id' => $match['match_id'], 
+			'checkmate_status' => $checkmate_status
+		]);
 		
 		break;
         

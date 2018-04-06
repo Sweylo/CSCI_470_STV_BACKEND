@@ -26,6 +26,7 @@ $match_status_enum = [
 // error constants
 const MATCH_ERROR_NOT_LOGGED_IN = 1;
 const MATCH_ERROR_NOT_IN_A_MATCH = 2;
+const MATCH_ERROR_ALREADY_IN_A_MATCH = 3;
 
 // message constants
 const MATCH_MESSAGE_WAITING_FOR_OPPONENT_READY = 1;
@@ -114,7 +115,7 @@ function get_match_by_user($user_id) {
     
 }
 
-function add_match($user_id, $board_id, $color) {
+function add_match($user_id, $board_id) {
     
     // insert record to match table
 	$match = sql::insert('matches', array(

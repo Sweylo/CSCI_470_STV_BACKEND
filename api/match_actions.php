@@ -117,20 +117,31 @@ switch ($action) {
             send_to_client(401);
         }
 		
+		$match_user = get_match_user($me['user_id']);
+		
+		if (!is_null($match_user->data)) {
+			send_to_client(403, ['match_error' => MATCH_ERROR_ALREADY_IN_A_MATCH]);
+		}
+		
 		$matches = get_avail_matches(10);
+		
+		//print_r($matches);
+		
+		echo is_null($matches[0]) ? 'true' : 'false';
 		
 		if (is_null($matches[0])) {
 			
 			//send_to_client(404);
 			
 			try {
-				$new_match_id = add_match($me['user_id'], $board['board_id'], 
-					rand(0,1) ? 'white' : 'black');
+				$new_match_id = add_match($me['user_id'], get_board_by_id(1)['board_id']);
 			} catch(mysqli_sql_exception $e) {
 				send_to_client(500, ['add_match_error' => $e]);
 			}
 			
 			$match = get_match_by_id($new_match_id);
+			
+			print_r($new_match_id);
 			
 			$code = 201;
 			
@@ -138,7 +149,7 @@ switch ($action) {
 			
 			$match = $matches[0];
 
-				// update the database with the new user
+			// update the database with the new user
 			try {
 				join_match($match['match_id'], $me['user_id']);
 			} catch (Exception $e) {
