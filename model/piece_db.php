@@ -157,10 +157,12 @@ function get_piece_move_code($board, $piece, $new_x, $new_y) {
 	if (($new_x > $max_x || $new_x < 1) && ($new_y > $max_y || $new_y < 1)) {
 		return INVALID_MOVE_OFF_BOARD;
 	}
+	
+	$piece_color = get_piece_color($piece);
 
 	// get coordinates relative to current space coordinate
 	$rel_x = $new_x - $current_x;
-	$rel_y = ($new_y - $current_y) * (get_piece_color($piece) == 'black' ? -1 : 1);
+	$rel_y = ($new_y - $current_y) * ($piece_color == 'black' ? -1 : 1);
 	
 	//echo "rel_x: $rel_x | rel_y: $rel_y<br />";
 	
@@ -174,6 +176,17 @@ function get_piece_move_code($board, $piece, $new_x, $new_y) {
 	if ($piece['piece_class_id'] == PIECE_CLASS_KING) {
 		$ability_data[$y_dir][$x_dir]['move_range'] *= $piece['piece_kill_count'] + 1;
 	}
+	
+	$piece_is_on_home_row = $piece_color == 'white' 
+		? $current_y - 1 == 1
+		: $max_y - $current_y == 1;
+	
+	// allow home row pawns to move 2 spaces
+	if ($piece['piece_class_id'] == PIECE_CLASS_PAWN && $piece_is_on_home_row) {
+		$ability_data[1][0]['move_range'] = 2;
+	}
+	
+	//print_r($ability_data);
 	
 	$move_is_in_matrix = !is_null($ability_data[$rel_y][$rel_x]);
 	
@@ -194,21 +207,21 @@ function get_piece_move_code($board, $piece, $new_x, $new_y) {
 		
 			$x_dir = $rel_x > 0 ? 1 : -1;
 			$y_dir = $rel_y > 0 ? 1 : -1;
-			$magnitude = $rel_x;
+			$magnitude = abs($rel_x);
 			
 		// up/down moves
 		} else if ($rel_x == 0 && abs($rel_y) > 0) {
 			
 			$x_dir = 0;
 			$y_dir = $rel_y > 0 ? 1 : -1;
-			$magnitude = $rel_y;
+			$magnitude = abs($rel_y);
 			
 		// left/right moves
 		} else if ($rel_y == 0 && abs($rel_x) > 0) {
 			
 			$x_dir = $rel_x > 0 ? 1 : -1;
 			$y_dir = 0;
-			$magnitude = $rel_x;
+			$magnitude = abs($rel_x);
 			
 		// invalid moves
 		} else {
@@ -257,7 +270,7 @@ function get_piece_move_code_matrix($board, $piece) {
 
 function piece_is_threatened($this_user_id, $opp_piece, $board) {
 	
-	// get the opponent's king's coordinates
+	// get the opponent's piece's coordinates
 	$opp_piece_space = get_space_by_id($opp_piece['piece_space_id']);
 	$opp_piece_x = $opp_piece_space['space_coord_x'];
 	$opp_piece_y = $opp_piece_space['space_coord_y'];
@@ -269,7 +282,11 @@ function piece_is_threatened($this_user_id, $opp_piece, $board) {
 	
 	foreach ($my_pieces as $piece) {
 		
+		print_r($piece);
+		
 		$move_code = get_piece_move_code($board, $piece, $opp_piece_x, $opp_piece_y);
+		
+		echo "move code: $move_code";
 		
 		if (piece_can_attack($move_code)) {
 			return true;

@@ -161,10 +161,9 @@ switch ($action) {
     case 'move_piece':
         
         $match = get_match_and_validate_match_status(MATCH_PLAYING);
-        //$match_user = get_match_by_user($me['user_id']);
 		$match_user = get_match_user($me['user_id']);
         
-        if ($match_user['match_user_color'] == 'white') {
+		if ($match_user['match_user_color'] == 'white') {
             $is_my_turn = $match['match_turn_count'] % 2 != 0;
         } else if ($match_user['match_user_color'] == 'black') {
             $is_my_turn = $match['match_turn_count'] % 2 == 0;
@@ -245,6 +244,9 @@ switch ($action) {
 		// check for check
 		$opp_is_in_check = get_check_status($me['user_id'], $match);
 		
+		// output array to be passed as json to client
+		$output = [];
+		
 		if ($opp_is_in_check) {
 			
 			// check for checkmate
@@ -253,18 +255,25 @@ switch ($action) {
 				$match['match_status'] = $match_user['match_user_color'] == 'white' 
 					? MATCH_WHITE_WIN : MATCH_BLACK_WIN;
 				
-				send_to_client(202, ['match_status' => $match['match_status']]);
+				$victor = get_user_by_id($match_user['match_user_user_id']);
 				
-			}
+				array_push($output, [
+					'match_status' => $match['match_status'],
+					'match_victor' => $victor['user_name']
+				]);
+				
+			} 
+			
+		} else {
 			
 		}
+		
+		array_push($output, ['check_status' => $opp_is_in_check]);
 		
 		// update match record
 		$match->update();
 		
-        send_to_client(202, [
-			'check_status' => $opp_is_in_check
-		]);
+        send_to_client(202, $output);
         
         break;
 		
@@ -277,7 +286,7 @@ switch ($action) {
 		
 		break;
 	
-	case 'get_checkmate_status':
+	/*case 'get_checkmate_status':
 		
 		$match = get_match_and_validate_match_status(MATCH_PLAYING);
 		$checkmate_status = get_checkmate_status($me['user_id'], $match);
@@ -287,7 +296,7 @@ switch ($action) {
 			'checkmate_status' => $checkmate_status
 		]);
 		
-		break;
+		break;*/
         
     case 'resign':
         
