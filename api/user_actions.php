@@ -39,7 +39,7 @@ switch ($action) {
         try {
             $login_status = validate_user($username, $password);
         } catch (Exception $e) {
-            send_to_client(500, null, $e);
+            send_to_client(500, ['login_error' => $e]);
         }
         
         switch ($login_status) {
@@ -124,7 +124,7 @@ switch ($action) {
         try {
             //add_friend($me['user_id'], $friend_user_id);
         } catch (Exception $e) {
-            send_to_client(500, null, $e);
+            send_to_client(500, ['friend_error' => $e]);
         }
         
         // send success code
