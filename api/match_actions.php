@@ -127,7 +127,7 @@ switch ($action) {
 		
 		//print_r($matches);
 		
-		echo is_null($matches[0]) ? 'true' : 'false';
+		// echo is_null($matches[0]) ? 'true' : 'false';
 		
 		if (is_null($matches[0])) {
 			
@@ -141,7 +141,7 @@ switch ($action) {
 			
 			$match = get_match_by_id($new_match_id);
 			
-			print_r($new_match_id);
+			//print_r($new_match_id);
 			
 			$code = 201;
 			
