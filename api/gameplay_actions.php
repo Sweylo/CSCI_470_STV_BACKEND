@@ -62,18 +62,38 @@ switch ($action) {
             'turn_count' => $match['match_turn_count'],
         ];
 		
+		/*
+			Edited: 4/11/18
+			Purpose: The format of the returned JSON must always be in the same
+			format or the serializer on the front end will throw an error and 
+			stop execution of Coroutines.
+			Setting the unnecessary values to NULL will allow something to be 
+			passed to the frontend without error.
+		 */
 		if ($log) {
 			$output['last_move'] = [
 				'moving_piece_id' => $log['match_move_relative_piece_id'],
 				'space_x' => $log['match_move_coord_x'],
-				'space_y' => $log['match_move_coord_y']
+				'space_y' => $log['match_move_coord_y'],
+				'captured_piece_id' => NULL
+			];
+		}
+		else
+		{
+			$output['last_move'] = [
+				'moving_piece_id' => NULL,
+				'space_x' => NULL,
+				'space_y' => NULL,
+				'captured_piece_id' => NULL
 			];
 		}
 		
+		/*
 		if ($log['match_move_captured_relative_piece_id'] > 0) {
 			$output['last_move']['captured_piece_id'] = 
 				$log['match_move_captured_relative_piece_id'];
 		}
+		*/
         
         send_to_client(200, $output);
         
