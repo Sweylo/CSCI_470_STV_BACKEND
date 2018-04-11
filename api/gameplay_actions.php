@@ -75,7 +75,7 @@ switch ($action) {
 				'moving_piece_id' => $log['match_move_relative_piece_id'],
 				'space_x' => $log['match_move_coord_x'],
 				'space_y' => $log['match_move_coord_y'],
-				'captured_piece_id' => NULL
+				'captured_piece_id' => $log['match_move_captured_relative_piece_id']
 			];
 		}
 		else
