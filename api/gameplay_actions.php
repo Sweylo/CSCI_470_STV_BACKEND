@@ -48,7 +48,7 @@ switch ($action) {
         $match_user = get_match_user($me['user_id']);
 		$log = get_last_move_log_by_match_id($match['match_id']);
         
-		print_r($log);
+		//print_r($log);
 		
         if ($match_user['match_user_color'] == 'white') {
             $is_my_turn = $match['match_turn_count'] % 2 != 0;
