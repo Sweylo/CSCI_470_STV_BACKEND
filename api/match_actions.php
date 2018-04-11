@@ -119,7 +119,9 @@ switch ($action) {
 		
 		$match_user = get_match_user($me['user_id']);
 		
-		if (!is_null($match_user->data)) {
+		// Same issue we had with the join_match request, could not join a match if there was one that
+		// had already finished in the database
+		if (!is_null($match_user->data) && $match_user['match_status'] <= MATCH_PLAYING) {
 			send_to_client(403, ['match_error' => MATCH_ERROR_ALREADY_IN_A_MATCH]);
 		}
 		
