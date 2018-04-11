@@ -282,11 +282,11 @@ function piece_is_threatened($this_user_id, $opp_piece, $board) {
 	
 	foreach ($my_pieces as $piece) {
 		
-		print_r($piece);
+		//print_r($piece);
 		
 		$move_code = get_piece_move_code($board, $piece, $opp_piece_x, $opp_piece_y);
 		
-		echo "move code: $move_code";
+		//echo "move code: $move_code";
 		
 		if (piece_can_attack($move_code)) {
 			return true;

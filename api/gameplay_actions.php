@@ -5,6 +5,7 @@ require_once($dir_depth . 'model/match_db.php');
 require_once($dir_depth . 'model/space_db.php');
 require_once($dir_depth . 'model/piece_db.php');
 require_once($dir_depth . 'model/card_db.php');
+require_once($dir_depth . 'model/match_move_log_db.php');
 
 // move error constants
 const MOVE_ERROR_NOT_YOUR_TURN = 1;
@@ -272,6 +273,13 @@ switch ($action) {
 		
 		// update match record
 		$match->update();
+		
+		// add record to match move log
+		try {
+			log_move($match, $moving_piece, $other_piece, $new_space);
+		} catch (Exception $e) {
+			echo "error logging move: $e";
+		}
 		
         send_to_client(202, $output);
         
