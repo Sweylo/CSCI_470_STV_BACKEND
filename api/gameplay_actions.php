@@ -46,7 +46,10 @@ switch ($action) {
         
         $match = get_match_and_validate_match_status(MATCH_PLAYING, true);
         $match_user = get_match_user($me['user_id']);
+		$log = get_last_move_log_by_match_id($match['match_id']);
         
+		print_r($log);
+		
         if ($match_user['match_user_color'] == 'white') {
             $is_my_turn = $match['match_turn_count'] % 2 != 0;
         } else if ($match_user['match_user_color'] == 'black') {
@@ -56,8 +59,21 @@ switch ($action) {
         $output = [
             'match_status' => $match['match_status'],
             'is_my_turn' => $is_my_turn,
-            'turn_count' => $match['match_turn_count']
+            'turn_count' => $match['match_turn_count'],
         ];
+		
+		if ($log) {
+			$output['last_move'] = [
+				'moving_piece_id' => $log['match_move_relative_piece_id'],
+				'space_x' => $log['match_move_coord_x'],
+				'space_y' => $log['match_move_coord_y']
+			];
+		}
+		
+		if ($log['match_move_captured_relative_piece_id'] > 0) {
+			$output['last_move']['captured_piece_id'] = 
+				$log['match_move_captured_relative_piece_id'];
+		}
         
         send_to_client(200, $output);
         
