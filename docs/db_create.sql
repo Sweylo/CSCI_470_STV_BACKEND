@@ -169,13 +169,15 @@ DROP TABLE IF EXISTS `match_move_log`;
 CREATE TABLE `match_move_log` (
   `match_move_log_id` int(11) NOT NULL AUTO_INCREMENT,
   `match_move_match_id` int(11) NOT NULL,
-  `match_move_move_id` int(11) NOT NULL,
-  `match_move_piece_id` int(11) NOT NULL,
-  `match_move_new_space_id` int(11) NOT NULL,
-  `match_move_timestamp` varchar(20) NOT NULL,
+  `match_move_relative_piece_id` int(11) NOT NULL,
+  `match_move_timestamp` varchar(50) NOT NULL,
+  `match_move_turn_count` int(11) NOT NULL,
+  `match_move_captured_relative_piece_id` int(11) DEFAULT NULL,
+  `match_move_coord_x` int(11) NOT NULL,
+  `match_move_coord_y` int(11) NOT NULL,
   PRIMARY KEY (`match_move_log_id`),
   UNIQUE KEY `match_move_log_id_UNIQUE` (`match_move_log_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -197,7 +199,7 @@ CREATE TABLE `match_users` (
   KEY `match_user_match_id_idx` (`match_user_match_id`),
   CONSTRAINT `match_user_match_id` FOREIGN KEY (`match_user_match_id`) REFERENCES `matches` (`match_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `match_user_white_user_id` FOREIGN KEY (`match_user_user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -217,7 +219,7 @@ CREATE TABLE `matches` (
   UNIQUE KEY `match_id_UNIQUE` (`match_id`),
   KEY `match_board_id_idx` (`match_board_id`),
   CONSTRAINT `match_board_id` FOREIGN KEY (`match_board_id`) REFERENCES `boards` (`board_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -237,7 +239,7 @@ CREATE TABLE `pieces` (
   `piece_relative_id` int(3) DEFAULT NULL,
   PRIMARY KEY (`piece_id`),
   UNIQUE KEY `piece_space_id_UNIQUE` (`piece_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=129 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=257 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -293,7 +295,7 @@ CREATE TABLE `spaces` (
   KEY `match_space_id_idx` (`space_match_id`),
   KEY `match_space_type_id_idx` (`space_type_id`),
   CONSTRAINT `match_space_id` FOREIGN KEY (`space_match_id`) REFERENCES `matches` (`match_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=257 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=513 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -424,7 +426,7 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-05 14:38:22
+-- Dump completed on 2018-04-10 22:41:32
 
 -- -----------------------------------------------------
 -- Data for table `chess_n_conquer`.`account_types`
