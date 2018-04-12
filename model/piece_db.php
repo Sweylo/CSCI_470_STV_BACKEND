@@ -94,17 +94,23 @@ function get_piece_by_user_and_class($user_id, $piece_class_id) {
 
 function get_piece_by_relative_id($user_id, $relative_id) {
 	
-	$sql = 'SELECT * FROM pieces
+	$sql = 'SELECT * FROM pieces p 
+			JOIN spaces s 
+				ON p.piece_space_id = s.space_id
+			JOIN matches m
+				ON s.space_match_id = m.match_id
 			WHERE piece_user_id = ? 
-				AND piece_relative_id = ?';
+				AND piece_relative_id = ?
+				AND match_status < 4';
 	
 	$stmt = sql::$db->prepare($sql);
 	$stmt->bind_param('ii', $user_id, $relative_id);
 	$stmt->execute();
 	$result = $stmt->get_result();
-    $piece = new sql('pieces', $result->fetch_array(MYSQLI_ASSOC));
+    //$piece = new sql('pieces', $result->fetch_array(MYSQLI_ASSOC));
+	$record = $result->fetch_array(MYSQLI_ASSOC);
 	
-	return $piece;
+	return get_piece_by_id($record['piece_id']);
 	
 }
 
@@ -147,11 +153,17 @@ function get_piece_move_code($board, $piece, $new_x, $new_y) {
 	// get the board and space records
 	$space = get_space_by_id($piece['piece_space_id']);
 	
+	//print_r($space);
+	
 	// extract values from database records
 	$max_x = $board['board_col_count'];
 	$max_y = $board['board_row_count'];
 	$current_x = $space['space_coord_x'];
 	$current_y = $space['space_coord_y'];
+	
+	//echo "max_x: $max_x | max_y: $max_y<br />";
+	//echo "current_x: $current_x | current_y: $current_y<br />";
+	//echo "new_x: $new_x | new_y: $new_y<br />";
 	
 	// check that the move is in the bounds of the board
 	if (($new_x > $max_x || $new_x < 1) && ($new_y > $max_y || $new_y < 1)) {

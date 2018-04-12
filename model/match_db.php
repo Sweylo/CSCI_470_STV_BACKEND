@@ -63,12 +63,27 @@ function get_match_by_id($match_id) {
 }
 
 function get_match_user($user_id) {
-    $match_user = new sql('match_users');
+	
+    /*$match_user = new sql('match_users');
     $match_user->select([
         'column' => 'match_user_user_id', 
         'value' => $user_id
     ], sql::SELECT_SINGLE);
-    return $match_user;
+    return $match_user;*/
+	
+	$match = get_user_current_match($user_id);
+	
+	$sql = 'SELECT * FROM match_users 
+			WHERE match_user_match_id = ? 
+				AND match_user_user_id = ?';
+	
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('ii', $match['match_id'], $user_id);
+	$stmt->execute();
+	$result = $stmt->get_result();
+    $match_user = new sql('match_users', $result->fetch_array(MYSQLI_ASSOC));
+	
+	return $match_user;
 }
 
 function get_match_users($match_id) {
@@ -113,6 +128,35 @@ function get_match_by_user($user_id) {
         return $match;
     }
     
+}
+
+function get_user_current_match($user_id, $return_obj = false) {
+	
+	$sql = 'SELECT * FROM match_users mu JOIN matches m 
+				ON mu.match_user_match_id = m.match_id 
+			WHERE match_user_user_id = ? 
+				AND match_status < 4';
+	
+	$stmt = sql::$db->prepare($sql);
+	$stmt->bind_param('i', $user_id);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	
+	$match = $result->fetch_array(MYSQLI_ASSOC);
+	
+	if ($match && !$return_obj) {
+		return $match;
+	} else if ($match && $return_obj) {
+		return get_match_by_id($match['match_id']);
+	} else {
+		return false;
+	}
+	
+}
+
+function is_user_playing_match($user_id) {
+	$match = get_user_current_match($user_id);
+	return (bool) $match;
 }
 
 function add_match($user_id, $board_id) {

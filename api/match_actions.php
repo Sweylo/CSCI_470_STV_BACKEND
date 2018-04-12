@@ -74,6 +74,11 @@ switch ($action) {
         if (!$me || $me['user_account_type_id'] < USER_TYPE_USER) {
             send_to_client(401);
         }
+		
+		// check if user is already playing a match
+		if (is_user_playing_match($me['user_id'])) {
+			send_to_client(403, ['match_error' => MATCH_ERROR_ALREADY_IN_A_MATCH]);
+		}
         
         $match = get_match_by_id(filter_var($input['match_id'], FILTER_VALIDATE_INT));
         
@@ -81,12 +86,12 @@ switch ($action) {
             send_to_client(400, null, 'match requested is not in the database');
         }
 		
-		$user_match = get_match_by_user($me['user_id']);
+		/*$user_match = get_match_by_user($me['user_id']);
 		
 		// checks if the user is playing a match (match status <= 3)
         if ($user_match && $user_match['match_status'] <= MATCH_PLAYING) {
             send_to_client(403, null, 'user is already in a match');
-        }
+        }*/
 		
         //echo $match['match_status'];
         
@@ -117,11 +122,16 @@ switch ($action) {
             send_to_client(401);
         }
 		
-		$match_user = get_match_user($me['user_id']);
+		/*$match_user = get_match_user($me['user_id']);
 		
 		// Same issue we had with the join_match request, could not join a match if there was one that
 		// had already finished in the database
 		if (!is_null($match_user->data) && $match_user['match_status'] <= MATCH_PLAYING) {
+			send_to_client(403, ['match_error' => MATCH_ERROR_ALREADY_IN_A_MATCH]);
+		}*/
+		
+		// check if user is already playing a match
+		if (is_user_playing_match($me['user_id'])) {
 			send_to_client(403, ['match_error' => MATCH_ERROR_ALREADY_IN_A_MATCH]);
 		}
 		

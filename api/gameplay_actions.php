@@ -24,9 +24,11 @@ function get_match_and_validate_match_status($match_status, $no_more_than = fals
         send_to_client(401, ['match_error' => MATCH_ERROR_NOT_LOGGED_IN]);
     }
 
-    $match = get_match_by_user($me['user_id']);
+    $match = get_user_current_match($me['user_id'], true);
 
-    if (!$match->data) {
+	//print_r($match);
+	
+    if (!$match) {
         send_to_client(400, ['match_error' => MATCH_ERROR_NOT_IN_A_MATCH]);
     }
 
@@ -282,11 +284,12 @@ switch ($action) {
 		$opp_is_in_check = get_check_status($me['user_id'], $match);
 		
 		// output array to be passed as json to client
-		$output = [];
+		$output['match_status'] = null;
+		$output['match_victor'] = null;
 		
 		if ($opp_is_in_check) {
 			
-			// check for checkmate
+			/*// check for checkmate
 			if (get_checkmate_status($me['user_id'], $match, $moving_piece)) {
 				
 				$match['match_status'] = $match_user['match_user_color'] == 'white' 
@@ -294,21 +297,20 @@ switch ($action) {
 				
 				$victor = get_user_by_id($match_user['match_user_user_id']);
 				
-				array_push($output, [
-					'match_status' => $match['match_status'],
-					'match_victor' => $victor['user_name']
-				]);
+				$output['match_status'] = $match['match_status'];
+				$output['match_victor'] = $victor['user_name'];
 				
-			} 
-			
-		} else {
+			}*/
 			
 		}
 		
-		array_push($output, ['check_status' => $opp_is_in_check]);
+		$output['check_status'] = $opp_is_in_check;
 		
 		// update match record
 		$match->update();
+		
+		// decrement match turn count to be logged
+		$match['match_turn_count']--;
 		
 		// add record to match move log
 		try {
